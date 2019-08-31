@@ -1,0 +1,47 @@
+{
+  "name": "beesjs",
+  "version": "1.0.1",
+  "description": "Javascript library that retreives data from public distributed ledgers, and decides which answer to reject or accept.",
+  "main": "dist/index.js",
+  "scripts": {
+    "compile": "tsc src/index.ts --declaration --outDir dist/",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fabcotech/beesjs.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fabcotech/beesjs/issues"
+  },
+  "homepage": "https://github.com/fabcotech/beesjs#readme",
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "\\.(ts|tsx)$": "ts-jest"
+    },
+    "testRegex": "/__tests__/.*\\.(ts|tsx|js)$",
+    "automock": false,
+    "setupFiles": [
+      "./setupJest.js"
+    ]
+  },
+  "dependencies": {
+    "@types/node": "^12.7.2",
+    "node-fetch": "^2.6.0",
+    "source-map": "^0.7.3",
+    "xstream": "11.7.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.15",
+    "jest": "^24.8.0",
+    "ts-jest": "^24.0.2",
+    "typescript": "^3.5.3"
+  }
+}
