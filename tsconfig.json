@@ -19,6 +19,5 @@
     "strictNullChecks": true,
     "sourceMap": true
   },
-  "include": ["src", "setupJest.js"],
-  "exclude": ["*.spec.js"]
+  "include": ["src"]
 }
