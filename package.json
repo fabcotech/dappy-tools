@@ -1,10 +1,10 @@
 {
   "name": "beesjs",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Javascript library that retreives data from public distributed ledgers, and decides which answer to reject or accept.",
   "main": "dist/index.js",
   "scripts": {
-    "compile": "tsc src/index.ts --declaration --outDir dist/",
+    "build:browser": "npx rollup -c",
     "test": "jest"
   },
   "repository": {
@@ -34,11 +34,13 @@
     "xstream": "11.7.0"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^13.0.0",
-    "@rollup/plugin-node-resolve": "^8.0.1",
-    "@rollup/plugin-typescript": "^4.1.2",
+    "@rollup/plugin-typescript": "^8.2.1",
     "@types/jest": "^24.0.15",
     "jest": "^24.8.0",
+    "rollup": "2.50.2",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-json": "^4.0.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
     "ts-jest": "^24.0.2",
     "tslib": "^2.0.0",
     "typescript": "^3.5.3"

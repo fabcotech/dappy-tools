@@ -1,4 +1,4 @@
-import resolver, { ResolverOutput } from "../index";
+import { resolver, ResolverOutput }  from "../index";
 import { fakeQueryHandler } from "../fakeQueryHandler";
 import { LoadError } from "../models";
 
@@ -157,7 +157,7 @@ describe("resolver, 3 nodes", () => {
   it("should complete 51/2 with two nodes A, one node B", done => {
     resolver(
       fakeQueryHandler,
-      ["https://nodea1.org", "https://nodea2.org", "https://nodeb1.org"],
+      ["https://nodeb1.org", "https://nodea1.org", "https://nodea2.org"],
       "absolute",
       51,
       2
@@ -169,15 +169,15 @@ describe("resolver, 3 nodes", () => {
             loadErrors: {},
             loadState: {
               "1": {
+                nodeUrls: ["https://nodeb1.org"],
+                data: "b",
+                stringToCompare: "b"
+              },
+              "2": {
                 nodeUrls: ["https://nodea1.org", "https://nodea2.org"],
                 data: "a",
                 stringToCompare: "a"
               },
-              "2": {
-                nodeUrls: ["https://nodeb1.org"],
-                data: "b",
-                stringToCompare: "b"
-              }
             },
             loadPending: [],
             status: "completed"
@@ -190,7 +190,7 @@ describe("resolver, 3 nodes", () => {
   it("should fail UnaccurateState 67/2 with two nodes A, one node B", done => {
     resolver(
       fakeQueryHandler,
-      ["https://nodea1.org", "https://nodea2.org", "https://nodeb1.org"],
+      ["https://nodeb1.org", "https://nodea1.org", "https://nodea2.org"],
       "absolute",
       90,
       2
@@ -200,15 +200,15 @@ describe("resolver, 3 nodes", () => {
         next: (a: ResolverOutput) => {
           expect(a.loadState).toEqual({
             "1": {
+              nodeUrls: ["https://nodeb1.org"],
+              data: "b",
+              stringToCompare: "b"
+            },
+            "2": {
               nodeUrls: ["https://nodea1.org", "https://nodea2.org"],
               data: "a",
               stringToCompare: "a"
             },
-            "2": {
-              nodeUrls: ["https://nodeb1.org"],
-              data: "b",
-              stringToCompare: "b"
-            }
           });
           expect(a.loadError).toEqual({
             error: LoadError.UnaccurateState,
@@ -217,14 +217,14 @@ describe("resolver, 3 nodes", () => {
               loadStates: [
                 {
                   key: "1",
-                  okResponses: 2,
-                  percent: 66.67
+                  okResponses: 1,
+                  percent: 33.33
                 },
                 {
                   key: "2",
-                  okResponses: 1,
-                  percent: 33.33
-                }
+                  okResponses: 2,
+                  percent: 66.67
+                },
               ]
             }
           });
@@ -300,6 +300,67 @@ describe("resolver, 5 nodes", () => {
             }
           });
           expect(a.status).toBe("failed");
+          done();
+        }
+      });
+  });
+});
+
+describe.only("resolver, 10 nodes", () => {
+  it("should fail 91/10 with 9 nodes A, 1 node B", done => {
+    resolver(
+      fakeQueryHandler,
+      [
+        "https://nodea1.org", 
+        "https://nodeb1.org",
+        "https://nodea2.org",
+        "https://nodefail1.org",
+        "https://nodea3.org",
+        "https://nodea4.org",
+        "https://nodea5.org",
+        "https://nodea6.org",
+        "https://nodea7.org",
+        "https://nodea8.org",
+        "https://nodea9.org",
+    ],
+      "absolute",
+      91,
+      10
+    )
+      .last()
+      .subscribe({
+        next: (a: ResolverOutput) => {
+          expect(a.loadState).toEqual({
+              "1": {
+                nodeUrls: [
+                  "https://nodea1.org", 
+                  "https://nodea2.org",
+                  "https://nodea3.org",
+                  "https://nodea4.org",
+                  "https://nodea5.org",
+                  "https://nodea6.org",
+                  "https://nodea7.org",
+                  "https://nodea8.org",
+                  "https://nodea9.org",
+                ],
+                data: "a",
+                stringToCompare: "a"
+              },
+              "2": {
+                nodeUrls: ["https://nodeb1.org"],
+                data: "b",
+                stringToCompare: "b"
+              },
+          });
+
+          expect(a.loadError).toEqual({
+            error: LoadError.OutOfNodes,
+            args: {
+              alreadyQueried: 10,
+              resolverAbsolute: 10,
+            }
+          });
+
           done();
         }
       });
