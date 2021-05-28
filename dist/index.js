@@ -1830,35 +1830,35 @@
     xstream.Stream;
     xstream.MemoryStream;
 
-    var LoadStatus;
-    (function (LoadStatus) {
-        LoadStatus["Loading"] = "loading";
-        LoadStatus["Failed"] = "failed";
-        LoadStatus["Completed"] = "completed";
-    })(LoadStatus || (LoadStatus = {}));
-    var LoadError;
-    (function (LoadError) {
+    var BeesLoadStatus;
+    (function (BeesLoadStatus) {
+        BeesLoadStatus["Loading"] = "loading";
+        BeesLoadStatus["Failed"] = "failed";
+        BeesLoadStatus["Completed"] = "completed";
+    })(BeesLoadStatus || (BeesLoadStatus = {}));
+    var BeesLoadError;
+    (function (BeesLoadError) {
         // request
-        LoadError["IncompleteAddress"] = "The address is incomplete";
-        LoadError["ChainNotFound"] = "Blockchain not found";
-        LoadError["MissingBlockchainData"] = "Missing data from the blockchain";
-        LoadError["RecordNotFound"] = "Record not found";
+        BeesLoadError["IncompleteAddress"] = "The address is incomplete";
+        BeesLoadError["ChainNotFound"] = "Blockchain not found";
+        BeesLoadError["MissingBlockchainData"] = "Missing data from the blockchain";
+        BeesLoadError["RecordNotFound"] = "Record not found";
         // not found
-        LoadError["ResourceNotFound"] = "Contract not found";
+        BeesLoadError["ResourceNotFound"] = "Contract not found";
         // server error
-        LoadError["ServerError"] = "Server error";
+        BeesLoadError["ServerError"] = "Server error";
         // resolver
-        LoadError["InsufficientNumberOfNodes"] = "Insufficient number of nodes";
-        LoadError["OutOfNodes"] = "Out of nodes";
-        LoadError["UnstableState"] = "Unstable state";
-        LoadError["UnaccurateState"] = "Unaccurate state";
+        BeesLoadError["InsufficientNumberOfNodes"] = "Insufficient number of nodes";
+        BeesLoadError["OutOfNodes"] = "Out of nodes";
+        BeesLoadError["UnstableState"] = "Unstable state";
+        BeesLoadError["UnaccurateState"] = "Unaccurate state";
         // parsing
-        LoadError["FailedToParseResponse"] = "Failed to parse response";
-        LoadError["InvalidManifest"] = "Invalid manifest";
-        LoadError["InvalidSignature"] = "Invalid signature";
-        LoadError["InvalidRecords"] = "Invalid records";
-        LoadError["InvalidNodes"] = "Invalid nodes"; // for nodes
-    })(LoadError || (LoadError = {}));
+        BeesLoadError["FailedToParseResponse"] = "Failed to parse response";
+        BeesLoadError["InvalidManifest"] = "Invalid manifest";
+        BeesLoadError["InvalidSignature"] = "Invalid signature";
+        BeesLoadError["InvalidRecords"] = "Invalid records";
+        BeesLoadError["InvalidNodes"] = "Invalid nodes"; // for nodes
+    })(BeesLoadError || (BeesLoadError = {}));
 
     var indexData = function (data, existingData, comparer) {
         var _a;
@@ -1913,7 +1913,7 @@
                     loadErrors: loadErrors,
                     loadState: loadState,
                     loadPending: loadPending,
-                    status: LoadStatus.Loading
+                    status: BeesLoadStatus.Loading
                 });
                 if (resolverMode === "absolute") {
                     if (resolverAbsolute > nodeUrls.length) {
@@ -1922,13 +1922,13 @@
                             loadState: loadState,
                             loadPending: loadPending,
                             loadError: {
-                                error: LoadError.InsufficientNumberOfNodes,
+                                error: BeesLoadError.InsufficientNumberOfNodes,
                                 args: {
                                     expected: resolverAbsolute,
                                     got: nodeUrls.length
                                 }
                             },
-                            status: LoadStatus.Failed
+                            status: BeesLoadStatus.Failed
                         });
                         listener.complete();
                         return;
@@ -1942,13 +1942,13 @@
                                 loadState: loadState,
                                 loadPending: loadPending,
                                 loadError: {
-                                    error: LoadError.OutOfNodes,
+                                    error: BeesLoadError.OutOfNodes,
                                     args: {
                                         alreadyQueried: i - Object.keys(loadErrors).length,
                                         resolverAbsolute: resolverAbsolute
                                     }
                                 },
-                                status: LoadStatus.Failed
+                                status: BeesLoadStatus.Failed
                             });
                             listener.complete();
                             return;
@@ -1959,7 +1959,7 @@
                             loadErrors: loadErrors,
                             loadState: loadState,
                             loadPending: loadPending,
-                            status: LoadStatus.Loading
+                            status: BeesLoadStatus.Loading
                         });
                         var stream = createStream(queryHandler, urlsToQuery);
                         stream.take(urlsToQuery.length).subscribe({
@@ -1988,7 +1988,7 @@
                                     loadErrors: loadErrors,
                                     loadState: loadState,
                                     loadPending: loadPending,
-                                    status: LoadStatus.Loading
+                                    status: BeesLoadStatus.Loading
                                 });
                             },
                             error: function (e) {
@@ -2003,12 +2003,12 @@
                                         loadState: loadState,
                                         loadPending: loadPending,
                                         loadError: {
-                                            error: LoadError.ServerError,
+                                            error: BeesLoadError.ServerError,
                                             args: {
                                                 numberOfLoadErrors: Object.keys(loadErrors).length
                                             }
                                         },
-                                        status: LoadStatus.Failed
+                                        status: BeesLoadStatus.Failed
                                     });
                                     listener.complete();
                                     return;
@@ -2020,12 +2020,12 @@
                                         loadState: loadState,
                                         loadPending: loadPending,
                                         loadError: {
-                                            error: LoadError.UnstableState,
+                                            error: BeesLoadError.UnstableState,
                                             args: {
                                                 numberOfLoadStates: Object.keys(loadState).length
                                             }
                                         },
-                                        status: LoadStatus.Failed
+                                        status: BeesLoadStatus.Failed
                                     });
                                     listener.complete();
                                     return;
@@ -2047,7 +2047,7 @@
                                                     loadState: loadState,
                                                     loadPending: loadPending,
                                                     loadError: {
-                                                        error: LoadError.UnaccurateState,
+                                                        error: BeesLoadError.UnaccurateState,
                                                         args: {
                                                             totalOkResponses: totalOkResponses_1,
                                                             loadStates: Object.keys(loadState).map(function (k) {
@@ -2061,7 +2061,7 @@
                                                             })
                                                         }
                                                     },
-                                                    status: LoadStatus.Failed
+                                                    status: BeesLoadStatus.Failed
                                                 });
                                                 listener.complete();
                                                 return;
@@ -2070,7 +2070,7 @@
                                                 loadErrors: loadErrors,
                                                 loadState: loadState,
                                                 loadPending: loadPending,
-                                                status: LoadStatus.Completed
+                                                status: BeesLoadStatus.Completed
                                             });
                                             listener.complete();
                                             return;

@@ -1,6 +1,6 @@
-import { LoadData } from "./models";
+import { BeesLoadData } from "./index";
 
-export const fakeQueryHandler = (urlToQuery: string): Promise<LoadData> => {
+export const fakeQueryHandler = (urlToQuery: string): Promise<BeesLoadData> => {
   if (urlToQuery.includes("nodefail")) {
     return new Promise(r => {
       r({

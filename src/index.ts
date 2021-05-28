@@ -1,28 +1,84 @@
 import xs, { Stream } from "xstream";
 
-import {
-  LoadError,
-  ResolverMode,
-  LoadStatus,
-  LoadData,
-  LoadCompleted,
-  LoadErrors,
-  LoadErrorWithArgs,
-} from './models';
+export type BeesResolver = "auto" | "custom";
+export type BeesResolverMode = "percent" | "absolute";
+
+export enum BeesLoadStatus {
+  Loading = "loading",
+  Failed = "failed",
+  Completed = "completed"
+}
+
+export interface BeesLoadData {
+  type: "SUCCESS" | "ERROR";
+  status?: number;
+  data?: string;
+  stringToCompare?: string | undefined;
+  nodeUrl: string;
+}
+
+export interface BeesLoadCompleted {
+  [id: string]: {
+    nodeUrls: string[];
+    data: string;
+    stringToCompare: string | undefined;
+  };
+}
+
+export interface BeesLoadErrors {
+  [nodeUrl: string]: {
+    nodeUrl: string;
+    status?: number;
+  };
+}
+
+export enum BeesLoadError {
+  // request
+  IncompleteAddress = "The address is incomplete",
+  ChainNotFound = "Blockchain not found",
+  MissingBlockchainData = "Missing data from the blockchain",
+  RecordNotFound = "Record not found",
+
+  // not found
+  ResourceNotFound = "Contract not found",
+
+  // server error
+  ServerError = "Server error",
+
+  // resolver
+  InsufficientNumberOfNodes = "Insufficient number of nodes",
+  OutOfNodes = "Out of nodes",
+  UnstableState = "Unstable state",
+  UnaccurateState = "Unaccurate state",
+
+  // parsing
+  FailedToParseResponse = "Failed to parse response",
+  InvalidManifest = "Invalid manifest", // for dappy manifests
+  InvalidSignature = "Invalid signature",
+  InvalidRecords = "Invalid records", // for records
+  InvalidNodes = "Invalid nodes", // for nodes
+  InvalidServers = 'Invalid servers', // for nodes
+}
+
+export interface BeesLoadErrorWithArgs {
+  error: BeesLoadError;
+  args: { [key: string]: any };
+}
+
 
 export interface ResolverOutput {
-  loadState: LoadCompleted;
-  loadErrors: LoadErrors;
+  loadState: BeesLoadCompleted;
+  loadErrors: BeesLoadErrors;
   loadPending: string[];
-  loadError?: LoadErrorWithArgs;
-  status: LoadStatus;
+  loadError?: BeesLoadErrorWithArgs;
+  status: BeesLoadStatus;
 }
 
 const indexData = (
-  data: LoadData,
-  existingData: LoadCompleted,
+  data: BeesLoadData,
+  existingData: BeesLoadCompleted,
   comparer?: (x: string | undefined) => any
-): LoadCompleted => {
+): BeesLoadCompleted => {
   let found = false;
   let stringToCompare = data.data;
 
@@ -72,9 +128,9 @@ const indexData = (
 };
 
 const createStream = (
-  queryHandler: (urlToQuery: string) => Promise<LoadData>,
+  queryHandler: (urlToQuery: string) => Promise<BeesLoadData>,
   urlsToQuery: string[]
-): Stream<LoadData> => {
+): Stream<BeesLoadData> => {
   const streams = urlsToQuery.map(urlToQuery =>
     xs.fromPromise(queryHandler(urlToQuery))
   );
@@ -83,15 +139,15 @@ const createStream = (
 };
 
 export const resolver = (
-  queryHandler: (urlToQuery: string) => Promise<LoadData>,
+  queryHandler: (urlToQuery: string) => Promise<BeesLoadData>,
   nodeUrls: string[],
-  resolverMode: ResolverMode,
+  resolverMode: BeesResolverMode,
   resolverAccuracy: number,
   resolverAbsolute: number,
   comparer?: (x: string | undefined) => any
 ): Stream<ResolverOutput> => {
-  let loadErrors: LoadErrors = {};
-  let loadState: LoadCompleted = {};
+  let loadErrors: BeesLoadErrors = {};
+  let loadState: BeesLoadCompleted = {};
   let loadPending: string[] = [];
 
   return xs.create({
@@ -100,7 +156,7 @@ export const resolver = (
         loadErrors: loadErrors,
         loadState: loadState,
         loadPending: loadPending,
-        status: LoadStatus.Loading
+        status: BeesLoadStatus.Loading
       });
       if (resolverMode === "absolute") {
         if (resolverAbsolute > nodeUrls.length) {
@@ -109,13 +165,13 @@ export const resolver = (
             loadState: loadState,
             loadPending: loadPending,
             loadError: {
-              error: LoadError.InsufficientNumberOfNodes,
+              error: BeesLoadError.InsufficientNumberOfNodes,
               args: {
                 expected: resolverAbsolute,
                 got: nodeUrls.length
               }
             },
-            status: LoadStatus.Failed
+            status: BeesLoadStatus.Failed
           });
           listener.complete();
           return;
@@ -131,13 +187,13 @@ export const resolver = (
               loadState: loadState,
               loadPending: loadPending,
               loadError: {
-                error: LoadError.OutOfNodes,
+                error: BeesLoadError.OutOfNodes,
                 args: {
                   alreadyQueried: i - Object.keys(loadErrors).length,
                   resolverAbsolute: resolverAbsolute
                 }
               },
-              status: LoadStatus.Failed
+              status: BeesLoadStatus.Failed
             });
             listener.complete();
             return;
@@ -149,15 +205,15 @@ export const resolver = (
             loadErrors: loadErrors,
             loadState: loadState,
             loadPending: loadPending,
-            status: LoadStatus.Loading
+            status: BeesLoadStatus.Loading
           });
 
-          const stream: Stream<LoadData> = createStream(
+          const stream: Stream<BeesLoadData> = createStream(
             queryHandler,
             urlsToQuery
           );
           stream.take(urlsToQuery.length).subscribe({
-            next: (data: LoadData) => {
+            next: (data: BeesLoadData) => {
               loadPending = loadPending.filter(url => url !== data.nodeUrl);
 
               if (data.type === "SUCCESS") {
@@ -186,7 +242,7 @@ export const resolver = (
                 loadErrors: loadErrors,
                 loadState: loadState,
                 loadPending: loadPending,
-                status: LoadStatus.Loading
+                status: BeesLoadStatus.Loading
               });
             },
             error: e => {
@@ -201,12 +257,12 @@ export const resolver = (
                   loadState: loadState,
                   loadPending: loadPending,
                   loadError: {
-                    error: LoadError.ServerError,
+                    error: BeesLoadError.ServerError,
                     args: {
                       numberOfLoadErrors: Object.keys(loadErrors).length
                     }
                   },
-                  status: LoadStatus.Failed
+                  status: BeesLoadStatus.Failed
                 });
                 listener.complete();
                 return;
@@ -218,12 +274,12 @@ export const resolver = (
                   loadState: loadState,
                   loadPending: loadPending,
                   loadError: {
-                    error: LoadError.UnstableState,
+                    error: BeesLoadError.UnstableState,
                     args: {
                       numberOfLoadStates: Object.keys(loadState).length
                     }
                   },
-                  status: LoadStatus.Failed
+                  status: BeesLoadStatus.Failed
                 });
                 listener.complete();
                 return;
@@ -252,7 +308,7 @@ export const resolver = (
                         loadState: loadState,
                         loadPending: loadPending,
                         loadError: {
-                          error: LoadError.UnaccurateState,
+                          error: BeesLoadError.UnaccurateState,
                           args: {
                             totalOkResponses: totalOkResponses,
                             loadStates: Object.keys(loadState).map(k => {
@@ -269,7 +325,7 @@ export const resolver = (
                             })
                           }
                         },
-                        status: LoadStatus.Failed
+                        status: BeesLoadStatus.Failed
                       });
                       listener.complete();
                       return;
@@ -279,7 +335,7 @@ export const resolver = (
                       loadErrors: loadErrors,
                       loadState: loadState,
                       loadPending: loadPending,
-                      status: LoadStatus.Completed
+                      status: BeesLoadStatus.Completed
                     });
                     listener.complete();
                     return;

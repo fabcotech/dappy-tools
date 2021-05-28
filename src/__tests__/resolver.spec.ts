@@ -1,6 +1,5 @@
-import { resolver, ResolverOutput }  from "../index";
+import { resolver, ResolverOutput, BeesLoadError }  from "../index";
 import { fakeQueryHandler } from "../fakeQueryHandler";
-import { LoadError } from "../models";
 
 export interface Query {
   path: string;
@@ -49,7 +48,7 @@ describe("resolver, 1 node", () => {
             loadState: {},
             loadPending: [],
             loadError: {
-              error: LoadError.InsufficientNumberOfNodes,
+              error: BeesLoadError.InsufficientNumberOfNodes,
               args: {
                 expected: 2,
                 got: 1
@@ -74,7 +73,7 @@ describe("resolver, 1 node", () => {
             }
           });
           expect(a.loadError).toEqual({
-            error: LoadError.OutOfNodes,
+            error: BeesLoadError.OutOfNodes,
             args: {
               alreadyQueried: 0,
               resolverAbsolute: 1
@@ -140,7 +139,7 @@ describe("resolver, 2 nodes, 100/2", () => {
             }
           });
           expect(a.loadError).toEqual({
-            error: LoadError.OutOfNodes,
+            error: BeesLoadError.OutOfNodes,
             args: {
               resolverAbsolute: 2,
               alreadyQueried: 2
@@ -211,7 +210,7 @@ describe("resolver, 3 nodes", () => {
             },
           });
           expect(a.loadError).toEqual({
-            error: LoadError.UnaccurateState,
+            error: BeesLoadError.UnaccurateState,
             args: {
               totalOkResponses: 3,
               loadStates: [
@@ -263,7 +262,7 @@ describe("resolver, 3 nodes", () => {
             }
           });
           expect(a.loadError).toEqual({
-            error: LoadError.UnstableState,
+            error: BeesLoadError.UnstableState,
             args: {
               numberOfLoadStates: 3
             }
@@ -294,7 +293,7 @@ describe("resolver, 5 nodes", () => {
       .subscribe({
         next: (a: ResolverOutput) => {
           expect(a.loadError).toEqual({
-            error: LoadError.ServerError,
+            error: BeesLoadError.ServerError,
             args: {
               numberOfLoadErrors: 5
             }
@@ -306,7 +305,7 @@ describe("resolver, 5 nodes", () => {
   });
 });
 
-describe.only("resolver, 10 nodes", () => {
+describe("resolver, 10 nodes", () => {
   it("should fail 91/10 with 9 nodes A, 1 node B", done => {
     resolver(
       fakeQueryHandler,
@@ -354,7 +353,7 @@ describe.only("resolver, 10 nodes", () => {
           });
 
           expect(a.loadError).toEqual({
-            error: LoadError.OutOfNodes,
+            error: BeesLoadError.OutOfNodes,
             args: {
               alreadyQueried: 10,
               resolverAbsolute: 10,
