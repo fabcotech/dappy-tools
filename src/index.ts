@@ -6,7 +6,7 @@ export type BeesResolverMode = "percent" | "absolute";
 export enum BeesLoadStatus {
   Loading = "loading",
   Failed = "failed",
-  Completed = "completed"
+  Completed = "completed",
 }
 
 export interface BeesLoadData {
@@ -57,14 +57,16 @@ export enum BeesLoadError {
   InvalidSignature = "Invalid signature",
   InvalidRecords = "Invalid records", // for records
   InvalidNodes = "Invalid nodes", // for nodes
-  InvalidServers = 'Invalid servers', // for nodes
+  InvalidServers = "Invalid servers", // for nodes
+
+  PostParseError = "Parse error after multicall", // for nodes
+  UnknownCriticalError = "Unknown critical error", // for nodes
 }
 
 export interface BeesLoadErrorWithArgs {
   error: BeesLoadError;
   args: { [key: string]: any };
 }
-
 
 export interface ResolverOutput {
   loadState: BeesLoadCompleted;
@@ -90,15 +92,15 @@ const indexData = (
     }
   }
 
-  Object.keys(existingData).forEach(key => {
+  Object.keys(existingData).forEach((key) => {
     if (stringToCompare === existingData[key].stringToCompare) {
       found = true;
       existingData = {
         ...existingData,
         [key]: {
           ...existingData[key],
-          nodeUrls: existingData[key].nodeUrls.concat(data.nodeUrl)
-        }
+          nodeUrls: existingData[key].nodeUrls.concat(data.nodeUrl),
+        },
       };
     }
   });
@@ -109,8 +111,8 @@ const indexData = (
       [Object.keys(existingData).length + 1]: {
         nodeUrls: [data.nodeUrl],
         data: data.data,
-        stringToCompare: stringToCompare
-      }
+        stringToCompare: stringToCompare,
+      },
     };
   }
 
@@ -119,8 +121,8 @@ const indexData = (
       "1": {
         nodeUrls: [data.nodeUrl],
         data: data.data || "",
-        stringToCompare: stringToCompare
-      }
+        stringToCompare: stringToCompare,
+      },
     };
   }
 
@@ -131,7 +133,7 @@ const createStream = (
   queryHandler: (urlToQuery: string) => Promise<BeesLoadData>,
   urlsToQuery: string[]
 ): Stream<BeesLoadData> => {
-  const streams = urlsToQuery.map(urlToQuery =>
+  const streams = urlsToQuery.map((urlToQuery) =>
     xs.fromPromise(queryHandler(urlToQuery))
   );
 
@@ -151,12 +153,12 @@ export const resolver = (
   let loadPending: string[] = [];
 
   return xs.create({
-    start: listener => {
+    start: (listener) => {
       listener.next({
         loadErrors: loadErrors,
         loadState: loadState,
         loadPending: loadPending,
-        status: BeesLoadStatus.Loading
+        status: BeesLoadStatus.Loading,
       });
       if (resolverMode === "absolute") {
         if (resolverAbsolute > nodeUrls.length) {
@@ -168,10 +170,10 @@ export const resolver = (
               error: BeesLoadError.InsufficientNumberOfNodes,
               args: {
                 expected: resolverAbsolute,
-                got: nodeUrls.length
-              }
+                got: nodeUrls.length,
+              },
             },
-            status: BeesLoadStatus.Failed
+            status: BeesLoadStatus.Failed,
           });
           listener.complete();
           return;
@@ -190,10 +192,10 @@ export const resolver = (
                 error: BeesLoadError.OutOfNodes,
                 args: {
                   alreadyQueried: i - Object.keys(loadErrors).length,
-                  resolverAbsolute: resolverAbsolute
-                }
+                  resolverAbsolute: resolverAbsolute,
+                },
               },
-              status: BeesLoadStatus.Failed
+              status: BeesLoadStatus.Failed,
             });
             listener.complete();
             return;
@@ -205,7 +207,7 @@ export const resolver = (
             loadErrors: loadErrors,
             loadState: loadState,
             loadPending: loadPending,
-            status: BeesLoadStatus.Loading
+            status: BeesLoadStatus.Loading,
           });
 
           const stream: Stream<BeesLoadData> = createStream(
@@ -214,7 +216,7 @@ export const resolver = (
           );
           stream.take(urlsToQuery.length).subscribe({
             next: (data: BeesLoadData) => {
-              loadPending = loadPending.filter(url => url !== data.nodeUrl);
+              loadPending = loadPending.filter((url) => url !== data.nodeUrl);
 
               if (data.type === "SUCCESS") {
                 try {
@@ -225,8 +227,8 @@ export const resolver = (
                     ...loadErrors,
                     [data.nodeUrl]: {
                       nodeUrl: data.nodeUrl,
-                      status: err.message ? parseInt(err.message, 10) : 400
-                    }
+                      status: err.message ? parseInt(err.message, 10) : 400,
+                    },
                   };
                 }
               } else {
@@ -234,18 +236,18 @@ export const resolver = (
                   ...loadErrors,
                   [data.nodeUrl]: {
                     nodeUrl: data.nodeUrl,
-                    status: data.status
-                  }
+                    status: data.status,
+                  },
                 };
               }
               listener.next({
                 loadErrors: loadErrors,
                 loadState: loadState,
                 loadPending: loadPending,
-                status: BeesLoadStatus.Loading
+                status: BeesLoadStatus.Loading,
               });
             },
-            error: e => {
+            error: (e) => {
               console.error(e);
               listener.error("UnknownError");
             },
@@ -259,10 +261,10 @@ export const resolver = (
                   loadError: {
                     error: BeesLoadError.ServerError,
                     args: {
-                      numberOfLoadErrors: Object.keys(loadErrors).length
-                    }
+                      numberOfLoadErrors: Object.keys(loadErrors).length,
+                    },
                   },
-                  status: BeesLoadStatus.Failed
+                  status: BeesLoadStatus.Failed,
                 });
                 listener.complete();
                 return;
@@ -276,10 +278,10 @@ export const resolver = (
                   loadError: {
                     error: BeesLoadError.UnstableState,
                     args: {
-                      numberOfLoadStates: Object.keys(loadState).length
-                    }
+                      numberOfLoadStates: Object.keys(loadState).length,
+                    },
                   },
-                  status: BeesLoadStatus.Failed
+                  status: BeesLoadStatus.Failed,
                 });
                 listener.complete();
                 return;
@@ -311,7 +313,7 @@ export const resolver = (
                           error: BeesLoadError.UnaccurateState,
                           args: {
                             totalOkResponses: totalOkResponses,
-                            loadStates: Object.keys(loadState).map(k => {
+                            loadStates: Object.keys(loadState).map((k) => {
                               return {
                                 key: k,
                                 okResponses: loadState[k].nodeUrls.length,
@@ -320,12 +322,12 @@ export const resolver = (
                                     (100 *
                                       (100 * loadState[k].nodeUrls.length)) /
                                       totalOkResponses
-                                  ) / 100
+                                  ) / 100,
                               };
-                            })
-                          }
+                            }),
+                          },
                         },
-                        status: BeesLoadStatus.Failed
+                        status: BeesLoadStatus.Failed,
                       });
                       listener.complete();
                       return;
@@ -335,7 +337,7 @@ export const resolver = (
                       loadErrors: loadErrors,
                       loadState: loadState,
                       loadPending: loadPending,
-                      status: BeesLoadStatus.Completed
+                      status: BeesLoadStatus.Completed,
                     });
                     listener.complete();
                     return;
@@ -344,13 +346,13 @@ export const resolver = (
               }
 
               callBatch(i);
-            }
+            },
           });
         };
 
         callBatch(i);
       }
     },
-    stop: () => {}
+    stop: () => {},
   });
 };

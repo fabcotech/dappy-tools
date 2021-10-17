@@ -2,7 +2,7 @@
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
     typeof define === 'function' && define.amd ? define(['exports'], factory) :
     (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Bees = {}));
-}(this, (function (exports) { 'use strict';
+})(this, (function (exports) { 'use strict';
 
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation.
@@ -1830,13 +1830,13 @@
     xstream.Stream;
     xstream.MemoryStream;
 
-    var BeesLoadStatus;
+    exports.BeesLoadStatus = void 0;
     (function (BeesLoadStatus) {
         BeesLoadStatus["Loading"] = "loading";
         BeesLoadStatus["Failed"] = "failed";
         BeesLoadStatus["Completed"] = "completed";
-    })(BeesLoadStatus || (BeesLoadStatus = {}));
-    var BeesLoadError;
+    })(exports.BeesLoadStatus || (exports.BeesLoadStatus = {}));
+    exports.BeesLoadError = void 0;
     (function (BeesLoadError) {
         // request
         BeesLoadError["IncompleteAddress"] = "The address is incomplete";
@@ -1857,9 +1857,11 @@
         BeesLoadError["InvalidManifest"] = "Invalid manifest";
         BeesLoadError["InvalidSignature"] = "Invalid signature";
         BeesLoadError["InvalidRecords"] = "Invalid records";
-        BeesLoadError["InvalidNodes"] = "Invalid nodes"; // for nodes
-    })(BeesLoadError || (BeesLoadError = {}));
-
+        BeesLoadError["InvalidNodes"] = "Invalid nodes";
+        BeesLoadError["InvalidServers"] = "Invalid servers";
+        BeesLoadError["PostParseError"] = "Parse error after multicall";
+        BeesLoadError["UnknownCriticalError"] = "Unknown critical error";
+    })(exports.BeesLoadError || (exports.BeesLoadError = {}));
     var indexData = function (data, existingData, comparer) {
         var _a;
         var found = false;
@@ -1883,7 +1885,7 @@
             existingData = __assign(__assign({}, existingData), (_a = {}, _a[Object.keys(existingData).length + 1] = {
                 nodeUrls: [data.nodeUrl],
                 data: data.data,
-                stringToCompare: stringToCompare
+                stringToCompare: stringToCompare,
             }, _a));
         }
         if (!Object.keys(existingData).length) {
@@ -1891,8 +1893,8 @@
                 "1": {
                     nodeUrls: [data.nodeUrl],
                     data: data.data || "",
-                    stringToCompare: stringToCompare
-                }
+                    stringToCompare: stringToCompare,
+                },
             };
         }
         return existingData;
@@ -1913,7 +1915,7 @@
                     loadErrors: loadErrors,
                     loadState: loadState,
                     loadPending: loadPending,
-                    status: BeesLoadStatus.Loading
+                    status: exports.BeesLoadStatus.Loading,
                 });
                 if (resolverMode === "absolute") {
                     if (resolverAbsolute > nodeUrls.length) {
@@ -1922,13 +1924,13 @@
                             loadState: loadState,
                             loadPending: loadPending,
                             loadError: {
-                                error: BeesLoadError.InsufficientNumberOfNodes,
+                                error: exports.BeesLoadError.InsufficientNumberOfNodes,
                                 args: {
                                     expected: resolverAbsolute,
-                                    got: nodeUrls.length
-                                }
+                                    got: nodeUrls.length,
+                                },
                             },
-                            status: BeesLoadStatus.Failed
+                            status: exports.BeesLoadStatus.Failed,
                         });
                         listener.complete();
                         return;
@@ -1942,13 +1944,13 @@
                                 loadState: loadState,
                                 loadPending: loadPending,
                                 loadError: {
-                                    error: BeesLoadError.OutOfNodes,
+                                    error: exports.BeesLoadError.OutOfNodes,
                                     args: {
                                         alreadyQueried: i - Object.keys(loadErrors).length,
-                                        resolverAbsolute: resolverAbsolute
-                                    }
+                                        resolverAbsolute: resolverAbsolute,
+                                    },
                                 },
-                                status: BeesLoadStatus.Failed
+                                status: exports.BeesLoadStatus.Failed,
                             });
                             listener.complete();
                             return;
@@ -1959,7 +1961,7 @@
                             loadErrors: loadErrors,
                             loadState: loadState,
                             loadPending: loadPending,
-                            status: BeesLoadStatus.Loading
+                            status: exports.BeesLoadStatus.Loading,
                         });
                         var stream = createStream(queryHandler, urlsToQuery);
                         stream.take(urlsToQuery.length).subscribe({
@@ -1974,21 +1976,21 @@
                                     catch (err) {
                                         loadErrors = __assign(__assign({}, loadErrors), (_a = {}, _a[data.nodeUrl] = {
                                             nodeUrl: data.nodeUrl,
-                                            status: err.message ? parseInt(err.message, 10) : 400
+                                            status: err.message ? parseInt(err.message, 10) : 400,
                                         }, _a));
                                     }
                                 }
                                 else {
                                     loadErrors = __assign(__assign({}, loadErrors), (_b = {}, _b[data.nodeUrl] = {
                                         nodeUrl: data.nodeUrl,
-                                        status: data.status
+                                        status: data.status,
                                     }, _b));
                                 }
                                 listener.next({
                                     loadErrors: loadErrors,
                                     loadState: loadState,
                                     loadPending: loadPending,
-                                    status: BeesLoadStatus.Loading
+                                    status: exports.BeesLoadStatus.Loading,
                                 });
                             },
                             error: function (e) {
@@ -2003,12 +2005,12 @@
                                         loadState: loadState,
                                         loadPending: loadPending,
                                         loadError: {
-                                            error: BeesLoadError.ServerError,
+                                            error: exports.BeesLoadError.ServerError,
                                             args: {
-                                                numberOfLoadErrors: Object.keys(loadErrors).length
-                                            }
+                                                numberOfLoadErrors: Object.keys(loadErrors).length,
+                                            },
                                         },
-                                        status: BeesLoadStatus.Failed
+                                        status: exports.BeesLoadStatus.Failed,
                                     });
                                     listener.complete();
                                     return;
@@ -2020,12 +2022,12 @@
                                         loadState: loadState,
                                         loadPending: loadPending,
                                         loadError: {
-                                            error: BeesLoadError.UnstableState,
+                                            error: exports.BeesLoadError.UnstableState,
                                             args: {
-                                                numberOfLoadStates: Object.keys(loadState).length
-                                            }
+                                                numberOfLoadStates: Object.keys(loadState).length,
+                                            },
                                         },
-                                        status: BeesLoadStatus.Failed
+                                        status: exports.BeesLoadStatus.Failed,
                                     });
                                     listener.complete();
                                     return;
@@ -2047,7 +2049,7 @@
                                                     loadState: loadState,
                                                     loadPending: loadPending,
                                                     loadError: {
-                                                        error: BeesLoadError.UnaccurateState,
+                                                        error: exports.BeesLoadError.UnaccurateState,
                                                         args: {
                                                             totalOkResponses: totalOkResponses_1,
                                                             loadStates: Object.keys(loadState).map(function (k) {
@@ -2056,12 +2058,12 @@
                                                                     okResponses: loadState[k].nodeUrls.length,
                                                                     percent: Math.round((100 *
                                                                         (100 * loadState[k].nodeUrls.length)) /
-                                                                        totalOkResponses_1) / 100
+                                                                        totalOkResponses_1) / 100,
                                                                 };
-                                                            })
-                                                        }
+                                                            }),
+                                                        },
                                                     },
-                                                    status: BeesLoadStatus.Failed
+                                                    status: exports.BeesLoadStatus.Failed,
                                                 });
                                                 listener.complete();
                                                 return;
@@ -2070,7 +2072,7 @@
                                                 loadErrors: loadErrors,
                                                 loadState: loadState,
                                                 loadPending: loadPending,
-                                                status: BeesLoadStatus.Completed
+                                                status: exports.BeesLoadStatus.Completed,
                                             });
                                             listener.complete();
                                             return;
@@ -2078,13 +2080,13 @@
                                     }
                                 }
                                 callBatch_1(i);
-                            }
+                            },
                         });
                     };
                     callBatch_1(i);
                 }
             },
-            stop: function () { }
+            stop: function () { },
         });
     };
 
@@ -2092,5 +2094,5 @@
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));
 //# sourceMappingURL=index.js.map
