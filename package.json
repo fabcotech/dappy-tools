@@ -1,6 +1,6 @@
 {
   "name": "beesjs",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Javascript library that retreives data from public distributed ledgers, and decides which answer to reject or accept.",
   "main": "dist/index.js",
   "scripts": {

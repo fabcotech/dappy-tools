@@ -7,7 +7,7 @@ export default {
   output: [
     {
       sourcemap: true,
-      format: "umd",
+      format: "esm",
       name: "Bees",
       file: `dist/index.js`,
     },
