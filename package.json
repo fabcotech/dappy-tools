@@ -1,5 +1,5 @@
 {
-  "name": "dappy-resolve",
+  "name": "dappy-lookup",
   "version": "1.0.0",
   "description": "library that resolves names from dappy name system",
   "main": "index.js",
