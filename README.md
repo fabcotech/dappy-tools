@@ -11,7 +11,7 @@ You can find Dappy documentation [here](https://fabco.gitbook.io/dappy-spec/).
 ### Node.js
 
 ```sh
-npm i -S dappy-resolve
+npm i -S dappy-lookup
 ```
 
 ## You don't have a dappy name ? Mint in one.
