@@ -62,7 +62,7 @@ const { lookup } = createNodeLookup();
 https.get('https://your-dappy-name/', {
     lookup,
 }, (res) => {
-    console.log(data);
+  ...
 });
 ```
 
@@ -86,56 +86,79 @@ https.get('https://your-dappy-name/', {
     lookup,
     ca: await getCA('your-dappy-name'),
 }, (res) => {
-    console.log(data);
+  ...
 });
 ```
 
 ## API
 
-### lookup
+### `lookup()`
 
-```ts
-type lookup = (name: string, options: LookupOptions) => Promise<Record>
-
-interface LookupOptions {
+```typescript
+function lookup(
+  name: string,
+  options: {
     cacheMaxHit: number;
     cacheTTL: number;
-    network: DappyNetwork;
-}
-
-interface Record {
-    addresses: string[],
-    ca: string[],
+    network: 'mainnet' | 'gamma';
+  }
+) =>
+  Promise<{
+    addresses: string[];
+    ca: string[];
     ...
-}
+  }>;
+
 ```
 
-### createNodeLookup
+Resolve name on dappy name system.
+
+Example:
+
+```typescript
+const record = await lookup('your-dappy-name'); 
+console.log(record);
+```
+
+### `createNodeLookup()`
 
 ```ts
-type createNodeLookup = (options: LookupOptions) => { lookup: nodeLookup, getCA: getCA}
-
-interface LookupOptions {
+function createNodeLookup (
+  options: {
     cacheMaxHit: number;
     cacheTTL: number;
-    network: DappyNetwork;
+    network: 'mainnet' | 'gamma';
+  }
+) => { 
+  lookup: (
+    name: string,
+    options?: {
+      all?: boolean;
+      family?: number;
+      hints?: number;
+      verbatim?: boolean;
+    },
+    callback: (err: Error, address: string, family: number) => void;
+  ) => void,
+  getCA: (name: string) => Promise<string[]>;
 }
-
-type DappyNetwork = 'mainnet' | 'gamma';
-
-type getCA = (name: string) => Promise<string[]>;
-
-// Same interface as [NodeJS dns.lookup](https://nodejs.org/api/dns.html#dnslookuphostname-options-callback)
-type nodeLookup = (name: string, options?: Options, callback: Callback) => void
-
-interface Options {
-  all?: boolean;
-  family?: number;
-  hints?: number;
-  verbatim?: boolean;
-}
-
-type Callback = (err: Error, address: string, family: number) => void;
 ```
 
+Create 2 functions that share a common cache to store name records:
+- `lookup()`: function that can be used by [HTTP](https://nodejs.org/api/http.html) and [HTTPS](https://nodejs.org/api/https.html) NodeJS modules to resolve names.
+- `getCA()`: get CA certificate for a given name
 
+Example:
+
+```ts
+import { createNodeLookup } from 'dappy-lookup';
+
+const { getCA, lookup } = createNodeLookup();
+
+https.get('https://your-dappy-name/', {
+    lookup,
+    ca: await getCA('your-dappy-name'),
+}, (res) => {
+  ...
+});
+```
