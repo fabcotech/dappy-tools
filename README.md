@@ -1,4 +1,4 @@
-# Dappy resolve
+# dappy-lookup
 
 A library that resolves names from dappy name system (written in Typescript).
 
@@ -16,7 +16,7 @@ npm i -S dappy-lookup
 
 ## You don't have a dappy name ? Mint in one.
 
-Using dappy-browser,
+Using dappy-browser ...
 
 ## Examples
 
