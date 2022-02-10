@@ -2,7 +2,7 @@
 
 A library that resolves names from dappy name system (written in Typescript).
 
-# Dappy documentation
+## Dappy documentation
 
 You can find Dappy documentation [here](https://fabco.gitbook.io/dappy-spec/).
 
