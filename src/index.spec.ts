@@ -1,24 +1,23 @@
-import http from "http";
-import { lookup, createNodeLookup } from "./index";
+import http from 'http';
+import { lookup, createNodeLookup } from './index';
 
-describe("tests", () => {
-  
-  it("lookup()", async () => {
-    const r = await lookup("foo");
+describe('tests', () => {
+  it('lookup()', async () => {
+    const r = await lookup('foo');
     console.log(r);
   });
 
-  it("createNodeLookup()", () => {
+  it('createNodeLookup()', () => {
     const { lookup } = createNodeLookup();
     http.get(
-      "http://your-dappy-name/",
+      'http://your-dappy-name/',
       {
-        lookup,
+        lookup
       },
       (res) => {
-        res.setEncoding("utf8");
-        res.on("data", (data) => {
-          console.log("ok");
+        res.setEncoding('utf8');
+        res.on('data', (data) => {
+          console.log('ok');
         });
       }
     );
