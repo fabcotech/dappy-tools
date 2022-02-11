@@ -8,18 +8,18 @@ describe('tests', () => {
   });
 
   it('createNodeLookup()', () => {
-    const { lookup } = createNodeLookup();
+    const { nodeLookup } = createNodeLookup();
     http.get(
       'http://your-dappy-name/',
       {
-        lookup
+        lookup: nodeLookup,
       },
       (res) => {
         res.setEncoding('utf8');
-        res.on('data', (data) => {
+        res.on('data', () => {
           console.log('ok');
         });
-      }
+      },
     );
   });
 });

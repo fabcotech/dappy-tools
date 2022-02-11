@@ -1,6 +1,9 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
   "plugins": [
     "@typescript-eslint",
     "prettier"
@@ -9,10 +12,25 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
-    "prettier"
+    "prettier",
+    "airbnb-base",
+    "airbnb-typescript/base"
   ],
   "rules": {
     "no-console": 1,
-    "prettier/prettier": 1
-  }
+    "prettier/prettier": 1,
+    "@typescript-eslint/indent": 0,
+    "implicit-arrow-linebreak": 0,
+    "operator-linebreak": 0
+  },
+  "overrides": [
+    {
+      "files": [
+        "src/**/*.spec.ts"
+      ],
+      "rules": {
+        "no-console": 0
+      }
+    }
+  ]
 }

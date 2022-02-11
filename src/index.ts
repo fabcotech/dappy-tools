@@ -31,8 +31,8 @@ AtcExTrn17AElT06jbET0zuCigwTA5eGsUkt9gzK4W2GbdtjoLwvk3Mldv8XlHHc
 TYjihznr0Z+EgNuB98unuo1/JnxPBCZ4EfzvJaMEPdN2Fexddr4ilBG4N6uURv49
 O1eXkQXqXMz+IOFQJGL/xkpEWMkOtQlJZmqj+KmmcYXEPYU4dK8VAHkoXIGiVkeP
 0+cKdGty/fijp4JDZqY14Feosbr8eY3glg7sIozB+nKvxht/CY8eUj++zfE=
------END CERTIFICATE-----`
-  ]
+-----END CERTIFICATE-----`,
+  ],
 };
 
 export type DappyNetworkId = 'mainnet' | 'gamma';
@@ -41,21 +41,24 @@ export interface DappyLookupOptions {
   network: DappyNetworkId;
 }
 
-function isIPv4(address: string) {
-  return /\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}\b/.test(address);
-}
+// function isIPv4(address: string) {
+//   return /\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}\b/.test(address);
+// }
 
 function isIPv6(address: string) {
   return /(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/.test(
-    address
+    address,
   );
 }
 
+// eslint-disable-next-line
 export function lookupRecord(name: string, options?: DappyLookupOptions) {
   return Promise.resolve(dummyRecord);
 }
 
 export const lookup = lookupRecord;
+
+// export const lookup = lookupRecord;
 
 interface DappyRecord {
   addresses: string[];
@@ -76,10 +79,10 @@ function createCached(action: typeof lookupRecord) {
       cache[name] = {
         value: await action(name),
         hit: 0,
-        age: Date.now()
+        age: Date.now(),
       };
     } else {
-      cache[name].hit++;
+      cache[name].hit += 1;
     }
     return cache[name].value;
   };
@@ -88,29 +91,29 @@ function createCached(action: typeof lookupRecord) {
 function withFamily(address: string) {
   return {
     address,
-    family: isIPv6(address) ? 6 : 4
+    family: isIPv6(address) ? 6 : 4,
   };
 }
 
 export type CallbackOne = (
   err: NodeJS.ErrnoException | null,
   address: string,
-  family: number
+  family: number,
 ) => void;
 export type CallbackAll = (
   err: NodeJS.ErrnoException | null,
-  addresses: { address: string; family: number }[]
+  addresses: { address: string; family: number }[],
 ) => void;
 export type CallbackError = (err: NodeJS.ErrnoException) => void;
 
-const _createNodeLookup =
-  (lookup: typeof lookupRecord) =>
+const pCreateNodeLookup =
+  (lookupFn: typeof lookupRecord) =>
   async (
     name: string,
     options: dns.LookupOptions,
-    callback: CallbackOne | CallbackAll | CallbackError
+    callback: CallbackOne | CallbackAll | CallbackError,
   ) => {
-    const record = await lookup(name);
+    const record = await lookupFn(name);
 
     const family = options.family === 6 ? 6 : 4;
     const addresses = record.addresses
@@ -120,8 +123,8 @@ const _createNodeLookup =
     if (addresses.length === 0) {
       (callback as CallbackError)(
         new Error(
-          `No address found for name ${name} (format: IPv${options.family})`
-        )
+          `No address found for name ${name} (format: IPv${options.family})`,
+        ),
       );
       return;
     }
@@ -129,19 +132,12 @@ const _createNodeLookup =
     if (options.all) {
       (callback as CallbackAll)(null, addresses);
       return;
-    } else {
-      (callback as CallbackOne)(
-        null,
-        addresses[0].address,
-        addresses[0].family
-      );
-      return;
     }
+    (callback as CallbackOne)(null, addresses[0].address, addresses[0].family);
   };
 
-const createGetCA = (lookup: typeof lookupRecord) => async (name: string) => {
-  const record = await lookup(name);
-
+const createGetCA = (lookupFn: typeof lookupRecord) => async (name: string) => {
+  const record = await lookupFn(name);
   return record.ca;
 };
 
@@ -149,7 +145,7 @@ export function createNodeLookup() {
   const cachedLookup = createCached(lookupRecord);
 
   return {
-    lookup: _createNodeLookup(cachedLookup),
-    getCA: createGetCA(cachedLookup)
+    nodeLookup: pCreateNodeLookup(cachedLookup),
+    getCA: createGetCA(cachedLookup),
   };
 }

@@ -10,13 +10,13 @@ export default [
     output: {
       name: 'dappy-lokup',
       file: pkg.browser,
-      format: 'umd'
+      format: 'umd',
     },
     plugins: [
       resolve(),
       commonjs(),
-      typescript({ tsconfig: './tsconfig.json' })
-    ]
+      typescript({ tsconfig: './tsconfig.json' }),
+    ],
   },
 
   // CommonJS (for Node) and ES module (for bundlers) build.
@@ -29,8 +29,8 @@ export default [
     input: 'src/index.ts',
     output: [
       { file: pkg.main, format: 'cjs' },
-      { file: pkg.module, format: 'es' }
+      { file: pkg.module, format: 'es' },
     ],
-    plugins: [typescript({ tsconfig: './tsconfig.json' })]
-  }
+    plugins: [typescript({ tsconfig: './tsconfig.json' })],
+  },
 ];
