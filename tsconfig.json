@@ -1,15 +1,15 @@
 {
-    "exclude": [
-        "node_modules",
-        "**/node_modules/*",
-        "src/**/*.spec.ts"
-    ],
-    "compilerOptions": {
-        "outDir": "./dist",
-        "target": "es6",
-        "module": "esnext",
-        "moduleResolution": "node",
-        "strict": true,
-        "esModuleInterop": true
-    }
+  "exclude": [
+    "node_modules",
+    "**/node_modules/*",
+    "src/**/*.spec.ts"
+  ],
+  "compilerOptions": {
+    "outDir": "./dist",
+    "target": "es6",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true
+  }
 }
