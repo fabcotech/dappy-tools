@@ -33,9 +33,9 @@ O1eXkQXqXMz+IOFQJGL/xkpEWMkOtQlJZmqj+KmmcYXEPYU4dK8VAHkoXIGiVkeP
 -----END CERTIFICATE-----`]
 }
 
-type DappyNetworkId = "mainnet" | "gamma";
+export type DappyNetworkId = "mainnet" | "gamma";
 
-interface DappyLookupOptions {
+export interface DappyLookupOptions {
     network: DappyNetworkId;
 }
 
@@ -47,7 +47,7 @@ function isIPv6(address: string) {
     return /(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/.test(address);
 }
 
-function lookupRecord(name: string, options?: DappyLookupOptions) {
+export function lookupRecord(name: string, options?: DappyLookupOptions) {
     return Promise.resolve(dummyRecord);
 }
 
@@ -88,9 +88,9 @@ function withFamily(address: string) {
     }
 }
 
-type CallbackOne = (err: NodeJS.ErrnoException | null, address: string , family: number) => void;
-type CallbackAll = (err: NodeJS.ErrnoException | null, addresses: { address: string; family: number }[]) => void;
-type CallbackError = (err: NodeJS.ErrnoException) => void;
+export type CallbackOne = (err: NodeJS.ErrnoException | null, address: string , family: number) => void;
+export type CallbackAll = (err: NodeJS.ErrnoException | null, addresses: { address: string; family: number }[]) => void;
+export type CallbackError = (err: NodeJS.ErrnoException) => void;
 
 const _createNodeLookup = (lookup: typeof lookupRecord) =>
     async (name: string, options: dns.LookupOptions , callback: CallbackOne | CallbackAll | CallbackError) => {
