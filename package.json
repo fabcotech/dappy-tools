@@ -35,6 +35,11 @@
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier --write 'src/**/*.ts'"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint && npm run test"
+    }
+  },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.19.4",
     "@rollup/plugin-commonjs": "^21.0.1",
@@ -51,6 +56,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-prettier": "^4.0.0",
+    "husky": "^7.0.4",
     "mocha": "^9.2.0",
     "prettier": "^2.5.1",
     "rollup": "^2.67.2",
