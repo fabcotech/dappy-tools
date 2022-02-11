@@ -33,12 +33,8 @@
     "build:types": "rm -rf build && tsc -p ./tsconfig.json --outDir build --declaration true && api-extractor run",
     "lint": "eslint src --ext .ts",
     "lint:fix": "npm run lint -- --fix",
-    "format": "prettier --write 'src/**/*.ts'"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint && npm run test"
-    }
+    "format": "prettier --write 'src/**/*.ts'",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.19.4",
