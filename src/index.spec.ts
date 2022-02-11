@@ -7,7 +7,7 @@ describe('tests', () => {
     console.log(r);
   });
 
-  it('createNodeLookup()', () => {
+  xit('createNodeLookup()', () => {
     const { nodeLookup } = createNodeLookup();
     http.get(
       'http://your-dappy-name/',
