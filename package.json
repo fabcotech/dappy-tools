@@ -3,20 +3,13 @@
   "version": "2.0.0",
   "description": "Javascript library that retreives data from public distributed ledgers, and decides which answer to reject or accept.",
   "main": "dist/index.js",
+  "author": "FABCO <contact@fabco.tech>",
   "scripts": {
     "build": "npx rollup -c",
     "build:declaration": "tsc -p ./tsconfig.json --outDir dist --declaration true",
     "test": "jest"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fabcotech/beesjs.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/fabcotech/beesjs/issues"
-  },
+  "license": "MIT",
   "homepage": "https://github.com/fabcotech/beesjs#readme",
   "jest": {
     "moduleFileExtensions": [
