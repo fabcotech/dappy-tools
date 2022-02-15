@@ -80,10 +80,10 @@ So, dappy-lookup enable to retrieve CA certificate associated with the address i
 ```typescript
 import { createNodeLookup } from 'dappy-lookup';
 
-const { getCA, nodeLookup } = createNodeLookup();
+const { getCA, lookup } = createNodeLookup();
 
 https.get('https://your-dappy-name/', {
-    lookup: nodeLookup,
+    lookup,
     ca: await getCA('your-dappy-name'),
 }, (res) => {
   ...
@@ -100,14 +100,20 @@ function lookup(
   options: {
     cacheMaxHit: number;
     cacheTTL: number;
-    network: 'mainnet' | 'gamma';
+    dappyNetwork: 'dNetwork' | 'gamma';
   }
 ) =>
-  Promise<{
-    addresses: string[];
+  Promise<DappyRecord>;
+
+interface DappyRecord {
+    values: DappyRecordValue[];
     ca: string[];
-    ...
-  }>;
+}
+
+interface DappyRecordValue {
+    value: string;
+    kind: string;
+}
 
 ```
 
