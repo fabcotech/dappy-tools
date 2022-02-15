@@ -135,7 +135,7 @@ export const createCoResolveRequest =
           if (status === 'completed') {
             resolve(Object.values(results)[0]);
           } else if (status === 'failed') {
-            reject(new Error(loadError?.error));
+            reject(new Error(`Name ${name} not resolved: ${loadError?.error}`));
           }
         },
       });

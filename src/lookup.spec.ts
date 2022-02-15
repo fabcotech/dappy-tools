@@ -133,7 +133,7 @@ describe('lookup', () => {
     }
     expect((exp as Error).message).to.match(/missing or malformed/);
   });
-  it('coResolveRequest on all network members with 100% accuracy', async () => {
+  it('coResolveRequest on all network members with 100% accuracy: success scenario', async () => {
     const fakeRecord = createDappyRecord();
     const encodedRecord = [
       Buffer.from(
@@ -163,5 +163,43 @@ describe('lookup', () => {
 
     expect(dappyRecord).to.eql(fakeRecord);
     expect(fakeRequest).to.have.been.called.exactly(dappyNetwork.length);
+  });
+
+  it('coResolveRequest on all network members with 100% accuracy: failed scenario (different responses)', async () => {
+    const fakeRecord = createDappyRecord();
+    const createEncodedRecord = () => [
+      Buffer.from(
+        JSON.stringify({
+          success: true,
+          records: [
+            {
+              data: JSON.stringify({ ...fakeRecord, random: Math.random() }),
+            },
+          ],
+        }),
+      ),
+    ];
+
+    const fakeRequest = chai.spy(() => Promise.resolve(createEncodedRecord()));
+
+    const coResolve = createCoResolveRequest(fakeRequest);
+
+    const dappyNetwork = [
+      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkInfo(),
+    ];
+
+    let exp;
+    try {
+      await coResolve('foo', {
+        dappyNetwork,
+      });
+    } catch (err) {
+      exp = err;
+    }
+    expect((exp as Error).message).to.match(
+      /Name foo not resolved: Unstable state/,
+    );
   });
 });
