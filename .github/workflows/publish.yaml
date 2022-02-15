@@ -18,6 +18,10 @@ jobs:
         with:
           node-version: 16
           cache: 'npm'
+      - name: Reconfigure git to use HTTP authentication
+        run: >
+          git config --global url."https://github.com/".insteadOf
+          ssh://git@github.com/
       - run: npm ci
       - run: git config --global user.name "GitHub CD bot"
       - run: git config --global user.email "contact@fabco.tech"
