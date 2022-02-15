@@ -1,4 +1,4 @@
-import { DappyRecord, DappyNetworkInfo } from '../types';
+import { DappyRecord, DappyNetworkMember } from '../types';
 import { mergeDeep } from './mergeDeep';
 
 export const createDappyRecord = (
@@ -18,8 +18,8 @@ export const createDappyRecord = (
   );
 
 export const getFakeDappyNetworkInfo = (
-  networkInfo: Partial<DappyNetworkInfo> = {},
-): DappyNetworkInfo =>
+  networkInfo: Partial<DappyNetworkMember> = {},
+): DappyNetworkMember =>
   mergeDeep(
     {
       scheme: 'https',

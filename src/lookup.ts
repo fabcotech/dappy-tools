@@ -3,7 +3,7 @@ import {
   DappyRecord,
   DappyNetwork,
   DappyNetworkId,
-  DappyNetworkInfo,
+  DappyNetworkMember,
 } from './types';
 import { dappyNetworks } from './dappyNetworks';
 
@@ -30,13 +30,13 @@ import {
 // const validateDappyNetworkInfo = (dappyNetworkInfo: DappyNetworkInfo) => {
 // }
 export type GetDappyNetworks = () => Promise<
-  Record<DappyNetworkId, DappyNetworkInfo[]>
+  Record<DappyNetworkId, DappyNetworkMember[]>
 >;
 
 export const getDappyNetworkStaticList: GetDappyNetworks = () =>
   Promise.resolve(dappyNetworks);
 
-export const validateDappyNetworkInfo = (info: DappyNetworkInfo) => {
+export const validateDappyNetworkInfo = (info: DappyNetworkMember) => {
   if (!isStringNotEmpty(info.hostname)) {
     throw new Error(`missing or malformed hostname: ${info.hostname}`);
   }
@@ -54,7 +54,7 @@ export const validateDappyNetworkInfo = (info: DappyNetworkInfo) => {
   }
 };
 
-export const createGetDappyNetworkInfo =
+export const createGetDappyNetworkMembers =
   (getDappyNetworks: GetDappyNetworks) =>
   async (dappyNetwork?: DappyNetwork) => {
     if (Array.isArray(dappyNetwork) && dappyNetwork.length > 0) {
@@ -73,13 +73,13 @@ export const createGetDappyNetworkInfo =
     return networks[dappyNetworkId];
   };
 
-export const getDappyNetworkInfo = createGetDappyNetworkInfo(
+export const getDappyNetworkMembers = createGetDappyNetworkMembers(
   getDappyNetworkStaticList,
 );
 
 export const getXRecord =
   (request: typeof nodeRequest) =>
-  async (name: string, options: DappyNetworkInfo): Promise<DappyRecord> => {
+  async (name: string, options: DappyNetworkMember): Promise<DappyRecord> => {
     const { hostname, port, scheme } = options;
 
     const rawResponse: any = await request({
@@ -108,10 +108,9 @@ export const getXRecord =
 export const createCoResolveRequest =
   (request: typeof nodeRequest) =>
   async (name: string, options?: DappyLookupOptions) => {
-    return getXRecord(request)(
-      name,
-      (await getDappyNetworkInfo(options?.dappyNetwork))[0],
-    );
+    const members = await getDappyNetworkMembers(options?.dappyNetwork);
+
+    return getXRecord(request)(name, members[0]);
   };
 
 export const lookup = (name: string, options?: DappyLookupOptions) => {

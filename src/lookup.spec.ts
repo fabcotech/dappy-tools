@@ -3,7 +3,7 @@ import { DappyNetworkId } from '.';
 import {
   getXRecord,
   createCoResolveRequest,
-  getDappyNetworkInfo,
+  getDappyNetworkMembers,
   validateDappyNetworkInfo,
 } from './lookup';
 import { createDappyRecord, getFakeDappyNetworkInfo } from './utils/fakeData';
@@ -60,7 +60,7 @@ describe('lookup', () => {
   it('unknown dappy network', async () => {
     let exp;
     try {
-      await getDappyNetworkInfo('unknown' as DappyNetworkId);
+      await getDappyNetworkMembers('unknown' as DappyNetworkId);
     } catch (e) {
       exp = e;
     }
@@ -107,7 +107,7 @@ describe('lookup', () => {
       getFakeDappyNetworkInfo(),
       getFakeDappyNetworkInfo(),
     ];
-    expect(await getDappyNetworkInfo(customValidNetwork)).to.eql(
+    expect(await getDappyNetworkMembers(customValidNetwork)).to.eql(
       customValidNetwork,
     );
   });
@@ -120,7 +120,7 @@ describe('lookup', () => {
     ];
     let exp;
     try {
-      await getDappyNetworkInfo(customValidNetwork);
+      await getDappyNetworkMembers(customValidNetwork);
     } catch (e) {
       exp = e;
     }

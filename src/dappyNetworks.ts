@@ -1,6 +1,6 @@
-import { DappyNetworkId, DappyNetworkInfo } from './types';
+import { DappyNetworkId, DappyNetworkMember } from './types';
 
-export const dappyNetworks: Record<DappyNetworkId, DappyNetworkInfo[]> = {
+export const dappyNetworks: Record<DappyNetworkId, DappyNetworkMember[]> = {
   dNetwork: [
     {
       ip: '195.154.70.253',

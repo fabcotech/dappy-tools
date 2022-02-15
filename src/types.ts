@@ -1,8 +1,8 @@
 export type DappyNetworkId = 'dNetwork' | 'gamma';
 
-export type DappyNetwork = DappyNetworkId | DappyNetworkInfo[];
+export type DappyNetwork = DappyNetworkId | DappyNetworkMember[];
 
-export interface DappyNetworkInfo {
+export interface DappyNetworkMember {
   scheme: 'https' | 'http';
   hostname: string;
   port: string;
