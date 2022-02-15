@@ -1,22 +1,22 @@
 import { BeesLoadData } from "./index";
 
-export const fakeQueryHandler = (urlToQuery: string): Promise<BeesLoadData> => {
-  if (urlToQuery.includes("nodefail")) {
+export const fakeQueryHandler = (id: string): Promise<BeesLoadData> => {
+  if (id.includes("nodefail")) {
     return new Promise(r => {
       r({
         type: "ERROR",
-        nodeUrl: urlToQuery,
+        id: id,
         status: 400
       });
     });
   }
 
   let data = "";
-  if (urlToQuery.includes("nodea")) {
+  if (id.includes("nodea")) {
     data = "a";
-  } else if (urlToQuery.includes("nodeb")) {
+  } else if (id.includes("nodeb")) {
     data = "b";
-  } else if (urlToQuery.includes("nodec")) {
+  } else if (id.includes("nodec")) {
     data = "c";
   } else {
     data = "d";
@@ -25,7 +25,7 @@ export const fakeQueryHandler = (urlToQuery: string): Promise<BeesLoadData> => {
     r({
       type: "SUCCESS",
       data: data,
-      nodeUrl: urlToQuery
+      id: id
     });
   });
 };

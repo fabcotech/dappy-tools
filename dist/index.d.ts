@@ -1,5 +1,3 @@
-import { Stream } from "xstream";
-export declare type BeesResolver = "auto" | "custom";
 export declare type BeesResolverMode = "percent" | "absolute";
 export declare enum BeesLoadStatus {
     Loading = "loading",
@@ -11,18 +9,18 @@ export interface BeesLoadData {
     status?: number;
     data?: string;
     stringToCompare?: string | undefined;
-    nodeUrl: string;
+    id: string;
 }
 export interface BeesLoadCompleted {
     [id: string]: {
-        nodeUrls: string[];
+        ids: string[];
         data: string;
         stringToCompare: string | undefined;
     };
 }
 export interface BeesLoadErrors {
-    [nodeUrl: string]: {
-        nodeUrl: string;
+    [id: string]: {
+        id: string;
         status?: number;
     };
 }
@@ -59,4 +57,4 @@ export interface ResolverOutput {
     loadError?: BeesLoadErrorWithArgs;
     status: BeesLoadStatus;
 }
-export declare const resolver: (queryHandler: (urlToQuery: string) => Promise<BeesLoadData>, nodeUrls: string[], resolverMode: BeesResolverMode, resolverAccuracy: number, resolverAbsolute: number, comparer?: ((x: string | undefined) => any) | undefined) => Stream<ResolverOutput>;
+export declare const resolver: (queryHandler: (urlToQuery: string) => Promise<BeesLoadData>, ids: string[], resolverMode: BeesResolverMode, resolverAccuracy: number, resolverAbsolute: number, comparer?: ((x: string | undefined) => any) | undefined) => Promise<ResolverOutput>;
