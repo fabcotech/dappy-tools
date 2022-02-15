@@ -28,7 +28,7 @@
   },
   "scripts": {
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'src/**/*.spec.ts'",
-    "test:watch": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register --watch --watch-files src/**/*.ts  'src/**/*.spec.ts'",
+    "test:watch": "TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'src/**/*.spec.ts' --watch --watch-files *.ts",
     "build": "rm -rf dist && rollup -c",
     "build:types": "rm -rf build && tsc -p ./tsconfig.json --outDir build --declaration true && api-extractor run",
     "lint": "eslint src --ext .ts",
