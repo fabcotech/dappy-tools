@@ -1,12 +1,16 @@
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
+import spies from 'chai-spies';
+
 import { DappyNetworkId } from '.';
 import {
-  getXRecord,
+  createGetXRecord,
   createCoResolveRequest,
   getDappyNetworkMembers,
   validateDappyNetworkInfo,
 } from './lookup';
 import { createDappyRecord, getFakeDappyNetworkInfo } from './utils/fakeData';
+
+chai.use(spies);
 
 describe('lookup', () => {
   it('getXRecord() should resolve a name', async () => {
@@ -26,7 +30,10 @@ describe('lookup', () => {
 
     const fakeRequest = () => Promise.resolve(encodedRecord);
 
-    const r = await getXRecord(fakeRequest)('foo', getFakeDappyNetworkInfo());
+    const r = await createGetXRecord(fakeRequest)(
+      'foo',
+      getFakeDappyNetworkInfo(),
+    );
     expect(r).to.eql(record);
   });
 
@@ -46,7 +53,7 @@ describe('lookup', () => {
 
     let throwExp = false;
     try {
-      await getXRecord(fakeRequest)('foo', getFakeDappyNetworkInfo());
+      await createGetXRecord(fakeRequest)('foo', getFakeDappyNetworkInfo());
     } catch (e) {
       throwExp = true;
       expect((e as Error).message).to.eql('unknown error');
@@ -126,31 +133,35 @@ describe('lookup', () => {
     }
     expect((exp as Error).message).to.match(/missing or malformed/);
   });
-  it('coResolveRequest', async () => {
-    const record = createDappyRecord();
+  it('coResolveRequest on all network members with 100% accuracy', async () => {
+    const fakeRecord = createDappyRecord();
     const encodedRecord = [
       Buffer.from(
         JSON.stringify({
           success: true,
           records: [
             {
-              data: JSON.stringify(record),
+              data: JSON.stringify(fakeRecord),
             },
           ],
         }),
       ),
     ];
 
-    const fakeRequest = () => Promise.resolve(encodedRecord);
+    const fakeRequest = chai.spy(() => Promise.resolve(encodedRecord));
 
     const coResolve = createCoResolveRequest(fakeRequest);
 
-    await coResolve('foo', {
-      dappyNetwork: [
-        getFakeDappyNetworkInfo(),
-        getFakeDappyNetworkInfo(),
-        getFakeDappyNetworkInfo(),
-      ],
+    const dappyNetwork = [
+      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkInfo(),
+    ];
+    const dappyRecord = await coResolve('foo', {
+      dappyNetwork,
     });
+
+    expect(dappyRecord).to.eql(fakeRecord);
+    expect(fakeRequest).to.have.been.called.exactly(dappyNetwork.length);
   });
 });

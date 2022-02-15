@@ -1,3 +1,4 @@
+import { resolver } from 'beesjs';
 import {
   DappyLookupOptions,
   DappyRecord,
@@ -6,7 +7,6 @@ import {
   DappyNetworkMember,
 } from './types';
 import { dappyNetworks } from './dappyNetworks';
-
 import { nodeRequest } from './utils/nodeRequest';
 import {
   isIP,
@@ -77,7 +77,7 @@ export const getDappyNetworkMembers = createGetDappyNetworkMembers(
   getDappyNetworkStaticList,
 );
 
-export const getXRecord =
+export const createGetXRecord =
   (request: typeof nodeRequest) =>
   async (name: string, options: DappyNetworkMember): Promise<DappyRecord> => {
     const { hostname, port, scheme } = options;
@@ -110,7 +110,36 @@ export const createCoResolveRequest =
   async (name: string, options?: DappyLookupOptions) => {
     const members = await getDappyNetworkMembers(options?.dappyNetwork);
 
-    return getXRecord(request)(name, members[0]);
+    return new Promise<DappyRecord>((resolve, reject) => {
+      const results: Record<string, DappyRecord> = {};
+      resolver(
+        async (index: any) => {
+          results[index] = await createGetXRecord(request)(
+            name,
+            members[index],
+          );
+
+          return {
+            type: 'SUCCESS',
+            data: JSON.stringify(results[index]),
+            nodeUrl: index,
+          };
+        },
+        members.map((_, i) => i as any),
+        'absolute',
+        100,
+        members.length,
+        (a: any) => a,
+      ).subscribe({
+        next: ({ status, loadError }) => {
+          if (status === 'completed') {
+            resolve(Object.values(results)[0]);
+          } else if (status === 'failed') {
+            reject(new Error(loadError?.error));
+          }
+        },
+      });
+    });
   };
 
 export const lookup = (name: string, options?: DappyLookupOptions) => {
