@@ -2,8 +2,8 @@ import { expect } from 'chai';
 import { getXRecords } from './lookup';
 import { createDappyRecord } from './utils/fakeData';
 
-describe('tests', () => {
-  it('should lookup a record', async () => {
+describe('lookup', () => {
+  it('getXRecords() should resolve a name', async () => {
     const record = createDappyRecord();
     const encodedRecord = [
       Buffer.from(
@@ -24,7 +24,7 @@ describe('tests', () => {
     expect(r).to.eql(record);
   });
 
-  it('should throw an error on rchain error', async () => {
+  it('getXRecords() throw an error on rchain error', async () => {
     const encodedRecord = [
       Buffer.from(
         JSON.stringify({
