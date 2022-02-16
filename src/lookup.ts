@@ -14,21 +14,8 @@ import {
   match,
   isBase64String,
 } from './utils/validation';
-// const parseUrl = (url: string): RequestOptions => ({});
+import { hashString } from './utils/hashString';
 
-// eslint-disable-next-line
-// const getDappyNode = (dappyNetwork?: DappyNetwork): DappyNetworkInfo => {
-//   return {
-//     hostname: 'dappynode',
-//     ip: '127.0.0.1',
-//     port: '3001',
-//     scheme: 'http',
-//     caCert: '123456789ABCDEF',
-//   };
-// };
-
-// const validateDappyNetworkInfo = (dappyNetworkInfo: DappyNetworkInfo) => {
-// }
 export type GetDappyNetworks = () => Promise<
   Record<DappyNetworkId, DappyNetworkMember[]>
 >;
@@ -110,36 +97,32 @@ export const createCoResolveRequest =
   async (name: string, options?: DappyLookupOptions) => {
     const members = await getDappyNetworkMembers(options?.dappyNetwork);
 
-    return new Promise<DappyRecord>((resolve, reject) => {
-      const results: Record<string, DappyRecord> = {};
-      resolver(
-        async (index: any) => {
-          results[index] = await createGetXRecord(request)(
-            name,
-            members[index],
-          );
+    const results: Record<string, DappyRecord> = {};
+    const resolved = await resolver(
+      async (id) => {
+        results[id] = await createGetXRecord(request)(
+          name,
+          members[Number(id)],
+        );
 
-          return {
-            type: 'SUCCESS',
-            data: JSON.stringify(results[index]),
-            nodeUrl: index,
-          };
-        },
-        members.map((_, i) => i as any),
-        'absolute',
-        100,
-        members.length,
-        (a: any) => a,
-      ).subscribe({
-        next: ({ status, loadError }) => {
-          if (status === 'completed') {
-            resolve(Object.values(results)[0]);
-          } else if (status === 'failed') {
-            reject(new Error(`Name ${name} not resolved: ${loadError?.error}`));
-          }
-        },
-      });
-    });
+        return {
+          type: 'SUCCESS',
+          data: hashString(JSON.stringify(results[id])),
+          id,
+        };
+      },
+      members.map((_, i) => i as any),
+      'absolute',
+      100,
+      members.length,
+      (a) => a,
+    );
+    if (resolved.status === 'failed') {
+      throw new Error(
+        `Name ${name} not resolved: ${resolved.loadError?.error}`,
+      );
+    }
+    return Object.values(results)[0];
   };
 
 export const lookup = (name: string, options?: DappyLookupOptions) => {
