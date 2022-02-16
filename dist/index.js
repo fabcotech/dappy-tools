@@ -195,8 +195,7 @@
                                     loadPending = loadPending.filter(function (id) { return id !== data.id; });
                                     if (data.type === "SUCCESS") {
                                         try {
-                                            var newLoadState = indexData(data, loadState, comparer);
-                                            loadState = newLoadState;
+                                            loadState = indexData(data, loadState, comparer);
                                         }
                                         catch (err) {
                                             loadErrors = __assign(__assign({}, loadErrors), (_a = {}, _a[data.id] = {

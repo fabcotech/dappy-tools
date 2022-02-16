@@ -42,10 +42,24 @@ resolve(
       });
     });
   },
+  /*
+    ids
+    IDs of the nodes that we want to hit/query
+  */
   ['nodea.org', 'nodeb.org'],
   'absolute',
-  2,
+  /*
+    resolverAccuracy
+    Among the answers that have succeeded, we want 100% of smae
+    answers
+  */
   100,
+  /*
+    resoverAbsolute
+    We want a group of 2 members to represent [resolverAccuracy]% of
+    the total of succesful answers
+  */
+  2,
   a => a
 )
   .then(resp => {

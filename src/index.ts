@@ -191,8 +191,7 @@ export const resolver = (
 
           if (data.type === "SUCCESS") {
             try {
-              const newLoadState = indexData(data, loadState, comparer);
-              loadState = newLoadState;
+              loadState = indexData(data, loadState, comparer);
             } catch (err) {
               loadErrors = {
                 ...loadErrors,

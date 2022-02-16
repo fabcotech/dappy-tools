@@ -249,6 +249,28 @@ describe("resolver, 3 nodes", () => {
       done();
     });
   });
+
+  it("should succeed with 100/2 with two nodes A, one node failing", done => {
+    resolver(
+      fakeQueryHandler,
+      ["https://nodea1.org", "https://nodea2.org", "https://nodefail.org"],
+      "absolute",
+      100,
+      2
+    )
+    .then((a: ResolverOutput) => {
+      expect(a.status).toBe("completed");
+      console.log(a.loadErrors);
+      expect(a.loadState).toEqual({
+        "1": {
+          ids: ["https://nodea1.org", "https://nodea2.org"],
+          data: "a",
+          stringToCompare: "a"
+        }
+      });
+      done();
+    });
+  });
 });
 
 describe("resolver, 5 nodes", () => {
