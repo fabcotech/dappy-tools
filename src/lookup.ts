@@ -15,6 +15,7 @@ import {
   isBase64String,
 } from './utils/validation';
 import { hashString } from './utils/hashString';
+import { get } from './utils/get';
 
 const MINIMUM_CONSENSUS_THRESHOLD = 2 / 3;
 const MEMBER_MAJORITY = 50;
@@ -69,22 +70,29 @@ export const getDappyNetworkMembers = createGetDappyNetworkMembers(
 
 export const createGetXRecord =
   (request: typeof nodeRequest) =>
-  async (name: string, options: DappyNetworkMember): Promise<DappyRecord> => {
-    const { hostname, port, scheme } = options;
-
-    const rawResponse: any = await request({
+  async (
+    name: string,
+    options: DappyNetworkMember,
+  ): Promise<DappyRecord | undefined> => {
+    const { hostname, port, scheme, ip, caCert } = options;
+    const reqOptions: Parameters<typeof request>[0] = {
       scheme,
-      hostname,
+      host: ip,
       port,
       path: '/get-x-records',
       method: 'POST',
       headers: {
+        Host: hostname,
         'Content-Type': 'application/json',
       },
       body: {
         names: [name],
       },
-    });
+    };
+    if (caCert) {
+      reqOptions.ca = Buffer.from(caCert, 'base64').toString();
+    }
+    const rawResponse: any = await request(reqOptions);
 
     const response = JSON.parse(Buffer.concat(rawResponse).toString());
 
@@ -92,6 +100,10 @@ export const createGetXRecord =
       throw new Error(response.error.message);
     }
 
+    const data = get(response, 'records[0].data');
+    if (!data) {
+      return undefined;
+    }
     return JSON.parse(response.records[0].data);
   };
 
@@ -106,7 +118,7 @@ export const createCoResolveRequest =
     const getXRecord = createGetXRecord(request);
     const members = await getDappyNetworkMembers(options?.dappyNetwork);
 
-    const results: Record<string, DappyRecord> = {};
+    const results: Record<string, DappyRecord | undefined> = {};
     const resolved = await resolver(
       async (id) => {
         try {

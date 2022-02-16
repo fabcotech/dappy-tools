@@ -8,6 +8,7 @@ import {
   getDappyNetworkMembers,
   validateDappyNetworkInfo,
 } from './lookup';
+// import { nodeRequest } from './utils/nodeRequest';
 import { spyFns } from './testUtils/spyFns';
 import {
   createDappyRecord,
@@ -17,7 +18,7 @@ import {
 chai.use(spies);
 
 describe('lookup', () => {
-  it('getXRecord() should resolve a name', async () => {
+  it('getXRecord() should return a DappyRecord for an existing name', async () => {
     const record = createDappyRecord();
     const encodedRecord = [
       Buffer.from(
@@ -39,6 +40,30 @@ describe('lookup', () => {
       getFakeDappyNetworkInfo(),
     );
     expect(r).to.eql(record);
+  });
+
+  it('getXRecord() return undefined for an unknown name', async () => {
+    const encodedRecord = [
+      Buffer.from(
+        JSON.stringify({
+          success: true,
+          records: [
+            {
+              id: 'foo',
+              notfound: 'true',
+            },
+          ],
+        }),
+      ),
+    ];
+
+    const fakeRequest = () => Promise.resolve(encodedRecord);
+
+    const r = await createGetXRecord(fakeRequest)(
+      'foo',
+      getFakeDappyNetworkInfo(),
+    );
+    expect(r).to.eql(undefined, "Expected 'undefined' to be returned");
   });
 
   it('getXRecord() throw an error on rchain error', async () => {
@@ -67,7 +92,30 @@ describe('lookup', () => {
   });
 
   xit('getXRecord() application http error (wrong path)', () => {});
-  xit('getXRecord() network connectivity issue', () => {});
+  // it.only('getXRecord() network connectivity issue', async () => {
+  // const record = createDappyRecord();
+  // const encodedRecord = [
+  //   Buffer.from(
+  //     JSON.stringify({
+  //       success: true,
+  //       records: [
+  //         {
+  //           data: JSON.stringify(record),
+  //         },
+  //       ],
+  //     }),
+  //   ),
+  // ];
+
+  // const fakeRequest = () => Promise.resolve(encodedRecord);
+
+  // const r = await createGetXRecord(nodeRequest)(
+  //   'foo2',
+  //   getFakeDappyNetworkInfo(),
+  // );
+  // console.log(r);
+  // expect(r).to.eql(record);
+  // });
   it('unknown dappy network', async () => {
     let exp;
     try {

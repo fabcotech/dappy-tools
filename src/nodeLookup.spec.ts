@@ -61,4 +61,34 @@ describe('nodeLookup', () => {
       }
     });
   });
+
+  it('lookup() should throw error on unknown name', (done) => {
+    // const record = createDappyRecord();
+    const fakeDappyLookup = () => Promise.resolve(undefined);
+    const { lookup } = internalCreateCachedNodeLookup(fakeDappyLookup)();
+
+    lookup('foo', {}, (err) => {
+      try {
+        expect(err.message).to.equal(
+          'No address found for name foo (format: IPv4)',
+        );
+        done();
+      } catch (e) {
+        done(e);
+      }
+    });
+  });
+  it('getCA() should throw error on unknown name', async () => {
+    const fakeDappyLookup = () => Promise.resolve(undefined);
+    const { getCA } = internalCreateCachedNodeLookup(fakeDappyLookup)();
+
+    let throwExp;
+    try {
+      await getCA('foo');
+    } catch (e) {
+      throwExp = e;
+    }
+
+    expect((throwExp as any).message).to.equal('No record found for name foo');
+  });
 });

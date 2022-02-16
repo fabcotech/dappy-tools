@@ -26,7 +26,20 @@
     "import/prefer-default-export": 0,
     "@typescript-eslint/no-unused-vars": 1,
     "@typescript-eslint/no-explicit-any": 0,
-    "function-paren-newline": 0
+    "function-paren-newline": 0,
+    "object-curly-newline": [
+      "error",
+      {
+        "ImportDeclaration": {
+          "multiline": true,
+          "minProperties": 3
+        },
+        "ExportDeclaration": {
+          "multiline": true,
+          "minProperties": 3
+        }
+      }
+    ]
   },
   "overrides": [
     {
