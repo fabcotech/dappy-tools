@@ -16,6 +16,9 @@ import {
 } from './utils/validation';
 import { hashString } from './utils/hashString';
 
+const MINIMUM_CONSENSUS_THRESHOLD = (100 / 3) * 2;
+const MEMBER_MAJORITY = 50;
+
 export type GetDappyNetworks = () => Promise<
   Record<DappyNetworkId, DappyNetworkMember[]>
 >;
@@ -95,26 +98,32 @@ export const createGetXRecord =
 export const createCoResolveRequest =
   (request: typeof nodeRequest) =>
   async (name: string, options?: DappyLookupOptions) => {
+    const getXRecord = createGetXRecord(request);
     const members = await getDappyNetworkMembers(options?.dappyNetwork);
 
-    const results: Record<string, DappyRecord> = {};
+    let result: DappyRecord = {} as any;
     const resolved = await resolver(
       async (id) => {
-        results[id] = await createGetXRecord(request)(
-          name,
-          members[Number(id)],
-        );
+        try {
+          result = await getXRecord(name, members[Number(id)]);
 
-        return {
-          type: 'SUCCESS',
-          data: hashString(JSON.stringify(results[id])),
-          id,
-        };
+          return {
+            type: 'SUCCESS',
+            data: hashString(JSON.stringify(result)),
+            id,
+          };
+        } catch (e) {
+          return {
+            type: 'ERROR',
+            data: (e as Error).message,
+            id,
+          };
+        }
       },
       members.map((_, i) => i as any),
       'absolute',
-      100,
-      members.length,
+      MINIMUM_CONSENSUS_THRESHOLD,
+      Math.ceil(members.length * (MEMBER_MAJORITY / 100)),
       (a) => a,
     );
     if (resolved.status === 'failed') {
@@ -122,7 +131,7 @@ export const createCoResolveRequest =
         `Name ${name} not resolved: ${resolved.loadError?.error}`,
       );
     }
-    return Object.values(results)[0];
+    return result;
   };
 
 export const lookup = (name: string, options?: DappyLookupOptions) => {

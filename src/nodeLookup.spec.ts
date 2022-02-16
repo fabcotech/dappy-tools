@@ -2,7 +2,7 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
 import { internalCreateCachedNodeLookup } from './nodeLookup';
-import { createDappyRecord } from './utils/fakeData';
+import { createDappyRecord } from './testUtils/fakeData';
 
 chai.use(spies);
 
