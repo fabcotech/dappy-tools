@@ -1,4 +1,4 @@
-import { resolver } from 'beesjs';
+import { resolver, ResolverOutput } from 'beesjs';
 import {
   DappyLookupOptions,
   DappyRecord,
@@ -16,7 +16,7 @@ import {
 } from './utils/validation';
 import { hashString } from './utils/hashString';
 
-const MINIMUM_CONSENSUS_THRESHOLD = (100 / 3) * 2;
+const MINIMUM_CONSENSUS_THRESHOLD = 2 / 3;
 const MEMBER_MAJORITY = 50;
 
 export type GetDappyNetworks = () => Promise<
@@ -95,21 +95,28 @@ export const createGetXRecord =
     return JSON.parse(response.records[0].data);
   };
 
+const getHashOfMajorityResult = (resolved: ResolverOutput) =>
+  Object.values(resolved.loadState)
+    .map(({ ids, data }) => ({ count: ids.length, hash: data }))
+    .sort((a, b) => b.count - a.count)[0].hash;
+
 export const createCoResolveRequest =
   (request: typeof nodeRequest) =>
   async (name: string, options?: DappyLookupOptions) => {
     const getXRecord = createGetXRecord(request);
     const members = await getDappyNetworkMembers(options?.dappyNetwork);
 
-    let result: DappyRecord = {} as any;
+    const results: Record<string, DappyRecord> = {};
     const resolved = await resolver(
       async (id) => {
         try {
-          result = await getXRecord(name, members[Number(id)]);
+          const record = await getXRecord(name, members[Number(id)]);
+          const hash = hashString(JSON.stringify(record));
+          results[hash] = record;
 
           return {
             type: 'SUCCESS',
-            data: hashString(JSON.stringify(result)),
+            data: hash,
             id,
           };
         } catch (e) {
@@ -131,7 +138,8 @@ export const createCoResolveRequest =
         `Name ${name} not resolved: ${resolved.loadError?.error}`,
       );
     }
-    return result;
+
+    return results[getHashOfMajorityResult(resolved)];
   };
 
 export const lookup = (name: string, options?: DappyLookupOptions) => {

@@ -138,25 +138,41 @@ describe('lookup', () => {
     expect((exp as Error).message).to.match(/missing or malformed/);
   });
   it('coResolveRequest on half network members with minimum 66% accuracy: success scenario', async () => {
-    const fakeRecord = createDappyRecord();
-    const encodedRecord = [
+    const fakeRecord1 = createDappyRecord();
+    const fakeRecord2 = createDappyRecord({
+      values: [
+        {
+          value: '192.168.0.1',
+          kind: 'IPv4',
+        },
+      ],
+    });
+    const createEncodedRecord = (record: DappyRecord) => [
       Buffer.from(
         JSON.stringify({
           success: true,
           records: [
             {
-              data: JSON.stringify(fakeRecord),
+              data: JSON.stringify(record),
             },
           ],
         }),
       ),
     ];
 
-    const fakeRequest = chai.spy(() => Promise.resolve(encodedRecord));
+    const fakeRequest = spyFns([
+      () => Promise.resolve(createEncodedRecord(fakeRecord1)),
+      () => Promise.resolve(createEncodedRecord(fakeRecord2)),
+      () => Promise.resolve(createEncodedRecord(fakeRecord2)),
+      () => {
+        throw new Error('fake error');
+      },
+    ]);
 
     const coResolve = createCoResolveRequest(fakeRequest);
 
     const dappyNetwork = [
+      getFakeDappyNetworkInfo(),
       getFakeDappyNetworkInfo(),
       getFakeDappyNetworkInfo(),
       getFakeDappyNetworkInfo(),
@@ -165,8 +181,8 @@ describe('lookup', () => {
       dappyNetwork,
     });
 
-    expect(dappyRecord).to.eql(fakeRecord);
-    expect(fakeRequest).to.have.been.called.exactly(2);
+    expect(dappyRecord).to.eql(fakeRecord2);
+    expect(fakeRequest).to.have.been.called.exactly(4);
   });
 
   it('coResolveRequest on half network members with minimum 66% accuracy: failed scenario (different responses)', async () => {
