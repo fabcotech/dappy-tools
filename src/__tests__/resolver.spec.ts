@@ -17,7 +17,7 @@ const query: Query = {
 
 describe("resolver, 1 node", () => {
   it("should complete with one available node 100/1", done => {
-    resolver(fakeQueryHandler, ["https://nodea.org"], "absolute", 100, 1)
+    resolver(fakeQueryHandler, ["https://nodea.org"], 100, 1)
       .then((a: ResolverOutput) => {
         expect(a).toEqual({
           loadErrors: {},
@@ -36,7 +36,7 @@ describe("resolver, 1 node", () => {
   });
 
   it("should fail with one available node 100/2", done => {
-    resolver(fakeQueryHandler, ["https://nodea.org"], "absolute", 100, 2)
+    resolver(fakeQueryHandler, ["https://nodea.org"], 100, 2)
       .then((a: ResolverOutput) => {
         expect(a).toEqual({
           loadErrors: {},
@@ -56,7 +56,7 @@ describe("resolver, 1 node", () => {
   });
 
   it("should fail OutOfNodes with unavailable node 100/1", done => {
-    resolver(fakeQueryHandler, ["https://nodefail.org"], "absolute", 100, 1)
+    resolver(fakeQueryHandler, ["https://nodefail.org"], 100, 1)
     .then((a: ResolverOutput) => {
         expect(a.loadErrors).toEqual({
           "https://nodefail.org": {
@@ -83,7 +83,6 @@ describe("resolver, 2 nodes, 100/2", () => {
     resolver(
       fakeQueryHandler,
       ["https://nodea1.org", "https://nodea2.org"],
-      "absolute",
       100,
       2
     )
@@ -108,7 +107,6 @@ describe("resolver, 2 nodes, 100/2", () => {
     resolver(
       fakeQueryHandler,
       ["https://nodea1.org", "https://nodeb1.org"],
-      "absolute",
       100,
       2
     )
@@ -143,7 +141,6 @@ describe("resolver, 3 nodes", () => {
     resolver(
       fakeQueryHandler,
       ["https://nodeb1.org", "https://nodea1.org", "https://nodea2.org"],
-      "absolute",
       51,
       2
     )
@@ -173,7 +170,6 @@ describe("resolver, 3 nodes", () => {
     resolver(
       fakeQueryHandler,
       ["https://nodeb1.org", "https://nodea1.org", "https://nodea2.org"],
-      "absolute",
       90,
       2
     )
@@ -217,7 +213,6 @@ describe("resolver, 3 nodes", () => {
     resolver(
       fakeQueryHandler,
       ["https://nodea1.org", "https://nodeb1.org", "https://nodec1.org"],
-      "absolute",
       90,
       2
     )
@@ -254,7 +249,6 @@ describe("resolver, 3 nodes", () => {
     resolver(
       fakeQueryHandler,
       ["https://nodea1.org", "https://nodea2.org", "https://nodefail.org"],
-      "absolute",
       100,
       2
     )
@@ -268,34 +262,6 @@ describe("resolver, 3 nodes", () => {
           stringToCompare: "a"
         }
       });
-      done();
-    });
-  });
-});
-
-describe("resolver, 5 nodes", () => {
-  it("should fail ServerError 100/5 with five first nodes that fail", done => {
-    resolver(
-      fakeQueryHandler,
-      [
-        "https://nodefail1.org",
-        "https://nodefail2.org",
-        "https://nodefail3.org",
-        "https://nodefail4.org",
-        "https://nodefail5.org"
-      ],
-      "absolute",
-      100,
-      5
-    )
-    .then((a: ResolverOutput) => {
-      expect(a.loadError).toEqual({
-        error: BeesLoadError.ServerError,
-        args: {
-          numberOfLoadErrors: 5
-        }
-      });
-      expect(a.status).toBe("failed");
       done();
     });
   });
@@ -318,9 +284,8 @@ describe("resolver, 10 nodes", () => {
         "https://nodea8.org",
         "https://nodea9.org",
     ],
-      "absolute",
-      91,
-      10
+    91,
+    10
     )
     .then((a: ResolverOutput) => {
       expect(a.loadState).toEqual({
@@ -375,7 +340,6 @@ describe("resolver, 10 nodes", () => {
     resolver(
       fakeQueryHandler,
       nodes,
-      "absolute",
       91,
       10
     )

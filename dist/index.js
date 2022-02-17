@@ -68,6 +68,7 @@
         }
     }
 
+    var BATCH_SIZE = 2;
     exports.BeesLoadStatus = void 0;
     (function (BeesLoadStatus) {
         BeesLoadStatus["Loading"] = "loading";
@@ -76,29 +77,10 @@
     })(exports.BeesLoadStatus || (exports.BeesLoadStatus = {}));
     exports.BeesLoadError = void 0;
     (function (BeesLoadError) {
-        // request
-        BeesLoadError["IncompleteAddress"] = "The address is incomplete";
-        BeesLoadError["ChainNotFound"] = "Blockchain not found";
-        BeesLoadError["MissingBlockchainData"] = "Missing data from the blockchain";
-        BeesLoadError["RecordNotFound"] = "Record not found";
-        // not found
-        BeesLoadError["ResourceNotFound"] = "Contract not found";
-        // server error
-        BeesLoadError["ServerError"] = "Server error";
-        // resolver
         BeesLoadError["InsufficientNumberOfNodes"] = "Insufficient number of nodes";
         BeesLoadError["OutOfNodes"] = "Out of nodes";
         BeesLoadError["UnstableState"] = "Unstable state";
         BeesLoadError["UnaccurateState"] = "Unaccurate state";
-        // parsing
-        BeesLoadError["FailedToParseResponse"] = "Failed to parse response";
-        BeesLoadError["InvalidManifest"] = "Invalid manifest";
-        BeesLoadError["InvalidSignature"] = "Invalid signature";
-        BeesLoadError["InvalidRecords"] = "Invalid records";
-        BeesLoadError["InvalidNodes"] = "Invalid nodes";
-        BeesLoadError["InvalidServers"] = "Invalid servers";
-        BeesLoadError["PostParseError"] = "Parse error after multicall";
-        BeesLoadError["UnknownCriticalError"] = "Unknown critical error";
     })(exports.BeesLoadError || (exports.BeesLoadError = {}));
     var indexData = function (data, existingData, comparer) {
         var _a;
@@ -140,170 +122,149 @@
         }
         return existingData;
     };
-    var resolver = function (queryHandler, ids, resolverMode, resolverAccuracy, resolverAbsolute, comparer) {
+    var resolver = function (queryHandler, ids, resolverAccuracy, resolverAbsolute, comparer) {
         var loadErrors = {};
         var loadState = {};
         var loadPending = [];
         return new Promise(function (resolve, reject) {
-            if (resolverMode === "absolute") {
-                if (resolverAbsolute > ids.length) {
-                    resolve({
-                        loadErrors: loadErrors,
-                        loadState: loadState,
-                        loadPending: loadPending,
-                        loadError: {
-                            error: exports.BeesLoadError.InsufficientNumberOfNodes,
-                            args: {
-                                expected: resolverAbsolute,
-                                got: ids.length,
-                            },
+            if (resolverAbsolute > ids.length) {
+                resolve({
+                    loadErrors: loadErrors,
+                    loadState: loadState,
+                    loadPending: loadPending,
+                    loadError: {
+                        error: exports.BeesLoadError.InsufficientNumberOfNodes,
+                        args: {
+                            expected: resolverAbsolute,
+                            got: ids.length,
                         },
-                        status: exports.BeesLoadStatus.Failed,
-                    });
-                    return;
-                }
-                var i = 0;
-                var callBatch_1 = function (i) { return __awaiter(void 0, void 0, void 0, function () {
-                    var idsToQuery, responses, totalOkResponses_1, j, key, nodesWithOkResponses;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                idsToQuery = ids.slice(i, i + resolverAbsolute);
-                                if (idsToQuery.length === 0) {
-                                    resolve({
-                                        loadErrors: loadErrors,
-                                        loadState: loadState,
-                                        loadPending: loadPending,
-                                        loadError: {
-                                            error: exports.BeesLoadError.OutOfNodes,
-                                            args: {
-                                                alreadyQueried: i - Object.keys(loadErrors).length,
-                                                resolverAbsolute: resolverAbsolute,
-                                            },
+                    },
+                    status: exports.BeesLoadStatus.Failed,
+                });
+                return;
+            }
+            var i = 0;
+            var callBatch = function (i) { return __awaiter(void 0, void 0, void 0, function () {
+                var idsToQuery, responses, totalOkResponses_1, j, key, nodesWithOkResponses;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            console.log('callBatch', i);
+                            idsToQuery = ids.slice(i, i + BATCH_SIZE);
+                            if (idsToQuery.length === 0) {
+                                resolve({
+                                    loadErrors: loadErrors,
+                                    loadState: loadState,
+                                    loadPending: loadPending,
+                                    loadError: {
+                                        error: exports.BeesLoadError.OutOfNodes,
+                                        args: {
+                                            alreadyQueried: i - Object.keys(loadErrors).length,
+                                            resolverAbsolute: resolverAbsolute,
                                         },
-                                        status: exports.BeesLoadStatus.Failed,
-                                    });
-                                    return [2 /*return*/];
-                                }
-                                i += idsToQuery.length;
-                                loadPending = loadPending.concat(idsToQuery);
-                                return [4 /*yield*/, Promise.all(idsToQuery.map(function (id) { return queryHandler(id); }))];
-                            case 1:
-                                responses = _a.sent();
-                                responses.forEach(function (data) {
-                                    var _a, _b;
-                                    loadPending = loadPending.filter(function (id) { return id !== data.id; });
-                                    if (data.type === "SUCCESS") {
-                                        try {
-                                            loadState = indexData(data, loadState, comparer);
-                                        }
-                                        catch (err) {
-                                            loadErrors = __assign(__assign({}, loadErrors), (_a = {}, _a[data.id] = {
-                                                id: data.id,
-                                                status: err.message ? parseInt(err.message, 10) : 400,
-                                            }, _a));
-                                        }
-                                    }
-                                    else {
-                                        loadErrors = __assign(__assign({}, loadErrors), (_b = {}, _b[data.id] = {
-                                            id: data.id,
-                                            status: data.status,
-                                        }, _b));
-                                    }
+                                    },
+                                    status: exports.BeesLoadStatus.Failed,
                                 });
-                                // 5 or more load errors
-                                if (Object.keys(loadErrors).length > 4) {
-                                    resolve({
-                                        loadErrors: loadErrors,
-                                        loadState: loadState,
-                                        loadPending: loadPending,
-                                        loadError: {
-                                            error: exports.BeesLoadError.ServerError,
-                                            args: {
-                                                numberOfLoadErrors: Object.keys(loadErrors).length,
-                                            },
-                                        },
-                                        status: exports.BeesLoadStatus.Failed,
-                                    });
-                                    return [2 /*return*/];
-                                    // 3 or more different groups
-                                }
-                                else if (Object.keys(loadState).length > 2) {
-                                    resolve({
-                                        loadErrors: loadErrors,
-                                        loadState: loadState,
-                                        loadPending: loadPending,
-                                        loadError: {
-                                            error: exports.BeesLoadError.UnstableState,
-                                            args: {
-                                                numberOfLoadStates: Object.keys(loadState).length,
-                                            },
-                                        },
-                                        status: exports.BeesLoadStatus.Failed,
-                                    });
-                                    return [2 /*return*/];
+                                return [2 /*return*/];
+                            }
+                            i += idsToQuery.length;
+                            loadPending = loadPending.concat(idsToQuery);
+                            return [4 /*yield*/, Promise.all(idsToQuery.map(function (id) { return queryHandler(id); }))];
+                        case 1:
+                            responses = _a.sent();
+                            responses.forEach(function (data) {
+                                var _a, _b;
+                                loadPending = loadPending.filter(function (id) { return id !== data.id; });
+                                if (data.type === "SUCCESS") {
+                                    try {
+                                        loadState = indexData(data, loadState, comparer);
+                                    }
+                                    catch (err) {
+                                        loadErrors = __assign(__assign({}, loadErrors), (_a = {}, _a[data.id] = {
+                                            id: data.id,
+                                            status: err.message ? parseInt(err.message, 10) : 400,
+                                        }, _a));
+                                    }
                                 }
                                 else {
-                                    totalOkResponses_1 = Object.keys(loadState).reduce(function (total, k) {
-                                        return total + loadState[k].ids.length;
-                                    }, 0);
-                                    // don't ruen this into a .forEach, return are
-                                    // not effecive in forEach loops
-                                    for (j = 0; j < Object.keys(loadState).length; j += 1) {
-                                        key = Object.keys(loadState)[j];
-                                        nodesWithOkResponses = loadState[key].ids.length;
-                                        // at least [resolverAbsolute] responses of the same
-                                        // resolver must Complete or Fail
-                                        if (nodesWithOkResponses >= resolverAbsolute) {
-                                            if (resolverAccuracy / 100 >
-                                                loadState[key].ids.length / totalOkResponses_1) {
-                                                resolve({
-                                                    loadErrors: loadErrors,
-                                                    loadState: loadState,
-                                                    loadPending: loadPending,
-                                                    loadError: {
-                                                        error: exports.BeesLoadError.UnaccurateState,
-                                                        args: {
-                                                            totalOkResponses: totalOkResponses_1,
-                                                            loadStates: Object.keys(loadState).map(function (k) {
-                                                                return {
-                                                                    key: k,
-                                                                    okResponses: loadState[k].ids.length,
-                                                                    percent: Math.round((100 *
-                                                                        (100 * loadState[k].ids.length)) /
-                                                                        totalOkResponses_1) / 100,
-                                                                };
-                                                            }),
-                                                        },
-                                                    },
-                                                    status: exports.BeesLoadStatus.Failed,
-                                                });
-                                                // will stop for loop
-                                                return [2 /*return*/];
-                                            }
+                                    loadErrors = __assign(__assign({}, loadErrors), (_b = {}, _b[data.id] = {
+                                        id: data.id,
+                                        status: data.status,
+                                    }, _b));
+                                }
+                            });
+                            if (Object.keys(loadState).length > 2) {
+                                resolve({
+                                    loadErrors: loadErrors,
+                                    loadState: loadState,
+                                    loadPending: loadPending,
+                                    loadError: {
+                                        error: exports.BeesLoadError.UnstableState,
+                                        args: {
+                                            numberOfLoadStates: Object.keys(loadState).length,
+                                        },
+                                    },
+                                    status: exports.BeesLoadStatus.Failed,
+                                });
+                                return [2 /*return*/];
+                            }
+                            else {
+                                totalOkResponses_1 = Object.keys(loadState).reduce(function (total, k) {
+                                    return total + loadState[k].ids.length;
+                                }, 0);
+                                // don't ruen this into a .forEach, return are
+                                // not effecive in forEach loops
+                                for (j = 0; j < Object.keys(loadState).length; j += 1) {
+                                    key = Object.keys(loadState)[j];
+                                    nodesWithOkResponses = loadState[key].ids.length;
+                                    // at least [resolverAbsolute] responses of the same
+                                    // resolver must Complete or Fail
+                                    if (nodesWithOkResponses >= resolverAbsolute) {
+                                        if (resolverAccuracy / 100 >
+                                            loadState[key].ids.length / totalOkResponses_1) {
                                             resolve({
                                                 loadErrors: loadErrors,
                                                 loadState: loadState,
                                                 loadPending: loadPending,
-                                                status: exports.BeesLoadStatus.Completed,
+                                                loadError: {
+                                                    error: exports.BeesLoadError.UnaccurateState,
+                                                    args: {
+                                                        totalOkResponses: totalOkResponses_1,
+                                                        loadStates: Object.keys(loadState).map(function (k) {
+                                                            return {
+                                                                key: k,
+                                                                okResponses: loadState[k].ids.length,
+                                                                percent: Math.round((100 *
+                                                                    (100 * loadState[k].ids.length)) /
+                                                                    totalOkResponses_1) / 100,
+                                                            };
+                                                        }),
+                                                    },
+                                                },
+                                                status: exports.BeesLoadStatus.Failed,
                                             });
                                             // will stop for loop
                                             return [2 /*return*/];
                                         }
+                                        resolve({
+                                            loadErrors: loadErrors,
+                                            loadState: loadState,
+                                            loadPending: loadPending,
+                                            status: exports.BeesLoadStatus.Completed,
+                                        });
+                                        // will stop for loop
+                                        return [2 /*return*/];
                                     }
                                 }
-                                // if no return in for loop, go
-                                // on next batch
-                                callBatch_1(i);
-                                return [2 /*return*/];
-                        }
-                    });
-                }); };
-                callBatch_1(i);
-            }
-            else {
-                reject('Only absolute mode is supported');
-            }
+                            }
+                            // if no return in for loop, go
+                            // on next batch
+                            callBatch(i);
+                            return [2 /*return*/];
+                    }
+                });
+            }); };
+            callBatch(i);
         });
     };
 
