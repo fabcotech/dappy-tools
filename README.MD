@@ -47,11 +47,10 @@ resolve(
     IDs of the nodes that we want to hit/query
   */
   ['nodea.org', 'nodeb.org'],
-  'absolute',
   /*
     resolverAccuracy
-    Among the answers that have succeeded, we want 100% of smae
-    answers
+    The group of [resoverAbsolute] must represent 100% of
+    all successful answers
   */
   100,
   /*
