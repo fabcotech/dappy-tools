@@ -1,4 +1,8 @@
 
+/*
+  We do not do a Promise.all on all ids
+  requests will be done BATCH_SIZE by BATCH_SIZE
+*/
 const BATCH_SIZE = 2;
 
 export enum BeesLoadStatus {
@@ -31,9 +35,7 @@ export interface BeesLoadErrors {
 }
 
 export enum BeesLoadError {
-  InsufficientNumberOfNodes = "Insufficient number of nodes",
   OutOfNodes = "Out of nodes",
-  UnstableState = "Unstable state",
   UnaccurateState = "Unaccurate state",
 }
 
@@ -116,27 +118,20 @@ export const resolver = (
   let loadPending: string[] = [];
 
   return new Promise((resolve, reject) => {
-    if (resolverAbsolute > ids.length) {
-      resolve({
-        loadErrors: loadErrors,
-        loadState: loadState,
-        loadPending: loadPending,
-        loadError: {
-          error: BeesLoadError.InsufficientNumberOfNodes,
-          args: {
-            expected: resolverAbsolute,
-            got: ids.length,
-          },
-        },
-        status: BeesLoadStatus.Failed,
-      });
+
+    if (typeof resolverAccuracy !== "number" || resolverAccuracy < 50 || resolverAccuracy > 100) {
+      reject("resolverAccuracy should be a number (percentage) between 50 and 100");
+      return;
+    }
+
+    if (typeof resolverAbsolute !== 'number' || !Number.isInteger(resolverAbsolute) || resolverAbsolute > ids.length) {
+      reject("resolverAbsolute should be an integer number and not exceed the length of ids");
       return;
     }
 
     let i = 0;
 
     const callBatch = async (i: number) => {
-      console.log('callBatch', i);
       // idsToQuery is of same size as resolverAbsolute
       // but you can change this to do 3 by 3 or 4 by 4 etc.
       const idsToQuery = ids.slice(i, i + BATCH_SIZE);
@@ -191,79 +186,63 @@ export const resolver = (
 
       });
 
-      if (Object.keys(loadState).length > 2) {
-        resolve({
-          loadErrors: loadErrors,
-          loadState: loadState,
-          loadPending: loadPending,
-          loadError: {
-            error: BeesLoadError.UnstableState,
-            args: {
-              numberOfLoadStates: Object.keys(loadState).length,
-            },
-          },
-          status: BeesLoadStatus.Failed,
-        });
-        return;
-      } else {
-        const totalOkResponses = Object.keys(loadState).reduce(
-          (total, k) => {
-            return total + loadState[k].ids.length;
-          },
-          0
-        );
+      const totalOkResponses = Object.keys(loadState).reduce(
+        (total, k) => {
+          return total + loadState[k].ids.length;
+        },
+        0
+      );
 
-        // don't ruen this into a .forEach, return are
-        // not effecive in forEach loops
-        for (let j = 0; j < Object.keys(loadState).length; j += 1) {
-          const key = Object.keys(loadState)[j];
+      // don't ruen this into a .forEach, return are
+      // not effecive in forEach loops
+      for (let j = 0; j < Object.keys(loadState).length; j += 1) {
+        const key = Object.keys(loadState)[j];
 
-          const nodesWithOkResponses = loadState[key].ids.length;
+        const nodesWithOkResponses = loadState[key].ids.length;
 
-          // at least [resolverAbsolute] responses of the same
-          // resolver must Complete or Fail
-          if (nodesWithOkResponses >= resolverAbsolute) {
-            if (
-              resolverAccuracy / 100 >
-              loadState[key].ids.length / totalOkResponses
-            ) {
-              resolve({
-                loadErrors: loadErrors,
-                loadState: loadState,
-                loadPending: loadPending,
-                loadError: {
-                  error: BeesLoadError.UnaccurateState,
-                  args: {
-                    totalOkResponses: totalOkResponses,
-                    loadStates: Object.keys(loadState).map((k) => {
-                      return {
-                        key: k,
-                        okResponses: loadState[k].ids.length,
-                        percent:
-                          Math.round(
-                            (100 *
-                              (100 * loadState[k].ids.length)) /
-                              totalOkResponses
-                          ) / 100,
-                      };
-                    }),
-                  },
-                },
-                status: BeesLoadStatus.Failed,
-              });
-              // will stop for loop
-              return;
-            }
-
+        // at least [resolverAbsolute] responses of the same
+        // resolver must Complete or Fail
+        if (nodesWithOkResponses >= resolverAbsolute) {
+          if (
+            resolverAccuracy / 100 >
+            loadState[key].ids.length / totalOkResponses
+          ) {
             resolve({
               loadErrors: loadErrors,
               loadState: loadState,
               loadPending: loadPending,
-              status: BeesLoadStatus.Completed,
+              loadError: {
+                error: BeesLoadError.UnaccurateState,
+                args: {
+                  totalOkResponses: totalOkResponses,
+                  loadStates: Object.keys(loadState).map((k) => {
+                    return {
+                      key: k,
+                      okResponses: loadState[k].ids.length,
+                      percent:
+                        Math.round(
+                          (100 *
+                            (100 * loadState[k].ids.length)) /
+                            totalOkResponses
+                        ) / 100,
+                    };
+                  }),
+                },
+              },
+              status: BeesLoadStatus.Failed,
             });
             // will stop for loop
             return;
           }
+
+          resolve({
+            loadErrors: loadErrors,
+            loadState: loadState,
+            loadPending: loadPending,
+            status: BeesLoadStatus.Completed,
+          });
+          // will stop for loop
+          return;
         }
       }
 

@@ -16,6 +16,24 @@ const query: Query = {
 };
 
 describe("resolver, 1 node", () => {
+  it("should fail with invalid resolverAccuracy", done => {
+    resolver(fakeQueryHandler, ["https://nodea.org"], 30, 1)
+      .then((a: ResolverOutput) => {})
+      .catch(err => {
+        expect(err).toEqual("resolverAccuracy should be a number (percentage) between 50 and 100");
+        done()
+      })
+  });
+
+  it("should fail with invalid resolverAbsolute", done => {
+    resolver(fakeQueryHandler, ["https://nodea.org"], 100, 2)
+      .then((a: ResolverOutput) => {})
+      .catch(err => {
+        expect(err).toEqual("resolverAbsolute should be an integer number and not exceed the length of ids");
+        done()
+      })
+  });
+
   it("should complete with one available node 100/1", done => {
     resolver(fakeQueryHandler, ["https://nodea.org"], 100, 1)
       .then((a: ResolverOutput) => {
@@ -30,26 +48,6 @@ describe("resolver, 1 node", () => {
           },
           loadPending: [],
           status: "completed"
-        });
-        done();
-      });
-  });
-
-  it("should fail with one available node 100/2", done => {
-    resolver(fakeQueryHandler, ["https://nodea.org"], 100, 2)
-      .then((a: ResolverOutput) => {
-        expect(a).toEqual({
-          loadErrors: {},
-          loadState: {},
-          loadPending: [],
-          loadError: {
-            error: BeesLoadError.InsufficientNumberOfNodes,
-            args: {
-              expected: 2,
-              got: 1
-            }
-          },
-          status: "failed"
         });
         done();
       });
@@ -209,42 +207,6 @@ describe("resolver, 3 nodes", () => {
     });
   });
 
-  it("should fail UnstableState 67/2 with one nodes A, one node B and one node C", done => {
-    resolver(
-      fakeQueryHandler,
-      ["https://nodea1.org", "https://nodeb1.org", "https://nodec1.org"],
-      90,
-      2
-    )
-    .then((a: ResolverOutput) => {
-      expect(a.loadState).toEqual({
-        "1": {
-          ids: ["https://nodea1.org"],
-          data: "a",
-          stringToCompare: "a"
-        },
-        "2": {
-          ids: ["https://nodeb1.org"],
-          data: "b",
-          stringToCompare: "b"
-        },
-        "3": {
-          ids: ["https://nodec1.org"],
-          data: "c",
-          stringToCompare: "c"
-        }
-      });
-      expect(a.loadError).toEqual({
-        error: BeesLoadError.UnstableState,
-        args: {
-          numberOfLoadStates: 3
-        }
-      });
-      expect(a.status).toBe("failed");
-      done();
-    });
-  });
-
   it("should succeed with 100/2 with two nodes A, one node failing", done => {
     resolver(
       fakeQueryHandler,
@@ -254,7 +216,6 @@ describe("resolver, 3 nodes", () => {
     )
     .then((a: ResolverOutput) => {
       expect(a.status).toBe("completed");
-      console.log(a.loadErrors);
       expect(a.loadState).toEqual({
         "1": {
           ids: ["https://nodea1.org", "https://nodea2.org"],
