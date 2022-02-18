@@ -6,9 +6,10 @@ import {
   createGetXRecord,
   createCoResolveRequest,
   getDappyNetworkMembers,
-  validateDappyNetworkInfo,
   isDappyNodeResponse,
   isDappyNodeResponseError,
+  isDappyRecord,
+  isDappyNetwork,
 } from './lookup';
 // import { nodeRequest } from './utils/nodeRequest';
 import { spyFns } from './testUtils/spyFns';
@@ -36,6 +37,15 @@ describe('lookup', () => {
     expect(isDappyNodeResponseError(errorResponse)).to.eql(true);
     const successResponse = fakeDappyNodeSuccessResponse();
     expect(isDappyNodeResponseError(successResponse)).to.eql(false);
+  });
+
+  it('isDappyRecord()', () => {
+    const dappyRecord = createDappyRecord();
+    expect(isDappyRecord(dappyRecord)).to.eql(true);
+    const notDappyRecord = {
+      foo: 'bar',
+    };
+    expect(isDappyRecord(notDappyRecord)).to.eql(false);
   });
 
   it('getXRecord() should return a DappyRecord for an existing name', async () => {
@@ -163,6 +173,54 @@ describe('lookup', () => {
 
   it('getXRecord() returns http error code ', async () => {});
 
+  it('getXRecord() could not parse dappy response data', async () => {
+    const encodedRecord = JSON.stringify({
+      success: true,
+      records: [
+        {
+          data: 'NOT PARSABLE JSON',
+        },
+      ],
+    });
+
+    const fakeRequest = () => Promise.resolve(encodedRecord);
+
+    let throwExp;
+    try {
+      await createGetXRecord(fakeRequest)('foo', getFakeDappyNetworkInfo());
+    } catch (e) {
+      throwExp = e;
+    }
+
+    expect((throwExp as Error).message).to.match(
+      /^Could not parse record data from/,
+    );
+  });
+
+  it('getXRecord() Dappy record is incorrect', async () => {
+    const encodedRecord = JSON.stringify({
+      success: true,
+      records: [
+        {
+          data: JSON.stringify({ foo: 'bar' }),
+        },
+      ],
+    });
+
+    const fakeRequest = () => Promise.resolve(encodedRecord);
+
+    let throwExp;
+    try {
+      await createGetXRecord(fakeRequest)('foo', getFakeDappyNetworkInfo());
+    } catch (e) {
+      throwExp = e;
+    }
+
+    expect((throwExp as Error).message).to.eql(
+      `Dappy record is incorrect: ${JSON.stringify({ foo: 'bar' })}`,
+    );
+  });
+
   it('unknown dappy network', async () => {
     let exp;
     try {
@@ -170,43 +228,22 @@ describe('lookup', () => {
     } catch (e) {
       exp = e;
     }
-    expect((exp as Error).message).to.eql('unknown dappy network: unknown');
+    expect((exp as Error).message).to.eql('unknown or malformed dappy network');
   });
 
-  it('validateDappyNetworkInfo() should throws validation errors', async () => {
-    expect(() => validateDappyNetworkInfo({ hostname: '' } as any)).to.throw(
-      /missing or malformed hostname: /,
-    );
-    expect(() =>
-      validateDappyNetworkInfo({ hostname: 'hostname', ip: 'notanip' } as any),
-    ).to.throw(/missing or malformed ip: notanip/);
-
-    expect(() =>
-      validateDappyNetworkInfo({
-        hostname: 'hostname',
-        ip: '127.0.0.1',
-        port: 'wrong_port',
-      } as any),
-    ).to.throw(/missing or malformed port: wrong_port/);
-
-    expect(() =>
-      validateDappyNetworkInfo({
-        hostname: 'hostname',
-        ip: '127.0.0.1',
-        port: '123',
-        scheme: 'wrong_scheme',
-      } as any),
-    ).to.throw(/missing or malformed scheme: wrong_scheme/);
-
-    expect(() =>
-      validateDappyNetworkInfo({
-        hostname: 'hostname',
-        ip: '127.0.0.1',
-        port: '123',
-        scheme: 'https',
-        caCert: 'wrong_ca_cert',
-      } as any),
-    ).to.throw(/missing or malformed caCert: wrong_ca_cert/);
+  it('isDappyNetwork()', async () => {
+    expect(isDappyNetwork([{ hostname: '' }])).to.eql(false);
+    expect(
+      isDappyNetwork([
+        {
+          hostname: 'hostname',
+          ip: '127.0.0.1',
+          port: '123',
+          scheme: 'https',
+          caCert: Buffer.from('wrong_ca_cert', 'utf8').toString('base64'),
+        },
+      ]),
+    ).to.eql(true);
   });
   it('getDappyNetworkInfo() should return custom valid DappyNetworkInfo[]', async () => {
     const customValidNetwork = [
@@ -230,7 +267,9 @@ describe('lookup', () => {
     } catch (e) {
       exp = e;
     }
-    expect((exp as Error).message).to.match(/missing or malformed/);
+    expect((exp as Error).message).to.match(
+      /unknown or malformed dappy network/,
+    );
   });
   it('coResolveRequest on half network members with minimum 66% accuracy: success scenario', async () => {
     const fakeRecord1 = createDappyRecord();

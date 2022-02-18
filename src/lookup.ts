@@ -16,10 +16,14 @@ import {
   isStringNotEmpty,
   match,
   isBase64String,
+  isObjectWith,
+  isArrayNotEmptyOf,
+  isBoolean,
 } from './utils/validation';
 import { hashString } from './utils/hashString';
 import { get } from './utils/get';
 
+const DEFAULT_DAPPY_NETWORK = 'dNetwork';
 const MINIMUM_CONSENSUS_THRESHOLD = (2 / 3) * 100;
 const MEMBER_MAJORITY = 50;
 const GET_X_RECORD_PATH = '/getXRecord';
@@ -31,38 +35,33 @@ export type GetDappyNetworks = () => Promise<
 export const getDappyNetworkStaticList: GetDappyNetworks = () =>
   Promise.resolve(dappyNetworks);
 
-export const validateDappyNetworkInfo = (info: DappyNetworkMember) => {
-  if (!isStringNotEmpty(info.hostname)) {
-    throw new Error(`missing or malformed hostname: ${info.hostname}`);
-  }
-  if (!isIP(info.ip)) {
-    throw new Error(`missing or malformed ip: ${info.ip}`);
-  }
-  if (!match(/^\d{1,5}$/, info.port)) {
-    throw new Error(`missing or malformed port: ${info.port}`);
-  }
-  if (!match(/^http(s)?$/, info.scheme)) {
-    throw new Error(`missing or malformed scheme: ${info.scheme}`);
-  }
-  if (!isBase64String(info.caCert)) {
-    throw new Error(`missing or malformed caCert: ${info.caCert}`);
-  }
+export const isDappyNetwork = (
+  network: any,
+): network is DappyNetworkMember[] => {
+  return isArrayNotEmptyOf(
+    isObjectWith({
+      hostname: isStringNotEmpty,
+      ip: isIP,
+      port: match(/^\d{1,5}$/),
+      scheme: match(/^http(s)?$/),
+      caCert: isBase64String,
+    }),
+  )(network);
 };
 
 export const createGetDappyNetworkMembers =
   (getDappyNetworks: GetDappyNetworks) =>
-  async (dappyNetwork?: DappyNetwork) => {
-    if (Array.isArray(dappyNetwork) && dappyNetwork.length > 0) {
-      dappyNetwork.forEach(validateDappyNetworkInfo);
+  async (dappyNetwork: DappyNetwork) => {
+    if (isDappyNetwork(dappyNetwork)) {
       return dappyNetwork;
     }
 
-    const dappyNetworkId = dappyNetwork as DappyNetworkId;
+    const dappyNetworkId = dappyNetwork;
     const networks = await getDappyNetworks();
     const networkInfo = networks[dappyNetworkId];
 
     if (!networkInfo || networkInfo.length === 0) {
-      throw new Error(`unknown dappy network: ${dappyNetworkId}`);
+      throw new Error('unknown or malformed dappy network');
     }
 
     return networks[dappyNetworkId];
@@ -83,7 +82,9 @@ export const tryParseJSON = (raw: string): object | undefined => {
 export const isDappyNodeResponse = (response: {
   [key: string]: any;
 }): response is DappyNodeResponse => {
-  return typeof response === 'object' && typeof response.success === 'boolean';
+  return isObjectWith({
+    success: isBoolean,
+  })(response);
 };
 
 export const isDappyNodeSuccessResponse = (response: {
@@ -96,7 +97,19 @@ export const isDappyNodeResponseError = (response: {
 }): response is DappyNodeErrorResponse =>
   isDappyNodeResponse(response) && !response.success;
 
-export const isDappyRecord = (record: DappyRecord) => false;
+export const isDappyRecord = (data: {
+  [key: string]: any;
+}): data is DappyRecord => {
+  return isObjectWith({
+    values: isArrayNotEmptyOf(
+      isObjectWith({
+        value: isStringNotEmpty,
+        kind: isStringNotEmpty,
+      }),
+    ),
+    ca: isArrayNotEmptyOf(isStringNotEmpty),
+  })(data);
+};
 
 export const createGetXRecord =
   (request: typeof nodeRequest) =>
@@ -140,14 +153,26 @@ export const createGetXRecord =
 
     if (isDappyNodeResponseError(jsonResponse)) {
       throw new Error(jsonResponse.error.message);
-    }
+    } else {
+      const rawData = get<string>(jsonResponse, 'records[0].data');
+      if (!rawData) {
+        return undefined;
+      }
 
-    const dappyResponse = jsonResponse as DappyNodeSuccessResponse;
-    const data = get<string>(jsonResponse, 'records[0].data');
-    if (!data) {
-      return undefined;
+      const jsonData = tryParseJSON(rawData);
+
+      if (!jsonData) {
+        throw new Error(
+          `Could not parse record data from ${scheme}://${hostname}:${port}/${GET_X_RECORD_PATH}`,
+        );
+      }
+      if (!isDappyRecord(jsonData)) {
+        throw new Error(
+          `Dappy record is incorrect: ${JSON.stringify(jsonData)}`,
+        );
+      }
+      return jsonData;
     }
-    return JSON.parse(dappyResponse.records[0].data);
   };
 
 const getHashOfMajorityResult = (resolved: ResolverOutput) =>
@@ -157,9 +182,9 @@ const getHashOfMajorityResult = (resolved: ResolverOutput) =>
 
 export const createCoResolveRequest =
   (request: typeof nodeRequest) =>
-  async (name: string, options?: DappyLookupOptions) => {
+  async (name: string, options: DappyLookupOptions) => {
     const getXRecord = createGetXRecord(request);
-    const members = await getDappyNetworkMembers(options?.dappyNetwork);
+    const members = await getDappyNetworkMembers(options.dappyNetwork);
 
     const results: Record<string, DappyRecord | undefined> = {};
     const resolved = await resolver(
@@ -198,5 +223,8 @@ export const createCoResolveRequest =
   };
 
 export const lookup = (name: string, options?: DappyLookupOptions) => {
-  return createCoResolveRequest(nodeRequest)(name, options);
+  return createCoResolveRequest(nodeRequest)(name, {
+    dappyNetwork: DEFAULT_DAPPY_NETWORK,
+    ...options,
+  });
 };
