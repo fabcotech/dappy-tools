@@ -49,6 +49,21 @@ describe('lookup', () => {
     expect(isDappyRecord(notDappyRecord)).to.eql(false);
   });
 
+  it('isDappyNetwork()', async () => {
+    expect(isDappyNetwork([{ hostname: '' }])).to.eql(false);
+    expect(
+      isDappyNetwork([
+        {
+          hostname: 'hostname',
+          ip: '127.0.0.1',
+          port: '123',
+          scheme: 'https',
+          caCert: Buffer.from('wrong_ca_cert', 'utf8').toString('base64'),
+        },
+      ]),
+    ).to.eql(true);
+  });
+
   it('getXRecord() should return a DappyRecord for an existing name', async () => {
     const record = createDappyRecord();
     const encodedRecord = JSON.stringify({
@@ -222,7 +237,7 @@ describe('lookup', () => {
     );
   });
 
-  it('unknown dappy network', async () => {
+  it('getDappyNetworkMembers() unknown dappy network', async () => {
     let exp;
     try {
       await getDappyNetworkMembers('unknown' as DappyNetworkId);
@@ -232,20 +247,6 @@ describe('lookup', () => {
     expect((exp as Error).message).to.eql('unknown or malformed dappy network');
   });
 
-  it('isDappyNetwork()', async () => {
-    expect(isDappyNetwork([{ hostname: '' }])).to.eql(false);
-    expect(
-      isDappyNetwork([
-        {
-          hostname: 'hostname',
-          ip: '127.0.0.1',
-          port: '123',
-          scheme: 'https',
-          caCert: Buffer.from('wrong_ca_cert', 'utf8').toString('base64'),
-        },
-      ]),
-    ).to.eql(true);
-  });
   it('getDappyNetworkInfo() should return custom valid DappyNetworkInfo[]', async () => {
     const customValidNetwork = [
       getFakeDappyNetworkInfo(),
@@ -271,6 +272,19 @@ describe('lookup', () => {
     expect((exp as Error).message).to.match(
       /unknown or malformed dappy network/,
     );
+  });
+  it('Default Dappy network set to dNetwork', async () => {
+    const getNetwork = createGetDappyNetworkMembers(() =>
+      Promise.resolve({
+        dNetwork: [
+          getFakeDappyNetworkInfo({
+            ip: 'DNETWORK_MEMBER_1_IP',
+          }),
+        ],
+        gamma: [],
+      }),
+    );
+    expect((await getNetwork())[0].ip).to.eql('DNETWORK_MEMBER_1_IP');
   });
   it('coResolveRequest on half network members with minimum 66% accuracy: success scenario', async () => {
     const fakeRecord1 = createDappyRecord();
@@ -416,18 +430,5 @@ describe('lookup', () => {
     expect((exp as Error).message).to.match(
       /Name foo not resolved: Out of nodes/,
     );
-  });
-  it('Default Dappy network set to dNetwork', async () => {
-    const getNetwork = createGetDappyNetworkMembers(() =>
-      Promise.resolve({
-        dNetwork: [
-          getFakeDappyNetworkInfo({
-            ip: 'DNETWORK_MEMBER_1_IP',
-          }),
-        ],
-        gamma: [],
-      }),
-    );
-    expect((await getNetwork())[0].ip).to.eql('DNETWORK_MEMBER_1_IP');
   });
 });
