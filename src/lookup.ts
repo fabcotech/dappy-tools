@@ -24,9 +24,19 @@ import { hashString } from './utils/hashString';
 import { get } from './utils/get';
 
 const DEFAULT_DAPPY_NETWORK = 'dNetwork';
-const MINIMUM_CONSENSUS_THRESHOLD = (2 / 3) * 100;
-const MEMBER_MAJORITY = 50;
 const GET_X_RECORD_PATH = '/getXRecord';
+
+const CO_RESOLUTION_SETTINGS: {
+  [key: number]: { absolute: number; accuracy: number };
+} = {
+  1: { absolute: 1, accuracy: 100 },
+  2: { absolute: 2, accuracy: 100 },
+  3: { absolute: 2, accuracy: 66 },
+  4: { absolute: 3, accuracy: 66 },
+  5: { absolute: 3, accuracy: 66 },
+  6: { absolute: 4, accuracy: 66 },
+  7: { absolute: 4, accuracy: 66 },
+};
 
 export type GetDappyNetworks = () => Promise<
   Record<DappyNetworkId, DappyNetworkMember[]>
@@ -210,9 +220,8 @@ export const createCoResolveRequest =
         }
       },
       members.map((_, i) => i as any),
-      'absolute',
-      MINIMUM_CONSENSUS_THRESHOLD,
-      Math.ceil(members.length * (MEMBER_MAJORITY / 100)),
+      CO_RESOLUTION_SETTINGS[Math.min(members.length, 7)].accuracy,
+      CO_RESOLUTION_SETTINGS[Math.min(members.length, 7)].absolute,
       (a) => a,
     );
     if (resolved.status === 'failed') {

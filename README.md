@@ -162,9 +162,9 @@ import { createNodeLookup } from 'dappy-lookup';
 
 const { getCA, lookup } = createNodeLookup();
 
-https.get('https://your-dappy-name/', {
-    lookup,
-    ca: await getCA('your-dappy-name'),
+https.get('https://secureservice', {
+  lookup,
+  ca: await getCA('secureservice'),
 }, (res) => {
   ...
 });

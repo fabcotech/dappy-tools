@@ -63,6 +63,6 @@
     "typescript": "^4.5.5"
   },
   "dependencies": {
-    "beesjs": "github:fabcotech/beesjs#b03909"
+    "beesjs": "github:fabcotech/beesjs#2.0.3"
   }
 }

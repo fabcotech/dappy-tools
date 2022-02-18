@@ -286,7 +286,7 @@ describe('lookup', () => {
     );
     expect((await getNetwork())[0].ip).to.eql('DNETWORK_MEMBER_1_IP');
   });
-  it('coResolveRequest on half network members with minimum 66% accuracy: success scenario', async () => {
+  it('coResolveRequest with 3 network members (absolute: 2, accuracy: 66%): success scenario (3:abb => b) ', async () => {
     const fakeRecord1 = createDappyRecord();
     const fakeRecord2 = createDappyRecord({
       values: [
@@ -313,15 +313,11 @@ describe('lookup', () => {
       () => Promise.resolve(createEncodedRecord(fakeRecord1)),
       () => Promise.resolve(createEncodedRecord(fakeRecord2)),
       () => Promise.resolve(createEncodedRecord(fakeRecord2)),
-      () => {
-        throw new Error('fake error');
-      },
     ]);
 
     const coResolve = createCoResolveRequest(fakeRequest);
 
     const dappyNetwork = [
-      getFakeDappyNetworkInfo(),
       getFakeDappyNetworkInfo(),
       getFakeDappyNetworkInfo(),
       getFakeDappyNetworkInfo(),
@@ -331,10 +327,66 @@ describe('lookup', () => {
     });
 
     expect(dappyRecord).to.eql(fakeRecord2);
-    expect(fakeRequest).to.have.been.called.exactly(4);
+    expect(fakeRequest).to.have.been.called.exactly(3);
   });
 
-  it('coResolveRequest on half network members with minimum 66% accuracy: failed scenario (different responses)', async () => {
+  it('coResolveRequest with 9 network members (absolute: 4, accuracy: 66%): success scenario (9:baabaa => a)', async () => {
+    const fakeRecord1 = createDappyRecord();
+    const fakeRecord2 = createDappyRecord({
+      values: [
+        {
+          value: '192.168.0.1',
+          kind: 'IPv4',
+        },
+      ],
+    });
+    const createEncodedRecord = (record: DappyRecord) => [
+      Buffer.from(
+        JSON.stringify({
+          success: true,
+          records: [
+            {
+              data: JSON.stringify(record),
+            },
+          ],
+        }),
+      ),
+    ];
+
+    const fakeRequest = spyFns([
+      () => Promise.resolve(createEncodedRecord(fakeRecord2)),
+      () => Promise.resolve(createEncodedRecord(fakeRecord1)),
+      () => Promise.resolve(createEncodedRecord(fakeRecord1)),
+      () => Promise.resolve(createEncodedRecord(fakeRecord2)),
+      () => Promise.resolve(createEncodedRecord(fakeRecord1)),
+      () => Promise.resolve(createEncodedRecord(fakeRecord1)),
+      () => Promise.resolve(createEncodedRecord(fakeRecord1)),
+      () => Promise.resolve(createEncodedRecord(fakeRecord1)),
+      () => Promise.resolve(createEncodedRecord(fakeRecord1)),
+    ]);
+
+    const coResolve = createCoResolveRequest(fakeRequest);
+
+    const dappyNetwork = [
+      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkInfo(),
+    ];
+    const dappyRecord = await coResolve('foo', {
+      dappyNetwork,
+    });
+
+    expect(dappyRecord).to.eql(fakeRecord1);
+    expect(fakeRequest).to.have.been.called.exactly(6);
+  });
+
+  it('coResolveRequest with 7 network members (absolute: 4, accuracy: 66%): failed scenario  (7:bbbaaaa => e)', async () => {
     const fakeRecord1 = createDappyRecord();
     const fakeRecord2 = createDappyRecord({
       values: [
@@ -358,16 +410,22 @@ describe('lookup', () => {
     ];
 
     const fakeRequest = spyFns([
-      () => Promise.resolve(createEncodedRecord(fakeRecord1)),
       () => Promise.resolve(createEncodedRecord(fakeRecord2)),
-      () => {
-        throw new Error('fake error');
-      },
+      () => Promise.resolve(createEncodedRecord(fakeRecord2)),
+      () => Promise.resolve(createEncodedRecord(fakeRecord2)),
+      () => Promise.resolve(createEncodedRecord(fakeRecord1)),
+      () => Promise.resolve(createEncodedRecord(fakeRecord1)),
+      () => Promise.resolve(createEncodedRecord(fakeRecord1)),
+      () => Promise.resolve(createEncodedRecord(fakeRecord1)),
     ]);
 
     const coResolve = createCoResolveRequest(fakeRequest);
 
     const dappyNetwork = [
+      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkInfo(),
       getFakeDappyNetworkInfo(),
       getFakeDappyNetworkInfo(),
       getFakeDappyNetworkInfo(),
@@ -382,11 +440,11 @@ describe('lookup', () => {
       exp = err;
     }
     expect((exp as Error).message).to.match(
-      /Name foo not resolved: Out of nodes/,
+      /Name foo not resolved: Unaccurate state/,
     );
   });
 
-  it('coResolveRequest on half network members with 66% accuracy: failed scenario (not enough members not responding)', async () => {
+  it('coResolveRequest with 3 network members (absolute: 2, accuracy: 66%): failed scenario  (3:eea => e)', async () => {
     const fakeRecord = createDappyRecord();
     const createEncodedRecord = () => [
       Buffer.from(
