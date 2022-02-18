@@ -1,11 +1,11 @@
 {
   "name": "beesjs",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Javascript library that retreives data from public distributed ledgers, and decides which answer to reject or accept.",
   "main": "dist/index.js",
   "author": "FABCO <contact@fabco.tech>",
   "scripts": {
-    "build": "npx rollup -c && npm run build:declaration",
+    "build": "npm run build:declaration && npx rollup -c",
     "build:declaration": "tsc -p ./tsconfig.json --outDir dist --declaration true",
     "test": "jest"
   },
