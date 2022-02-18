@@ -7,17 +7,37 @@ import {
   createCoResolveRequest,
   getDappyNetworkMembers,
   validateDappyNetworkInfo,
+  isDappyNodeResponse,
+  isDappyNodeResponseError,
 } from './lookup';
 // import { nodeRequest } from './utils/nodeRequest';
 import { spyFns } from './testUtils/spyFns';
 import {
+  fakeDappyNodeSuccessResponse,
   createDappyRecord,
   getFakeDappyNetworkInfo,
+  fakeDappyNodeErrorResponse,
 } from './testUtils/fakeData';
 
 chai.use(spies);
 
 describe('lookup', () => {
+  it('isDappyNodeResponse()', () => {
+    const dappyNodeResponse = fakeDappyNodeSuccessResponse();
+    expect(isDappyNodeResponse(dappyNodeResponse)).to.eql(true);
+    const notDappyDappyResponse = {
+      foo: 'bar',
+    };
+    expect(isDappyNodeResponse(notDappyDappyResponse)).to.eql(false);
+  });
+
+  it('isDappyNodeResponseError()', () => {
+    const errorResponse = fakeDappyNodeErrorResponse();
+    expect(isDappyNodeResponseError(errorResponse)).to.eql(true);
+    const successResponse = fakeDappyNodeSuccessResponse();
+    expect(isDappyNodeResponseError(successResponse)).to.eql(false);
+  });
+
   it('getXRecord() should return a DappyRecord for an existing name', async () => {
     const record = createDappyRecord();
     const encodedRecord = [
@@ -91,31 +111,74 @@ describe('lookup', () => {
     expect(throwExp).to.equal(true, 'Expected an error to be thrown');
   });
 
-  xit('getXRecord() application http error (wrong path)', () => {});
-  // it.only('getXRecord() network connectivity issue', async () => {
-  // const record = createDappyRecord();
-  // const encodedRecord = [
-  //   Buffer.from(
-  //     JSON.stringify({
-  //       success: true,
-  //       records: [
-  //         {
-  //           data: JSON.stringify(record),
-  //         },
-  //       ],
-  //     }),
-  //   ),
-  // ];
+  it('getXRecord() network connectivity issue', async () => {
+    const fakeRequest = () => {
+      throw new Error('connect ECONNREFUSED 127.0.0.1:31000');
+    };
 
-  // const fakeRequest = () => Promise.resolve(encodedRecord);
+    let throwExp;
+    try {
+      await createGetXRecord(fakeRequest)(
+        'foo',
+        getFakeDappyNetworkInfo({
+          ip: '127.0.0.1',
+          port: '31000',
+        }),
+      );
+    } catch (e) {
+      throwExp = e;
+    }
 
-  // const r = await createGetXRecord(nodeRequest)(
-  //   'foo2',
-  //   getFakeDappyNetworkInfo(),
-  // );
-  // console.log(r);
-  // expect(r).to.eql(record);
-  // });
+    expect((throwExp as Error).message).to.eql(
+      'connect ECONNREFUSED 127.0.0.1:31000',
+    );
+  });
+
+  it('getXRecord() return non JSON value', async () => {
+    const fakeRequest = () => Promise.resolve('NOT PARSABLE JSON');
+
+    let throwExp;
+    try {
+      await createGetXRecord(fakeRequest)('foo', getFakeDappyNetworkInfo());
+    } catch (e) {
+      throwExp = e;
+    }
+
+    expect((throwExp as Error).message).to.match(
+      /^Could not parse response from/,
+    );
+  });
+
+  it('getXRecord() Dappy node response is incorrect', async () => {
+    const encodedRecord = [
+      Buffer.from(
+        JSON.stringify({
+          foo: 'bar',
+        }),
+      ),
+    ];
+    const fakeRequest = () => Promise.resolve(encodedRecord);
+
+    let throwExp;
+    try {
+      const r = await createGetXRecord(fakeRequest)(
+        'foo',
+        getFakeDappyNetworkInfo(),
+      );
+      console.log(r);
+    } catch (e) {
+      throwExp = e;
+    }
+
+    expect((throwExp as Error).message).to.eql(
+      `Dappy node response is incorrect: ${JSON.stringify({
+        foo: 'bar',
+      })}`,
+    );
+  });
+
+  it('getXRecord() returns http error code ', async () => {});
+
   it('unknown dappy network', async () => {
     let exp;
     try {

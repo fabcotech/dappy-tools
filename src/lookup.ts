@@ -2,9 +2,12 @@ import { resolver, ResolverOutput } from 'beesjs';
 import {
   DappyLookupOptions,
   DappyRecord,
+  DappyNodeResponse,
   DappyNetwork,
   DappyNetworkId,
   DappyNetworkMember,
+  DappyNodeErrorResponse,
+  DappyNodeSuccessResponse,
 } from './types';
 import { dappyNetworks } from './dappyNetworks';
 import { nodeRequest } from './utils/nodeRequest';
@@ -17,8 +20,9 @@ import {
 import { hashString } from './utils/hashString';
 import { get } from './utils/get';
 
-const MINIMUM_CONSENSUS_THRESHOLD = 2 / 3;
+const MINIMUM_CONSENSUS_THRESHOLD = (2 / 3) * 100;
 const MEMBER_MAJORITY = 50;
+const GET_X_RECORD_PATH = '/getXRecord';
 
 export type GetDappyNetworks = () => Promise<
   Record<DappyNetworkId, DappyNetworkMember[]>
@@ -68,6 +72,32 @@ export const getDappyNetworkMembers = createGetDappyNetworkMembers(
   getDappyNetworkStaticList,
 );
 
+export const tryParseJSON = (raw: Uint8Array[]): object | undefined => {
+  try {
+    return JSON.parse(Buffer.concat(raw).toString());
+  } catch (e) {
+    return undefined;
+  }
+};
+
+export const isDappyNodeResponse = (response: {
+  [key: string]: any;
+}): response is DappyNodeResponse => {
+  return typeof response === 'object' && typeof response.success === 'boolean';
+};
+
+export const isDappyNodeSuccessResponse = (response: {
+  [key: string]: any;
+}): response is DappyNodeSuccessResponse =>
+  isDappyNodeResponse(response) && response.success;
+
+export const isDappyNodeResponseError = (response: {
+  [key: string]: any;
+}): response is DappyNodeErrorResponse =>
+  isDappyNodeResponse(response) && !response.success;
+
+export const isDappyRecord = (record: DappyRecord) => false;
+
 export const createGetXRecord =
   (request: typeof nodeRequest) =>
   async (
@@ -79,7 +109,7 @@ export const createGetXRecord =
       scheme,
       host: ip,
       port,
-      path: '/get-x-records',
+      path: GET_X_RECORD_PATH,
       method: 'POST',
       headers: {
         Host: hostname,
@@ -94,17 +124,30 @@ export const createGetXRecord =
     }
     const rawResponse: any = await request(reqOptions);
 
-    const response = JSON.parse(Buffer.concat(rawResponse).toString());
+    const jsonResponse = tryParseJSON(rawResponse);
 
-    if (response.success === false) {
-      throw new Error(response.error.message);
+    if (!jsonResponse) {
+      throw new Error(
+        `Could not parse response from ${scheme}://${hostname}:${port}/${GET_X_RECORD_PATH}`,
+      );
     }
 
-    const data = get(response, 'records[0].data');
+    if (!isDappyNodeResponse(jsonResponse)) {
+      throw new Error(
+        `Dappy node response is incorrect: ${JSON.stringify(jsonResponse)}`,
+      );
+    }
+
+    if (isDappyNodeResponseError(jsonResponse)) {
+      throw new Error(jsonResponse.error.message);
+    }
+
+    const dappyResponse = jsonResponse as DappyNodeSuccessResponse;
+    const data = get<string>(jsonResponse, 'records[0].data');
     if (!data) {
       return undefined;
     }
-    return JSON.parse(response.records[0].data);
+    return JSON.parse(dappyResponse.records[0].data);
   };
 
 const getHashOfMajorityResult = (resolved: ResolverOutput) =>

@@ -23,3 +23,21 @@ export interface DappyRecord {
   values: DappyRecordValue[];
   ca: string[];
 }
+
+export type DappyNodeErrorResponse = {
+  success: false;
+  error: {
+    message: string;
+  };
+};
+
+export type DappyNodeSuccessResponse = {
+  success: true;
+  records: {
+    data: string;
+  }[];
+};
+
+export type DappyNodeResponse =
+  | DappyNodeErrorResponse
+  | DappyNodeSuccessResponse;

@@ -1,4 +1,8 @@
-export const get = (obj: any, path: string | string[], defValue?: any) => {
+export const get = <T>(
+  obj: any,
+  path: string | string[],
+  defValue?: any,
+): T | undefined => {
   // If path is not defined or it has false value
   if (!path) return undefined;
   // Check if path is string or array. Regex : ensure that we do not have '.' and brackets.
