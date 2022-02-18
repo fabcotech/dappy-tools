@@ -10,6 +10,7 @@ import {
   isDappyNodeResponseError,
   isDappyRecord,
   isDappyNetwork,
+  createGetDappyNetworkMembers,
 } from './lookup';
 // import { nodeRequest } from './utils/nodeRequest';
 import { spyFns } from './testUtils/spyFns';
@@ -171,7 +172,7 @@ describe('lookup', () => {
     );
   });
 
-  it('getXRecord() returns http error code ', async () => {});
+  xit('getXRecord() returns http error code ', async () => {});
 
   it('getXRecord() could not parse dappy response data', async () => {
     const encodedRecord = JSON.stringify({
@@ -415,5 +416,18 @@ describe('lookup', () => {
     expect((exp as Error).message).to.match(
       /Name foo not resolved: Out of nodes/,
     );
+  });
+  it('Default Dappy network set to dNetwork', async () => {
+    const getNetwork = createGetDappyNetworkMembers(() =>
+      Promise.resolve({
+        dNetwork: [
+          getFakeDappyNetworkInfo({
+            ip: 'DNETWORK_MEMBER_1_IP',
+          }),
+        ],
+        gamma: [],
+      }),
+    );
+    expect((await getNetwork())[0].ip).to.eql('DNETWORK_MEMBER_1_IP');
   });
 });

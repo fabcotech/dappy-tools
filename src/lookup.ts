@@ -51,12 +51,14 @@ export const isDappyNetwork = (
 
 export const createGetDappyNetworkMembers =
   (getDappyNetworks: GetDappyNetworks) =>
-  async (dappyNetwork: DappyNetwork) => {
-    if (isDappyNetwork(dappyNetwork)) {
-      return dappyNetwork;
+  async (dappyNetwork?: DappyNetwork) => {
+    const network = dappyNetwork || DEFAULT_DAPPY_NETWORK;
+
+    if (isDappyNetwork(network)) {
+      return network;
     }
 
-    const dappyNetworkId = dappyNetwork;
+    const dappyNetworkId = network;
     const networks = await getDappyNetworks();
     const networkInfo = networks[dappyNetworkId];
 
@@ -182,9 +184,9 @@ const getHashOfMajorityResult = (resolved: ResolverOutput) =>
 
 export const createCoResolveRequest =
   (request: typeof nodeRequest) =>
-  async (name: string, options: DappyLookupOptions) => {
+  async (name: string, options?: DappyLookupOptions) => {
     const getXRecord = createGetXRecord(request);
-    const members = await getDappyNetworkMembers(options.dappyNetwork);
+    const members = await getDappyNetworkMembers(options?.dappyNetwork);
 
     const results: Record<string, DappyRecord | undefined> = {};
     const resolved = await resolver(
@@ -223,8 +225,5 @@ export const createCoResolveRequest =
   };
 
 export const lookup = (name: string, options?: DappyLookupOptions) => {
-  return createCoResolveRequest(nodeRequest)(name, {
-    dappyNetwork: DEFAULT_DAPPY_NETWORK,
-    ...options,
-  });
+  return createCoResolveRequest(nodeRequest)(name, options);
 };
