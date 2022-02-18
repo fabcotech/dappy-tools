@@ -72,9 +72,9 @@ export const getDappyNetworkMembers = createGetDappyNetworkMembers(
   getDappyNetworkStaticList,
 );
 
-export const tryParseJSON = (raw: Uint8Array[]): object | undefined => {
+export const tryParseJSON = (raw: string): object | undefined => {
   try {
-    return JSON.parse(Buffer.concat(raw).toString());
+    return JSON.parse(raw);
   } catch (e) {
     return undefined;
   }

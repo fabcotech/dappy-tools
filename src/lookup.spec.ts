@@ -40,18 +40,14 @@ describe('lookup', () => {
 
   it('getXRecord() should return a DappyRecord for an existing name', async () => {
     const record = createDappyRecord();
-    const encodedRecord = [
-      Buffer.from(
-        JSON.stringify({
-          success: true,
-          records: [
-            {
-              data: JSON.stringify(record),
-            },
-          ],
-        }),
-      ),
-    ];
+    const encodedRecord = JSON.stringify({
+      success: true,
+      records: [
+        {
+          data: JSON.stringify(record),
+        },
+      ],
+    });
 
     const fakeRequest = () => Promise.resolve(encodedRecord);
 
@@ -63,19 +59,15 @@ describe('lookup', () => {
   });
 
   it('getXRecord() return undefined for an unknown name', async () => {
-    const encodedRecord = [
-      Buffer.from(
-        JSON.stringify({
-          success: true,
-          records: [
-            {
-              id: 'foo',
-              notfound: 'true',
-            },
-          ],
-        }),
-      ),
-    ];
+    const encodedRecord = JSON.stringify({
+      success: true,
+      records: [
+        {
+          id: 'foo',
+          notfound: 'true',
+        },
+      ],
+    });
 
     const fakeRequest = () => Promise.resolve(encodedRecord);
 
@@ -87,16 +79,12 @@ describe('lookup', () => {
   });
 
   it('getXRecord() throw an error on rchain error', async () => {
-    const encodedRecord = [
-      Buffer.from(
-        JSON.stringify({
-          success: false,
-          error: {
-            message: 'unknown error',
-          },
-        }),
-      ),
-    ];
+    const encodedRecord = JSON.stringify({
+      success: false,
+      error: {
+        message: 'unknown error',
+      },
+    });
 
     const fakeRequest = () => Promise.resolve(encodedRecord);
 
@@ -150,13 +138,9 @@ describe('lookup', () => {
   });
 
   it('getXRecord() Dappy node response is incorrect', async () => {
-    const encodedRecord = [
-      Buffer.from(
-        JSON.stringify({
-          foo: 'bar',
-        }),
-      ),
-    ];
+    const encodedRecord = JSON.stringify({
+      foo: 'bar',
+    });
     const fakeRequest = () => Promise.resolve(encodedRecord);
 
     let throwExp;
