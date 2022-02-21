@@ -20,6 +20,7 @@
   "main": "dist/dappy-lookup.cjs.js",
   "browser": "dist/dappy-lookup.umd.js",
   "module": "dist/dappy-lookup.esm.js",
+  "cli": "dist/dappy-lookup-cli.js",
   "files": [
     "dist"
   ],
@@ -35,6 +36,9 @@
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier --write 'src/**/*.ts'",
     "prepare": "husky install"
+  },
+  "bin": {
+    "dappy-lookup": "./bin/dappy-lookup"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.19.4",
