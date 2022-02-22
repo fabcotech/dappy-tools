@@ -1,6 +1,18 @@
-export function dedent(strs: TemplateStringsArray) {
-  const lines = strs.join('').split('\n');
+export function dedent(strs: TemplateStringsArray, ...values: Array<string>) {
+  let result = '';
+  for (let i = 0; i < strs.length; i += 1) {
+    result += strs[i]
+      // join lines when there is a suppressed newline
+      .replace(/\\\n[ \t]*/g, '')
+      // handle escaped backticks
+      .replace(/\\`/g, '`');
 
+    if (i < values.length) {
+      result += values[i];
+    }
+  }
+
+  const lines = result.split('\n');
   let mindent: number | null = null;
   lines.forEach((l) => {
     const m = l.match(/^(\s+)\S+/);
@@ -14,7 +26,7 @@ export function dedent(strs: TemplateStringsArray) {
     }
   });
 
-  let result = '';
+  // let result = '';
   if (mindent !== null) {
     const m = mindent;
     result = lines.map((l) => (l[0] === ' ' ? l.slice(m) : l)).join('\n');

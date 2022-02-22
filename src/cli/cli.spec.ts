@@ -4,11 +4,11 @@ import { processCli } from './cli';
 
 chai.use(spies);
 
-describe('cli', () => {
+describe('cli (core)', () => {
   it('invoke command with parameters', async () => {
     const fooAction = chai.spy(() => Promise.resolve());
     await processCli({
-      parameters: ['--foo', 'param1', 'param2'],
+      parameters: ['foo', 'param1', 'param2'],
       commands: {
         foo: {
           description: 'foo command description.',
@@ -22,23 +22,17 @@ describe('cli', () => {
     expect(fooAction).to.have.been.called.with(['param1', 'param2']);
   });
 
-  it('command not found', async () => {
-    const helpAction = chai.spy(() => Promise.resolve());
+  it('missing command', async () => {
     try {
       await processCli({
-        parameters: ['--foo'],
-        commands: {
-          help: {
-            description: 'Display help information.',
-            action: helpAction,
-          },
-        },
+        parameters: [],
+        commands: {},
         api: {
           print: () => {},
         },
       });
     } catch (e) {
-      expect((e as Error).message).to.equal('Unknown command: foo');
+      expect((e as Error).message).to.equal('missing command');
     }
   });
 

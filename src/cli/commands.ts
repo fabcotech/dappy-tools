@@ -8,26 +8,44 @@ export interface Command {
   action: (args: string[], api: Api) => Promise<void>;
 }
 
-export const helpCommand: Command = {
+export const createHelpCommand = (commands: {
+  [key: string]: Command;
+}): Command => ({
   description: dedent`
     Display help information.
 
     Examples:
     
-      dappy-lookup --help
+      dappy-lookup help
   `,
   action: async (args, api) => {
-    api.print(helpCommand.description);
+    if (args.length === 0) {
+      api.print(dedent`
+      Available commands:\n${Object.keys(commands)
+        .filter((cmdName) => cmdName !== 'default')
+        .map((cmdName) => `        * ${cmdName}`)
+        .join('\n')}
+      `);
+    } else if (commands[args[0]]) {
+      api.print(commands[args[0]].description);
+    } else {
+      api.print('command not found');
+    }
   },
-};
+});
 
 export const lookupCommand: Command = {
   description: dedent`
     Lookup a name in dappy network.
+    Built-in networks are:
+      - mainnet
+      - gamma
 
     Examples:
 
-      dappy-lookup foo            # Lookup name in dappy network (mainnet)
+      dappy-lookup foo                                # Lookup name in dappy network (mainnet)
+      dappy-lookup foo --network=gamma                # Lookup name in dappy gamma network
+      dappy-lookup foo --network-file=./custom.json   # Lookup name in dappy network defined in local.json
   `,
   action: async ([name], api) => {
     if (!name) {
@@ -40,8 +58,13 @@ export const lookupCommand: Command = {
   },
 };
 
-export const getCommands = (): { [key: string]: Command } => ({
-  help: helpCommand,
-  lookup: lookupCommand,
-  default: lookupCommand,
-});
+export const getCommands = (): { [key: string]: Command } => {
+  const commands = {
+    lookup: lookupCommand,
+    default: lookupCommand,
+  } as { [key: string]: Command };
+
+  commands.help = createHelpCommand(commands);
+
+  return commands;
+};

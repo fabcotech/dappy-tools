@@ -14,19 +14,20 @@ export async function processCli({
   commands: { [key: string]: Command };
   api: Api;
 }) {
-  let cmdName;
+  let cmdName = '';
   let cmdParameters = [''];
 
-  if (!parameters[0].startsWith('--')) {
-    cmdName = 'default';
-    cmdParameters = parameters;
-  } else {
-    cmdName = parameters[0].replace(/^-+/, '');
-    cmdParameters = parameters.slice(1);
+  if (parameters.length === 0) {
+    throw new Error('missing command');
   }
 
+  [cmdName] = parameters;
+
   if (!commands[cmdName]) {
-    throw new Error(`Unknown command: ${cmdName}`);
+    cmdParameters = parameters;
+    cmdName = 'default';
+  } else {
+    cmdParameters = parameters.slice(1);
   }
   await commands[cmdName].action(cmdParameters, api);
 }
