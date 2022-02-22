@@ -59,7 +59,7 @@ export async function runCli(
     });
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.log((err as Error).message);
+    api.print((err as Error).message);
     code = 1;
   } finally {
     await shutdown(code);

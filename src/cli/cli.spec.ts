@@ -36,6 +36,29 @@ describe('cli (core)', () => {
     expect(shutdown).to.have.been.first.called.with(1);
     expect(shutdown).to.have.been.second.called.with(0);
   });
+  it('must shutdown with code 1 on unexpected command error', async () => {
+    const shutdown = chai.spy();
+    const api = {
+      print: chai.spy(),
+      lookup: () => Promise.resolve(undefined),
+    };
+    const commands = {
+      foo: {
+        action: () => {
+          throw new Error('foo error');
+        },
+        description: 'foo command description.',
+      },
+    };
+    await runCli({
+      args: ['foo'],
+      shutdown,
+      commands,
+      api,
+    });
+    expect(shutdown).to.have.been.called.with(1);
+    expect(api.print).to.have.been.called.with('foo error');
+  });
   it('invoke command with parameters', async () => {
     const fooAction = chai.spy(() => Promise.resolve(0));
     const code = await processCli({
