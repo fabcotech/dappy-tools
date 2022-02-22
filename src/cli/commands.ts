@@ -4,7 +4,7 @@ import { dedent } from './utils/dedent';
 
 export interface Command {
   description: string;
-  action: (args: string[], api: Api) => Promise<void>;
+  action: (args: string[], api: Api) => Promise<number>;
 }
 
 export const createHelpCommand = (commands: {
@@ -29,7 +29,9 @@ export const createHelpCommand = (commands: {
       api.print(commands[args[0]].description);
     } else {
       api.print('command not found');
+      return 1;
     }
+    return 0;
   },
 });
 
@@ -49,11 +51,13 @@ export const lookupCommand: Command = {
   action: async ([name], api) => {
     if (!name) {
       api.print('missing name');
+      return 1;
     }
     const record = await api.lookup(name);
     if (record) {
       api.print(record.values[0].value);
     }
+    return 0;
   },
 };
 

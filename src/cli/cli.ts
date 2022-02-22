@@ -2,7 +2,7 @@ import { Command, getCommands } from './commands';
 import { Api, print } from './api';
 import { lookup } from '..';
 
-function shutdown(code: number) {
+function processShutdown(code: number) {
   process.exit(code);
 }
 
@@ -14,12 +14,13 @@ export async function processCli({
   parameters: string[];
   commands: { [key: string]: Command };
   api: Api;
-}) {
+}): Promise<number> {
   let cmdName = '';
   let cmdParameters = [''];
 
   if (parameters.length === 0) {
-    throw new Error('missing command');
+    api.print('missing command');
+    return 1;
   }
 
   [cmdName] = parameters;
@@ -30,23 +31,31 @@ export async function processCli({
   } else {
     cmdParameters = parameters.slice(1);
   }
-  await commands[cmdName].action(cmdParameters, api);
+  return commands[cmdName].action(cmdParameters, api);
 }
 
-export async function runCli({ args }: { args?: string[] } = {}) {
-  const parameters = !args ? process.argv.slice(2) : args;
+export async function runCli(
+  parameters: Partial<{
+    args: string[];
+    shutdown: (code: number) => void;
+    commands: { [key: string]: Command };
+    api: Api;
+  }> = {},
+) {
+  const shutdown = parameters.shutdown || processShutdown;
+  const commands = parameters.commands || getCommands();
+  const api = parameters.api || {
+    print,
+    lookup,
+  };
 
-  let result;
   let code = 0;
 
   try {
-    result = await processCli({
-      parameters,
-      commands: getCommands(),
-      api: {
-        print,
-        lookup,
-      },
+    code = await processCli({
+      parameters: !parameters.args ? process.argv.slice(2) : parameters.args,
+      commands,
+      api,
     });
   } catch (err) {
     // eslint-disable-next-line no-console
@@ -55,6 +64,4 @@ export async function runCli({ args }: { args?: string[] } = {}) {
   } finally {
     await shutdown(code);
   }
-
-  return { result };
 }

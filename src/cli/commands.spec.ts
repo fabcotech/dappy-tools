@@ -14,11 +14,11 @@ describe('cli (commands)', () => {
     const commands = {
       foo: {
         description: 'foo command description.',
-        action: () => Promise.resolve(),
+        action: () => Promise.resolve(0),
       },
       bar: {
         description: 'bar command description.',
-        action: () => Promise.resolve(),
+        action: () => Promise.resolve(0),
       },
     };
     await createHelpCommand(commands).action([], {
@@ -39,15 +39,15 @@ describe('cli (commands)', () => {
     const commands = {
       foo: {
         description: 'foo command description.',
-        action: () => Promise.resolve(),
+        action: () => Promise.resolve(0),
       },
       bar: {
         description: 'bar command description.',
-        action: () => Promise.resolve(),
+        action: () => Promise.resolve(0),
       },
       default: {
         description: 'default command description.',
-        action: () => Promise.resolve(),
+        action: () => Promise.resolve(0),
       },
     };
     await createHelpCommand(commands).action(['foo'], {
@@ -62,19 +62,21 @@ describe('cli (commands)', () => {
       stdout += `${str}\n`;
     };
     const commands = {};
-    await createHelpCommand(commands).action(['foo'], {
+    const code = await createHelpCommand(commands).action(['foo'], {
       print,
       lookup: () => Promise.resolve(undefined),
     });
     expect(stdout).to.contains('command not found');
+    expect(code).to.eql(1);
   });
   it('lookup: missing name', async () => {
     const lookup = () => Promise.resolve(undefined);
     const print = chai.spy();
-    await lookupCommand.action([], {
+    const code = await lookupCommand.action([], {
       lookup,
       print,
     });
     expect(print).to.have.been.called.with('missing name');
+    expect(code).to.eql(1);
   });
 });
