@@ -1,4 +1,4 @@
-export type DappyNetworkId = 'dNetwork' | 'gamma';
+export type DappyNetworkId = 'd' | 'gamma';
 
 export type DappyNetwork = DappyNetworkId | DappyNetworkMember[];
 

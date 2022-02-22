@@ -23,7 +23,7 @@ import {
 import { hashString } from './utils/hashString';
 import { get } from './utils/get';
 
-const DEFAULT_DAPPY_NETWORK = 'dNetwork';
+const DEFAULT_DAPPY_NETWORK = 'd';
 const GET_X_RECORD_PATH = '/getXRecord';
 
 const CO_RESOLUTION_SETTINGS: {

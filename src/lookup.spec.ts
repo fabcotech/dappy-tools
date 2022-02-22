@@ -276,7 +276,7 @@ describe('lookup', () => {
   it('Default Dappy network set to dNetwork', async () => {
     const getNetwork = createGetDappyNetworkMembers(() =>
       Promise.resolve({
-        dNetwork: [
+        d: [
           getFakeDappyNetworkInfo({
             ip: 'DNETWORK_MEMBER_1_IP',
           }),
