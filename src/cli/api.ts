@@ -1,3 +1,5 @@
+import { lookup } from '..';
+
 export function print(str: string) {
   // eslint-disable-next-line no-console
   console.log(str);
@@ -5,4 +7,5 @@ export function print(str: string) {
 
 export interface Api {
   print: typeof print;
+  lookup: typeof lookup;
 }

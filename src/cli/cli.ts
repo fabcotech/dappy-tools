@@ -1,5 +1,6 @@
 import { Command, getCommands } from './commands';
 import { Api, print } from './api';
+import { lookup } from '..';
 
 function shutdown(code: number) {
   process.exit(code);
@@ -44,6 +45,7 @@ export async function runCli({ args }: { args?: string[] } = {}) {
       commands: getCommands(),
       api: {
         print,
+        lookup,
       },
     });
   } catch (err) {

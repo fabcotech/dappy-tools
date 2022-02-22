@@ -17,6 +17,7 @@ describe('cli (core)', () => {
       },
       api: {
         print: () => {},
+        lookup: () => Promise.resolve(undefined),
       },
     });
     expect(fooAction).to.have.been.called.with(['param1', 'param2']);
@@ -29,6 +30,7 @@ describe('cli (core)', () => {
         commands: {},
         api: {
           print: () => {},
+          lookup: () => Promise.resolve(undefined),
         },
       });
     } catch (e) {
@@ -48,6 +50,7 @@ describe('cli (core)', () => {
       },
       api: {
         print: () => {},
+        lookup: () => Promise.resolve(undefined),
       },
     });
     expect(fooAction).to.have.been.called.with(['param1', 'param2']);

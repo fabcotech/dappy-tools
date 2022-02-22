@@ -1,6 +1,5 @@
 import { Api } from './api';
 
-import { lookup } from '../lookup';
 import { dedent } from './utils/dedent';
 
 export interface Command {
@@ -49,9 +48,9 @@ export const lookupCommand: Command = {
   `,
   action: async ([name], api) => {
     if (!name) {
-      throw new Error('missing parameter name');
+      api.print('missing name');
     }
-    const record = await lookup(name);
+    const record = await api.lookup(name);
     if (record) {
       api.print(record.values[0].value);
     }
