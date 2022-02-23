@@ -79,4 +79,14 @@ describe('cli (commands)', () => {
     expect(print).to.have.been.called.with('missing name');
     expect(code).to.eql(1);
   });
+  it('lookup: record not found', async () => {
+    const lookup = () => Promise.resolve(undefined);
+    const print = chai.spy();
+    const code = await lookupCommand.action(['foo'], {
+      lookup,
+      print,
+    });
+    expect(print).to.have.been.called.with('Record foo not found');
+    expect(code).to.eql(1);
+  });
 });

@@ -11,6 +11,7 @@ import {
   isDappyRecord,
   isDappyNetwork,
   createGetDappyNetworkMembers,
+  // lookup,
 } from './lookup';
 // import { nodeRequest } from './utils/nodeRequest';
 import { spyFns } from './testUtils/spyFns';
@@ -297,6 +298,20 @@ describe('lookup', () => {
     );
     expect((await getNetwork())[0].ip).to.eql('DNETWORK_MEMBER_1_IP');
   });
+  // it.only('lookup', async () => {
+  //   const dappyRecord = await lookup('myrecord', {
+  //     dappyNetwork: [
+  //       {
+  //         scheme: 'http',
+  //         hostname: 'dappy.dev',
+  //         port: '3001',
+  //         ip: '127.0.0.1',
+  //         // caCert: 'a',
+  //       },
+  //     ],
+  //   });
+  //   console.log(dappyRecord);
+  // });
   it('coResolveRequest with 3 network members (absolute: 2, accuracy: 66%): success scenario (3:abb => b) ', async () => {
     const fakeRecord1 = createDappyRecord();
     const fakeRecord2 = createDappyRecord({

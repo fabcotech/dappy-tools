@@ -54,9 +54,12 @@ export const lookupCommand: Command = {
       return 1;
     }
     const record = await api.lookup(name);
-    if (record) {
-      api.print(record.values[0].value);
+
+    if (!record) {
+      api.print(`Record ${name} not found`);
+      return 1;
     }
+    api.print(record.values[0].value);
     return 0;
   },
 };

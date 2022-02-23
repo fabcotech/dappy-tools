@@ -1,5 +1,5 @@
 // Source implementation: https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
-export const hashString = (str: string) => {
+export const hashString = (str = '') => {
   let hash = 0;
 
   if (str.length === 0) return hash.toString();
