@@ -1,8 +1,13 @@
 import http from 'http';
 import https from 'https';
 
+import { JSONObject } from './json';
+
 export const nodeRequest = async (
-  options: https.RequestOptions & { scheme: 'http' | 'https'; body?: any },
+  options: https.RequestOptions & {
+    scheme: 'http' | 'https';
+    body?: JSONObject;
+  },
 ) => {
   const schemes = {
     http,

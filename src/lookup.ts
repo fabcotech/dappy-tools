@@ -23,6 +23,7 @@ import {
 } from './utils/validation';
 import { hashString } from './utils/hashString';
 import { get } from './utils/get';
+import { JSONArray, JSONObject } from './utils/json';
 
 const DEFAULT_DAPPY_NETWORK = 'd';
 const GET_X_RECORD_PATH = '/get-x-records';
@@ -47,7 +48,7 @@ export const getDappyNetworkStaticList: GetDappyNetworks = () =>
   Promise.resolve(dappyNetworks);
 
 export const isDappyNetwork = (
-  network: any,
+  network: JSONArray | string,
 ): network is DappyNetworkMember[] => {
   return isArrayNotEmptyOf(
     isObjectWith({
@@ -84,7 +85,7 @@ export const getDappyNetworkMembers = createGetDappyNetworkMembers(
   getDappyNetworkStaticList,
 );
 
-export const tryParseJSON = (raw: string): object | undefined => {
+export const tryParseJSON = (raw: string): JSONObject | undefined => {
   try {
     return JSON.parse(raw);
   } catch (e) {
@@ -92,27 +93,25 @@ export const tryParseJSON = (raw: string): object | undefined => {
   }
 };
 
-export const isDappyNodeResponse = (response: {
-  [key: string]: any;
-}): response is DappyNodeResponse => {
+export const isDappyNodeResponse = (
+  response: JSONObject,
+): response is DappyNodeResponse => {
   return isObjectWith({
     success: isBoolean,
   })(response);
 };
 
-export const isDappyNodeSuccessResponse = (response: {
-  [key: string]: any;
-}): response is DappyNodeSuccessResponse =>
+export const isDappyNodeSuccessResponse = (
+  response: JSONObject,
+): response is DappyNodeSuccessResponse =>
   isDappyNodeResponse(response) && response.success;
 
-export const isDappyNodeResponseError = (response: {
-  [key: string]: any;
-}): response is DappyNodeErrorResponse =>
+export const isDappyNodeResponseError = (
+  response: JSONObject,
+): response is DappyNodeErrorResponse =>
   isDappyNodeResponse(response) && !response.success;
 
-export const isDappyRecord = (data: {
-  [key: string]: any;
-}): data is DappyRecord => {
+export const isDappyRecord = (data: JSONObject): data is DappyRecord => {
   return isObjectWith({
     values: isArrayNotEmptyOf(
       isObjectWith({
@@ -148,7 +147,7 @@ export const createGetXRecord =
     if (caCert) {
       reqOptions.ca = Buffer.from(caCert, 'base64').toString();
     }
-    const rawResponse: any = await request(reqOptions);
+    const rawResponse = await request(reqOptions);
 
     const jsonResponse = tryParseJSON(rawResponse);
 
@@ -220,7 +219,7 @@ export const createCoResolveRequest =
           };
         }
       },
-      members.map((_, i) => i as any),
+      members.map((_, i) => i.toString()),
       CO_RESOLUTION_SETTINGS[Math.min(members.length, 7)].accuracy,
       CO_RESOLUTION_SETTINGS[Math.min(members.length, 7)].absolute,
       (a) => a,
