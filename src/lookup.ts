@@ -19,12 +19,13 @@ import {
   isObjectWith,
   isArrayNotEmptyOf,
   isBoolean,
+  isOptional,
 } from './utils/validation';
 import { hashString } from './utils/hashString';
 import { get } from './utils/get';
 
 const DEFAULT_DAPPY_NETWORK = 'd';
-const GET_X_RECORD_PATH = '/getXRecord';
+const GET_X_RECORD_PATH = '/get-x-records';
 
 const CO_RESOLUTION_SETTINGS: {
   [key: number]: { absolute: number; accuracy: number };
@@ -54,7 +55,7 @@ export const isDappyNetwork = (
       ip: isIP,
       port: match(/^\d{1,5}$/),
       scheme: match(/^http(s)?$/),
-      caCert: isBase64String,
+      caCert: isOptional(isBase64String),
     }),
   )(network);
 };

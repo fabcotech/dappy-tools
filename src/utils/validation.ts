@@ -33,6 +33,10 @@ export function isBase64String(v: string) {
 
 type ValuePredicat = (v: any) => boolean;
 
+export const isOptional = (fn: ValuePredicat) => (v: any) => {
+  return v === undefined || fn(v);
+};
+
 export const isObjectWith =
   (schema: { [key: string]: ValuePredicat }) => (v: any) => {
     if (typeof v !== 'object') {

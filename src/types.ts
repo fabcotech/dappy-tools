@@ -6,7 +6,7 @@ export interface DappyNetworkMember {
   scheme: 'https' | 'http';
   hostname: string;
   port: string;
-  caCert: string;
+  caCert?: string;
   ip: string;
 }
 

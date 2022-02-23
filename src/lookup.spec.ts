@@ -62,6 +62,17 @@ describe('lookup', () => {
         },
       ]),
     ).to.eql(true);
+
+    expect(
+      isDappyNetwork([
+        {
+          hostname: 'hostname',
+          ip: '127.0.0.1',
+          port: '123',
+          scheme: 'https',
+        },
+      ]),
+    ).to.eql(true);
   });
 
   it('getXRecord() should return a DappyRecord for an existing name', async () => {
