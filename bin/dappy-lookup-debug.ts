@@ -1,3 +1,3 @@
-import { runCli } from '../src/cli/cli';
+import { runCli } from '../src/cli';
 
 runCli();

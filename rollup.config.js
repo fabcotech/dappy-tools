@@ -34,7 +34,7 @@ export default [
     plugins: [typescript({ tsconfig: './tsconfig.json' })],
   },
   {
-    input: 'src/cli/cli.ts',
+    input: 'src/cli/index.ts',
     output: [{ file: pkg.cli, format: 'cjs' }],
     plugins: [typescript({ tsconfig: './tsconfig.json' })],
   },
