@@ -23,6 +23,38 @@
       "skipFiles": [
         "<node_internals>/**"
       ]
+    },
+    {
+      "name": "cli",
+      "type": "node",
+      "request": "launch",
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "ts-node/register",
+      ],
+      "args": [
+        "./bin/dappy-lookup-debug.ts",
+        "${input:dappy-name}"
+      ],
+      "cwd": "${workspaceFolder}",
+      "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": [
+        "<node_internals>/**",
+        "node_modules/**"
+      ],
+      "env": {
+        "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json",
+        "TS_NODE_COMPILER_OPTIONS": "{\"module\": \"commonjs\" }"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "dappy-name",
+      "description": "The name to lookup",
+      "type": "promptString",
+      "default": "dappy",
     }
   ]
 }
