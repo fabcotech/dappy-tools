@@ -1,3 +1,4 @@
+import { DappyLookupOptions, DappyNetworkId } from '../types';
 import { Api } from './api';
 
 import { dedent } from './utils/dedent';
@@ -35,6 +36,16 @@ export const createHelpCommand = (commands: {
   },
 });
 
+export const getArg = (name: string, args: string[]): string | undefined => {
+  return args.find((arg) => arg.startsWith(`--${name}=`))?.split('=')[1];
+};
+
+export const isDappyNetworkId = (
+  networkId?: string,
+): networkId is DappyNetworkId => {
+  return networkId === 'd' || networkId === 'gamma';
+};
+
 export const lookupCommand: Command = {
   description: dedent`
     Lookup a name in dappy network.
@@ -48,12 +59,20 @@ export const lookupCommand: Command = {
       dappy-lookup foo --network=gamma                # Lookup name in dappy gamma network
       dappy-lookup foo --network-file=./custom.json   # Lookup name in dappy network defined in local.json
   `,
-  action: async ([name], api) => {
+  action: async ([name, ...rest], api) => {
     if (!name) {
       api.print('missing name');
       return 1;
     }
-    const record = await api.lookup(name);
+    const options: DappyLookupOptions = {
+      dappyNetwork: 'd',
+    };
+
+    const network = getArg('network', rest);
+    if (isDappyNetworkId(network)) {
+      options.dappyNetwork = network;
+    }
+    const record = await api.lookup(name, options);
 
     if (!record) {
       api.print(`Record ${name} not found`);

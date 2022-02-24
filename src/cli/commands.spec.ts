@@ -89,4 +89,17 @@ describe('cli (commands)', () => {
     expect(print).to.have.been.called.with('Record foo not found');
     expect(code).to.eql(1);
   });
+  it('lookup: specify existing network', async () => {
+    const lookup = chai.spy(() => Promise.resolve(undefined));
+    const print = chai.spy();
+
+    await lookupCommand.action(['foo', '--network=gamma'], {
+      lookup,
+      print,
+    });
+
+    expect(lookup).to.have.been.called.with('foo', {
+      dappyNetwork: 'gamma',
+    });
+  });
 });
