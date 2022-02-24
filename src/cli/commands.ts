@@ -50,14 +50,29 @@ export const lookupCommand: Command = {
   description: dedent`
     Lookup a name in dappy network.
     Built-in networks are:
-      - mainnet
+      - d
       - gamma
 
     Examples:
+      # Lookup name in dappy network (mainnet)
+      dappy-lookup name
+      # Lookup name in dappy gamma network
+      dappy-lookup name --network=gamma
+      # Lookup name using a custom dappy-node over http
+      dappy-lookup name --endpoint=http://127.0.0.1:8080 --hostname=localhost
+      # Lookup name using a custom dappy-node over https
+      dappy-lookup name --endpoint=https://127.0.0.1:443 --hostname=localhost --cacert=./cert.pem
+      # Lookup name using a custom dappy-node defined in a JSON config file
+      dappy-lookup name --network-file=./custom.json
 
-      dappy-lookup foo                                # Lookup name in dappy network (mainnet)
-      dappy-lookup foo --network=gamma                # Lookup name in dappy gamma network
-      dappy-lookup foo --network-file=./custom.json   # Lookup name in dappy network defined in local.json
+      JSON Config file example:
+      {
+        ip: <IPV4_ADDRESS>,
+        port: <PORT>,
+        hostname: <HOSTNAME>,
+        scheme: <HTTP | HTTPS>,
+        caCert: <BASE_64_ENCODED_CA_CERTIFICATE>
+      }
   `,
   action: async ([name, ...rest], api) => {
     if (!name) {
