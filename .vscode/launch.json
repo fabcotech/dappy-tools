@@ -35,7 +35,8 @@
       ],
       "args": [
         "./bin/dappy-lookup-debug.ts",
-        "${input:dappy-name}"
+        "${input:dappy-name}",
+        "--network=${input:dappy-network}",
       ],
       "cwd": "${workspaceFolder}",
       "internalConsoleOptions": "openOnSessionStart",
@@ -55,6 +56,15 @@
       "description": "The name to lookup",
       "type": "promptString",
       "default": "dappy",
+    },
+    {
+      "id": "dappy-network",
+      "description": "Dappy network",
+      "type": "pickString",
+      "options": [
+        "d",
+        "gamma"
+      ]
     }
   ]
 }
