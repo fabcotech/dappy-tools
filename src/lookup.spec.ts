@@ -18,7 +18,7 @@ import { spyFns } from './testUtils/spyFns';
 import {
   fakeDappyNodeSuccessResponse,
   createDappyRecord,
-  getFakeDappyNetworkInfo,
+  getFakeDappyNetworkMember,
   fakeDappyNodeErrorResponse,
 } from './testUtils/fakeData';
 
@@ -91,7 +91,7 @@ describe('lookup', () => {
 
     const r = await createGetXRecord(fakeRequest)(
       'foo',
-      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkMember(),
     );
     expect(r).to.eql(record);
   });
@@ -111,7 +111,7 @@ describe('lookup', () => {
 
     const r = await createGetXRecord(fakeRequest)(
       'foo',
-      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkMember(),
     );
     expect(r).to.eql(undefined, "Expected 'undefined' to be returned");
   });
@@ -128,7 +128,7 @@ describe('lookup', () => {
 
     let throwExp = false;
     try {
-      await createGetXRecord(fakeRequest)('foo', getFakeDappyNetworkInfo());
+      await createGetXRecord(fakeRequest)('foo', getFakeDappyNetworkMember());
     } catch (e) {
       throwExp = true;
       expect((e as Error).message).to.eql('unknown error');
@@ -146,7 +146,7 @@ describe('lookup', () => {
     try {
       await createGetXRecord(fakeRequest)(
         'foo',
-        getFakeDappyNetworkInfo({
+        getFakeDappyNetworkMember({
           ip: '127.0.0.1',
           port: '31000',
         }),
@@ -165,7 +165,7 @@ describe('lookup', () => {
 
     let throwExp;
     try {
-      await createGetXRecord(fakeRequest)('foo', getFakeDappyNetworkInfo());
+      await createGetXRecord(fakeRequest)('foo', getFakeDappyNetworkMember());
     } catch (e) {
       throwExp = e;
     }
@@ -185,7 +185,7 @@ describe('lookup', () => {
     try {
       const r = await createGetXRecord(fakeRequest)(
         'foo',
-        getFakeDappyNetworkInfo(),
+        getFakeDappyNetworkMember(),
       );
       console.log(r);
     } catch (e) {
@@ -215,7 +215,7 @@ describe('lookup', () => {
 
     let throwExp;
     try {
-      await createGetXRecord(fakeRequest)('foo', getFakeDappyNetworkInfo());
+      await createGetXRecord(fakeRequest)('foo', getFakeDappyNetworkMember());
     } catch (e) {
       throwExp = e;
     }
@@ -239,7 +239,7 @@ describe('lookup', () => {
 
     let throwExp;
     try {
-      await createGetXRecord(fakeRequest)('foo', getFakeDappyNetworkInfo());
+      await createGetXRecord(fakeRequest)('foo', getFakeDappyNetworkMember());
     } catch (e) {
       throwExp = e;
     }
@@ -261,8 +261,8 @@ describe('lookup', () => {
 
   it('getDappyNetworkInfo() should return custom valid DappyNetworkInfo[]', async () => {
     const customValidNetwork = [
-      getFakeDappyNetworkInfo(),
-      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkMember(),
+      getFakeDappyNetworkMember(),
     ];
     expect(await getDappyNetworkMembers(customValidNetwork)).to.eql(
       customValidNetwork,
@@ -271,8 +271,8 @@ describe('lookup', () => {
 
   it('getDappyNetworkInfo() should throw on invalid DappyNetworkInfo[]', async () => {
     const customValidNetwork = [
-      getFakeDappyNetworkInfo(),
-      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkMember(),
+      getFakeDappyNetworkMember(),
       {} as any,
     ];
     let exp;
@@ -289,7 +289,7 @@ describe('lookup', () => {
     const getNetwork = createGetDappyNetworkMembers(() =>
       Promise.resolve({
         d: [
-          getFakeDappyNetworkInfo({
+          getFakeDappyNetworkMember({
             ip: 'DNETWORK_MEMBER_1_IP',
           }),
         ],
@@ -344,9 +344,9 @@ describe('lookup', () => {
     const coResolve = createCoResolveRequest(fakeRequest);
 
     const dappyNetwork = [
-      getFakeDappyNetworkInfo(),
-      getFakeDappyNetworkInfo(),
-      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkMember(),
+      getFakeDappyNetworkMember(),
+      getFakeDappyNetworkMember(),
     ];
     const dappyRecord = await coResolve('foo', {
       dappyNetwork,
@@ -394,15 +394,15 @@ describe('lookup', () => {
     const coResolve = createCoResolveRequest(fakeRequest);
 
     const dappyNetwork = [
-      getFakeDappyNetworkInfo(),
-      getFakeDappyNetworkInfo(),
-      getFakeDappyNetworkInfo(),
-      getFakeDappyNetworkInfo(),
-      getFakeDappyNetworkInfo(),
-      getFakeDappyNetworkInfo(),
-      getFakeDappyNetworkInfo(),
-      getFakeDappyNetworkInfo(),
-      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkMember(),
+      getFakeDappyNetworkMember(),
+      getFakeDappyNetworkMember(),
+      getFakeDappyNetworkMember(),
+      getFakeDappyNetworkMember(),
+      getFakeDappyNetworkMember(),
+      getFakeDappyNetworkMember(),
+      getFakeDappyNetworkMember(),
+      getFakeDappyNetworkMember(),
     ];
     const dappyRecord = await coResolve('foo', {
       dappyNetwork,
@@ -448,13 +448,13 @@ describe('lookup', () => {
     const coResolve = createCoResolveRequest(fakeRequest);
 
     const dappyNetwork = [
-      getFakeDappyNetworkInfo(),
-      getFakeDappyNetworkInfo(),
-      getFakeDappyNetworkInfo(),
-      getFakeDappyNetworkInfo(),
-      getFakeDappyNetworkInfo(),
-      getFakeDappyNetworkInfo(),
-      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkMember(),
+      getFakeDappyNetworkMember(),
+      getFakeDappyNetworkMember(),
+      getFakeDappyNetworkMember(),
+      getFakeDappyNetworkMember(),
+      getFakeDappyNetworkMember(),
+      getFakeDappyNetworkMember(),
     ];
 
     let exp;
@@ -498,9 +498,9 @@ describe('lookup', () => {
     const coResolve = createCoResolveRequest(fakeRequest);
 
     const dappyNetwork = [
-      getFakeDappyNetworkInfo(),
-      getFakeDappyNetworkInfo(),
-      getFakeDappyNetworkInfo(),
+      getFakeDappyNetworkMember(),
+      getFakeDappyNetworkMember(),
+      getFakeDappyNetworkMember(),
     ];
 
     let exp;

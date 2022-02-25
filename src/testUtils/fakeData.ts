@@ -22,7 +22,7 @@ export const createDappyRecord = (
     record,
   );
 
-export const getFakeDappyNetworkInfo = (
+export const getFakeDappyNetworkMember = (
   networkInfo: Partial<DappyNetworkMember> = {},
 ): DappyNetworkMember =>
   mergeDeep(

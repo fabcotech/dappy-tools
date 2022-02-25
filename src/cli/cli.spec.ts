@@ -10,6 +10,7 @@ describe('cli (core)', () => {
     const api = {
       print: () => {},
       lookup: () => Promise.resolve(undefined),
+      readFile: () => Promise.resolve(''),
     };
     const commands = {
       foo: {
@@ -41,6 +42,7 @@ describe('cli (core)', () => {
     const api = {
       print: chai.spy(),
       lookup: () => Promise.resolve(undefined),
+      readFile: () => Promise.resolve(''),
     };
     const commands = {
       foo: {
@@ -72,6 +74,7 @@ describe('cli (core)', () => {
       api: {
         print: () => {},
         lookup: () => Promise.resolve(undefined),
+        readFile: () => Promise.resolve(''),
       },
     });
     expect(fooAction).to.have.been.called.with(['param1', 'param2']);
@@ -86,6 +89,7 @@ describe('cli (core)', () => {
       api: {
         print,
         lookup: () => Promise.resolve(undefined),
+        readFile: () => Promise.resolve(''),
       },
     });
     expect(print).to.have.been.called.with('missing command');
@@ -105,6 +109,7 @@ describe('cli (core)', () => {
       api: {
         print: () => {},
         lookup: () => Promise.resolve(undefined),
+        readFile: () => Promise.resolve(''),
       },
     });
     expect(fooAction).to.have.been.called.with(['param1', 'param2']);

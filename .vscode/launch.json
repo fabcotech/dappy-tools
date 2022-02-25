@@ -48,6 +48,31 @@
         "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json",
         "TS_NODE_COMPILER_OPTIONS": "{\"module\": \"commonjs\" }"
       }
+    },
+    {
+      "name": "cli (custom http dappy-node)",
+      "type": "node",
+      "request": "launch",
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "ts-node/register",
+      ],
+      "args": [
+        "./bin/dappy-lookup-debug.ts",
+        "${input:dappy-name}",
+        "--endpoint=${input:dappy-node-endpoint}",
+      ],
+      "cwd": "${workspaceFolder}",
+      "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": [
+        "<node_internals>/**",
+        "node_modules/**"
+      ],
+      "env": {
+        "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json",
+        "TS_NODE_COMPILER_OPTIONS": "{\"module\": \"commonjs\" }"
+      }
     }
   ],
   "inputs": [
@@ -56,6 +81,18 @@
       "description": "The name to lookup",
       "type": "promptString",
       "default": "dappy",
+    },
+    {
+      "id": "dappy-node-endpoint",
+      "description": "Dappy node endpoint",
+      "type": "promptString",
+      "default": "http://127.0.0.1:3001",
+    },
+    {
+      "id": "dappy-node-hostname",
+      "description": "Dappy node hostname",
+      "type": "promptString",
+      "default": "localhost",
     },
     {
       "id": "dappy-network",

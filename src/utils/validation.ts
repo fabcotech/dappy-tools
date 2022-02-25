@@ -1,6 +1,26 @@
+export const isUndefined = (v: any) => v === undefined;
+
 export function isStringNotEmpty(v: string) {
   return typeof v === 'string' && v.length > 0;
 }
+
+export const urlRegExp = /^(.+):\/\/([\w\\.]+)(?::(\d+))?$/;
+
+export function isProtocolUrl(protocol: string) {
+  return (v: string) => {
+    if (!isStringNotEmpty(v)) return false;
+    const match = v.match(urlRegExp) || [];
+    if (!match) {
+      return false;
+    }
+    const [, scheme] = match;
+    return scheme === protocol;
+  };
+}
+
+export const isHttpUrl = isProtocolUrl('http');
+
+export const isHttpsUrl = isProtocolUrl('https');
 
 export function isBoolean(v: any) {
   return typeof v === 'boolean';

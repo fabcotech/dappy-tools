@@ -23,7 +23,8 @@ import {
 } from './utils/validation';
 import { hashString } from './utils/hashString';
 import { get } from './utils/get';
-import { JSONArray, JSONObject } from './utils/json';
+import { JSONArray, JSONObject, JSONValue } from './utils/json';
+import { tryParseJSON } from './utils/parse';
 
 const DEFAULT_DAPPY_NETWORK = 'd';
 const GET_X_RECORD_PATH = '/get-x-records';
@@ -85,16 +86,8 @@ export const getDappyNetworkMembers = createGetDappyNetworkMembers(
   getDappyNetworkStaticList,
 );
 
-export const tryParseJSON = (raw: string): JSONObject | undefined => {
-  try {
-    return JSON.parse(raw);
-  } catch (e) {
-    return undefined;
-  }
-};
-
 export const isDappyNodeResponse = (
-  response: JSONObject,
+  response: JSONValue,
 ): response is DappyNodeResponse => {
   return isObjectWith({
     success: isBoolean,
@@ -111,7 +104,7 @@ export const isDappyNodeResponseError = (
 ): response is DappyNodeErrorResponse =>
   isDappyNodeResponse(response) && !response.success;
 
-export const isDappyRecord = (data: JSONObject): data is DappyRecord => {
+export const isDappyRecord = (data: JSONValue): data is DappyRecord => {
   return isObjectWith({
     values: isArrayNotEmptyOf(
       isObjectWith({

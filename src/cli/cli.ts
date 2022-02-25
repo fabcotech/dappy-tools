@@ -1,5 +1,5 @@
 import { Command, getCommands } from './commands';
-import { Api, print } from './api';
+import { Api, print, readFile } from './api';
 import { lookup } from '..';
 
 function processShutdown(code: number) {
@@ -47,6 +47,7 @@ export async function runCli(
   const api = parameters.api || {
     print,
     lookup,
+    readFile,
   };
 
   let code = 0;
