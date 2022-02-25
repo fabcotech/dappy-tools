@@ -61,7 +61,59 @@
       "args": [
         "./bin/dappy-lookup-debug.ts",
         "${input:dappy-name}",
-        "--endpoint=${input:dappy-node-endpoint}",
+        "--endpoint=${input:dappy-node-http-endpoint}",
+      ],
+      "cwd": "${workspaceFolder}",
+      "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": [
+        "<node_internals>/**",
+        "node_modules/**"
+      ],
+      "env": {
+        "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json",
+        "TS_NODE_COMPILER_OPTIONS": "{\"module\": \"commonjs\" }"
+      }
+    },
+    {
+      "name": "cli (custom https dappy-node)",
+      "type": "node",
+      "request": "launch",
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "ts-node/register",
+      ],
+      "args": [
+        "./bin/dappy-lookup-debug.ts",
+        "${input:dappy-name}",
+        "--endpoint=${input:dappy-node-https-endpoint}",
+        "--hostname=${input:dappy-node-hostname}",
+        "--cacert=${input:dappy-node-cacert}",
+      ],
+      "cwd": "${workspaceFolder}",
+      "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": [
+        "<node_internals>/**",
+        "node_modules/**"
+      ],
+      "env": {
+        "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json",
+        "TS_NODE_COMPILER_OPTIONS": "{\"module\": \"commonjs\" }"
+      }
+    },
+    {
+      "name": "cli (custom network file)",
+      "type": "node",
+      "request": "launch",
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "ts-node/register",
+      ],
+      "args": [
+        "./bin/dappy-lookup-debug.ts",
+        "${input:dappy-name}",
+        "--network-file=${input:dappy-network-file}"
       ],
       "cwd": "${workspaceFolder}",
       "internalConsoleOptions": "openOnSessionStart",
@@ -83,16 +135,34 @@
       "default": "dappy",
     },
     {
-      "id": "dappy-node-endpoint",
-      "description": "Dappy node endpoint",
+      "id": "dappy-network-file",
+      "description": "Dappy network file",
+      "type": "promptString",
+      "default": "./custom-dappy-network.json",
+    },
+    {
+      "id": "dappy-node-http-endpoint",
+      "description": "Dappy node http endpoint",
       "type": "promptString",
       "default": "http://127.0.0.1:3001",
+    },
+    {
+      "id": "dappy-node-https-endpoint",
+      "description": "Dappy node https endpoint",
+      "type": "promptString",
+      "default": "https://127.0.0.1:3002",
     },
     {
       "id": "dappy-node-hostname",
       "description": "Dappy node hostname",
       "type": "promptString",
       "default": "localhost",
+    },
+    {
+      "id": "dappy-node-cacert",
+      "description": "Dappy node hostname",
+      "type": "promptString",
+      "default": "./dappynode.crt",
     },
     {
       "id": "dappy-network",

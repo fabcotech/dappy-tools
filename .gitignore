@@ -1,3 +1,5 @@
 node_modules
 dist
 build
+*.crt
+custom-dappy-network.json

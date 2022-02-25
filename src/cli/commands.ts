@@ -192,7 +192,7 @@ export const lookupCommand: Command = {
       # Lookup name in dappy gamma network
       dappy-lookup name --network=gamma
       # Lookup name using a custom dappy-node over http
-      dappy-lookup name --endpoint=http://127.0.0.1:8080 --hostname=localhost
+      dappy-lookup name --endpoint=http://127.0.0.1:8080
       # Lookup name using a custom dappy-node over https
       dappy-lookup name --endpoint=https://127.0.0.1:443 --hostname=localhost --cacert=./cert.pem
       # Lookup name using a custom dappy-node defined in a JSON config file
