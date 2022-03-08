@@ -195,17 +195,19 @@ export const lookupCommand: Command = {
       dappy-lookup name --endpoint=http://127.0.0.1:8080
       # Lookup name using a custom dappy-node over https
       dappy-lookup name --endpoint=https://127.0.0.1:443 --hostname=localhost --cacert=./cert.pem
-      # Lookup name using a custom dappy-node defined in a JSON config file
-      dappy-lookup name --network-file=./custom.json
+      # Lookup name using a custom dappy-node network defined in a JSON config file
+      dappy-lookup name --network-file=./custom-network.json
 
-      JSON Config file example:
-      {
-        ip: <IPV4_ADDRESS>,
-        port: <PORT>,
-        hostname: <HOSTNAME>,
-        scheme: <HTTP | HTTPS>,
-        caCert: <BASE_64_ENCODED_CA_CERTIFICATE>
-      }
+      Here is the json config file scheme of a Dappy-node network:
+      [
+        {
+          "ip": "<IPV4_ADDRESS>",
+          "port": <PORT>,
+          "hostname": "<HOSTNAME>",
+          "scheme": "<HTTP | HTTPS>",
+          "caCert": "<BASE_64_ENCODED_CA_CERTIFICATE>"
+        }
+      ]
   `,
   action: async ([name, ...rest], api) => {
     if (!name) {
