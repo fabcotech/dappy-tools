@@ -88,6 +88,6 @@ describe('nodeLookup', () => {
       throwExp = e;
     }
 
-    expect((throwExp as any).message).to.equal('No record found for name foo');
+    expect((throwExp as any).message).to.equal('No zone found for name foo');
   });
 });

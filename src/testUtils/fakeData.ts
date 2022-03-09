@@ -1,27 +1,10 @@
 import {
-  DappyRecord,
   DappyNetworkMember,
   DappyNodeErrorResponse,
   DappyNodeSuccessResponse,
   DappyZone,
 } from '../types';
 import { mergeDeep } from './mergeDeep';
-
-export const createDappyRecord = (
-  record: Partial<DappyRecord> = {},
-): DappyRecord =>
-  mergeDeep(
-    {
-      values: [
-        {
-          value: '127.0.0.1',
-          kind: 'IPv4',
-        },
-      ],
-      ca: ['123456789ABCDEF', '123456789ABCDEF'],
-    },
-    record,
-  );
 
 export const createDappyZone = (zone: Partial<DappyZone> = {}): DappyZone => {
   return mergeDeep(
@@ -73,7 +56,7 @@ export const fakeDappyNodeSuccessResponse = (
       success: true,
       records: [
         {
-          data: JSON.stringify(createDappyRecord()),
+          data: JSON.stringify(createDappyZone()),
         },
       ],
     },

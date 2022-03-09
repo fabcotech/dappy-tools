@@ -1,7 +1,6 @@
 import { resolver, ResolverOutput } from 'beesjs';
 import {
   DappyLookupOptions,
-  DappyRecord,
   DappyNodeResponse,
   DappyNetwork,
   DappyNetworkId,
@@ -145,18 +144,6 @@ export const isDappyZone = (data: JSONObject): data is DappyZone => {
   })(data);
 };
 
-export const isDappyRecord = (data: JSONValue): data is DappyRecord => {
-  return isObjectWith({
-    values: isArrayNotEmptyOf(
-      isObjectWith({
-        value: isStringNotEmpty,
-        kind: isStringNotEmpty,
-      }),
-    ),
-    ca: isArrayNotEmptyOf(isStringNotEmpty),
-  })(data);
-};
-
 export const createGetZone =
   (request: typeof nodeRequest) =>
   async (
@@ -234,9 +221,9 @@ export const createCoResolveRequest =
     const resolved = await resolver(
       async (id) => {
         try {
-          const record = await getZone(name, members[Number(id)]);
-          const hash = hashString(JSON.stringify(record));
-          results[hash] = record;
+          const zone = await getZone(name, members[Number(id)]);
+          const hash = hashString(JSON.stringify(zone));
+          results[hash] = zone;
 
           return {
             type: 'SUCCESS',

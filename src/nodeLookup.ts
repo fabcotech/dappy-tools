@@ -14,12 +14,12 @@ export function createCached(action: typeof dappyLookupRecord) {
 
   return async (name: string) => {
     if (!cache[name]) {
-      const record = await action(name);
-      if (!record) {
+      const zone = await action(name);
+      if (!zone) {
         return undefined;
       }
       cache[name] = {
-        value: record,
+        value: zone,
         hit: 0,
         age: Date.now(),
       };
@@ -65,7 +65,7 @@ const createGetCA =
   (lookupFn: typeof dappyLookupRecord) => async (name: string) => {
     const record = await lookupFn(name);
     if (!record) {
-      throw new Error(`No record found for name ${name}`);
+      throw new Error(`No zone found for name ${name}`);
     }
     return record;
   };

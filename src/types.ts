@@ -14,16 +14,6 @@ export type DappyLookupOptions = {
   dappyNetwork: DappyNetwork;
 };
 
-export type DappyRecordValue = {
-  value: string;
-  kind: string;
-};
-
-export type DappyRecord = {
-  values: DappyRecordValue[];
-  ca: string[];
-};
-
 export type ResourceRecord = {
   name: string;
   ttl?: number;
