@@ -4,6 +4,10 @@ export function isStringNotEmpty(v: string) {
   return typeof v === 'string' && v.length > 0;
 }
 
+export function isNumber(v: number) {
+  return typeof v === 'number';
+}
+
 export const urlRegExp = /^(.+):\/\/([\w\\.]+)(?::(\d+))?$/;
 
 export function isProtocolUrl(protocol: string) {

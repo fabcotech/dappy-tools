@@ -3,6 +3,7 @@ import {
   DappyNetworkMember,
   DappyNodeErrorResponse,
   DappyNodeSuccessResponse,
+  DappyZone,
 } from '../types';
 import { mergeDeep } from './mergeDeep';
 
@@ -21,6 +22,33 @@ export const createDappyRecord = (
     },
     record,
   );
+
+export const createDappyZone = (zone: Partial<DappyZone> = {}): DappyZone => {
+  return mergeDeep(
+    {
+      $origin: 'example.com',
+      $ttl: 3600,
+      a: [
+        { name: '@', ip: '127.0.0.1' },
+        { name: 'foo', ip: '127.0.0.1' },
+      ],
+      aaaa: [
+        { name: '@', ip: '::1' },
+        { name: 'foo', ip: '::1' },
+      ],
+      tlsa: [
+        {
+          name: '@',
+          certUsage: 3,
+          selector: 1,
+          matchingType: 1,
+          cert: '123456789ABCDEF',
+        },
+      ],
+    },
+    zone,
+  );
+};
 
 export const getFakeDappyNetworkMember = (
   networkInfo: Partial<DappyNetworkMember> = {},

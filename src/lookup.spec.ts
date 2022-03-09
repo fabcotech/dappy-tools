@@ -9,6 +9,7 @@ import {
   isDappyNodeResponse,
   isDappyNodeResponseError,
   isDappyRecord,
+  isDappyZone,
   isDappyNetwork,
   createGetDappyNetworkMembers,
   // lookup,
@@ -18,6 +19,7 @@ import { spyFns } from './testUtils/spyFns';
 import {
   fakeDappyNodeSuccessResponse,
   createDappyRecord,
+  createDappyZone,
   getFakeDappyNetworkMember,
   fakeDappyNodeErrorResponse,
 } from './testUtils/fakeData';
@@ -48,6 +50,15 @@ describe('lookup', () => {
       foo: 'bar',
     };
     expect(isDappyRecord(notDappyRecord)).to.eql(false);
+  });
+
+  it('isDappyZone()', () => {
+    const dappyZone = createDappyZone();
+    expect(isDappyZone(dappyZone)).to.eql(true);
+    const notDappyZone = {
+      foo: 'bar',
+    };
+    expect(isDappyZone(notDappyZone)).to.eql(false);
   });
 
   it('isDappyNetwork()', async () => {

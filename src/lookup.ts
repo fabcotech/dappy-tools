@@ -8,6 +8,7 @@ import {
   DappyNetworkMember,
   DappyNodeErrorResponse,
   DappyNodeSuccessResponse,
+  DappyZone,
 } from './types';
 import { dappyNetworks } from './dappyNetworks';
 import { nodeRequest } from './utils/nodeRequest';
@@ -20,6 +21,9 @@ import {
   isArrayNotEmptyOf,
   isBoolean,
   isOptional,
+  isNumber,
+  isIPv4,
+  isIPv6,
 } from './utils/validation';
 import { hashString } from './utils/hashString';
 import { get } from './utils/get';
@@ -103,6 +107,43 @@ export const isDappyNodeResponseError = (
   response: JSONObject,
 ): response is DappyNodeErrorResponse =>
   isDappyNodeResponse(response) && !response.success;
+
+export const isDappyZone = (data: JSONObject): data is DappyZone => {
+  return isObjectWith({
+    $origin: isStringNotEmpty,
+    $ttl: isNumber,
+    a: isOptional(
+      isArrayNotEmptyOf(
+        isObjectWith({
+          name: isStringNotEmpty,
+          ttl: isOptional(isNumber),
+          ip: isIPv4,
+        }),
+      ),
+    ),
+    aaaa: isOptional(
+      isArrayNotEmptyOf(
+        isObjectWith({
+          name: isStringNotEmpty,
+          ttl: isOptional(isNumber),
+          ip: isIPv6,
+        }),
+      ),
+    ),
+    tlsa: isOptional(
+      isArrayNotEmptyOf(
+        isObjectWith({
+          name: isStringNotEmpty,
+          ttl: isOptional(isNumber),
+          certUsage: isNumber,
+          selector: isNumber,
+          matchingType: isNumber,
+          cert: isStringNotEmpty,
+        }),
+      ),
+    ),
+  })(data);
+};
 
 export const isDappyRecord = (data: JSONValue): data is DappyRecord => {
   return isObjectWith({
