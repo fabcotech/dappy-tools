@@ -1,13 +1,12 @@
 import dns from 'dns';
+import { DappyZone } from './types';
 
 import { lookup as dappyLookupRecord } from './lookup';
-import { DappyRecord, DappyRecordValue } from './types';
-import { isIPv6 } from './utils/validation';
 
 export function createCached(action: typeof dappyLookupRecord) {
   const cache: {
     [key: string]: {
-      value: DappyRecord;
+      value: DappyZone;
       hit: number;
       age: number;
     };
@@ -31,13 +30,6 @@ export function createCached(action: typeof dappyLookupRecord) {
   };
 }
 
-function withFamily(recordValue: DappyRecordValue) {
-  return {
-    address: recordValue.value,
-    family: isIPv6(recordValue.value) ? 6 : 4,
-  };
-}
-
 const internalCreateNodeLookup =
   (lookupFn: typeof dappyLookupRecord) =>
   async (
@@ -45,21 +37,19 @@ const internalCreateNodeLookup =
     options: dns.LookupOneOptions,
     callback: (...args: any[]) => void,
   ) => {
-    const record = await lookupFn(name);
+    const zone = await lookupFn(name);
     const family = options.family === 6 ? 6 : 4;
 
-    if (!record) {
+    if (!zone) {
       callback(
         new Error(`No address found for name ${name} (format: IPv${family})`),
       );
       return;
     }
 
-    const addresses = record.values
-      .map(withFamily)
-      .filter((a) => a.family === family);
+    const addresses = zone[family === 6 ? 'aaaa' : 'a'];
 
-    if (addresses.length === 0) {
+    if (!addresses || addresses.length === 0) {
       callback(
         new Error(
           `No address found for name ${name} (format: IPv${options.family})`,
@@ -68,7 +58,7 @@ const internalCreateNodeLookup =
       return;
     }
 
-    callback(null, addresses[0].address, addresses[0].family);
+    callback(null, addresses[0].ip, family);
   };
 
 const createGetCA =

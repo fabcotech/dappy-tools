@@ -157,12 +157,12 @@ export const isDappyRecord = (data: JSONValue): data is DappyRecord => {
   })(data);
 };
 
-export const createGetXRecord =
+export const createGetZone =
   (request: typeof nodeRequest) =>
   async (
     name: string,
     options: DappyNetworkMember,
-  ): Promise<DappyRecord | undefined> => {
+  ): Promise<DappyZone | undefined> => {
     const { hostname, port, scheme, ip, caCert } = options;
     const reqOptions: Parameters<typeof request>[0] = {
       scheme,
@@ -209,15 +209,13 @@ export const createGetXRecord =
 
       if (!jsonData) {
         throw new Error(
-          `Could not parse record data from ${scheme}://${hostname}:${port}/${GET_X_RECORD_PATH}`,
+          `Could not parse zone data from ${scheme}://${hostname}:${port}/${GET_X_RECORD_PATH}`,
         );
       }
-      if (!isDappyRecord(jsonData)) {
-        throw new Error(
-          `Dappy record is incorrect: ${JSON.stringify(jsonData)}`,
-        );
+      if (!isDappyZone(jsonData as any)) {
+        throw new Error(`Dappy zone is incorrect: ${JSON.stringify(jsonData)}`);
       }
-      return jsonData;
+      return jsonData as DappyZone;
     }
   };
 
@@ -229,14 +227,14 @@ const getHashOfMajorityResult = (resolved: ResolverOutput) =>
 export const createCoResolveRequest =
   (request: typeof nodeRequest) =>
   async (name: string, options?: DappyLookupOptions) => {
-    const getXRecord = createGetXRecord(request);
+    const getZone = createGetZone(request);
     const members = await getDappyNetworkMembers(options?.dappyNetwork);
 
-    const results: Record<string, DappyRecord | undefined> = {};
+    const results: Record<string, DappyZone | undefined> = {};
     const resolved = await resolver(
       async (id) => {
         try {
-          const record = await getXRecord(name, members[Number(id)]);
+          const record = await getZone(name, members[Number(id)]);
           const hash = hashString(JSON.stringify(record));
           results[hash] = record;
 

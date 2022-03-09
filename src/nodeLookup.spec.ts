@@ -2,14 +2,14 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
 import { internalCreateCachedNodeLookup } from './nodeLookup';
-import { createDappyRecord } from './testUtils/fakeData';
+import { createDappyZone } from './testUtils/fakeData';
 
 chai.use(spies);
 
 describe('nodeLookup', () => {
   it('create a cached version of dappy lookup for node', (done) => {
-    const record = createDappyRecord();
-    const fakeDappyLookup = () => Promise.resolve(record);
+    const zone = createDappyZone();
+    const fakeDappyLookup = () => Promise.resolve(zone);
     const { lookup } = internalCreateCachedNodeLookup(fakeDappyLookup)();
 
     lookup('foo', {}, (err, address, family) => {
@@ -24,8 +24,8 @@ describe('nodeLookup', () => {
     });
   });
   it('dappy lookup should be called once', (done) => {
-    const record = createDappyRecord();
-    const fakeDappyLookup = chai.spy(() => Promise.resolve(record));
+    const zone = createDappyZone();
+    const fakeDappyLookup = chai.spy(() => Promise.resolve(zone));
     const { lookup, getCA } = internalCreateCachedNodeLookup(fakeDappyLookup)();
 
     getCA('foo').then(() => {
@@ -41,19 +41,19 @@ describe('nodeLookup', () => {
   });
 
   it('should returns all IPv6 addresses', (done) => {
-    const record = createDappyRecord({
-      values: [
-        { value: '127.0.0.1', kind: 'IPv4' },
-        { value: '::1', kind: 'IPv6' },
-        { value: '::2', kind: 'IPv6' },
+    const zone = createDappyZone({
+      a: [{ name: '@', ip: '127.0.0.1' }],
+      aaaa: [
+        { name: '@', ip: '::1' },
+        { name: '@', ip: '::2' },
       ],
     });
-    const fakeDappyLookup = chai.spy(() => Promise.resolve(record));
+    const fakeDappyLookup = chai.spy(() => Promise.resolve(zone));
     const { lookup } = internalCreateCachedNodeLookup(fakeDappyLookup)();
 
     lookup('foo', { family: 6 }, (err, address: string, family: string) => {
       try {
-        expect(address).to.eql(record.values[1].value);
+        expect(address).to.eql(zone.aaaa![0].ip);
         expect(family).to.eql(6);
         done();
       } catch (e) {
@@ -63,7 +63,6 @@ describe('nodeLookup', () => {
   });
 
   it('lookup() should throw error on unknown name', (done) => {
-    // const record = createDappyRecord();
     const fakeDappyLookup = () => Promise.resolve(undefined);
     const { lookup } = internalCreateCachedNodeLookup(fakeDappyLookup)();
 
