@@ -81,3 +81,52 @@ export type DappyNodeSuccessResponse = {
 export type DappyNodeResponse =
   | DappyNodeErrorResponse
   | DappyNodeSuccessResponse;
+
+export type RecordType = 'A' | 'AAAA' | 'TLSA';
+
+export type RRAData = string;
+export type RRAAAAData = string;
+export type RRTLSAData = string;
+
+export type RRData = RRAData | RRAAAAData;
+export type DNSClass = 'IN';
+
+export type DNSQuestion = {
+  type: RecordType;
+  class: DNSClass;
+  name: string;
+};
+
+export type RecordAnswer = {
+  type: RecordType;
+  class: DNSClass;
+  name: string;
+  ttl: number;
+  data: RRData;
+};
+
+// DNS RCODEs in https://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml
+export enum DNSReturnCode {
+  NOERROR, // DNS Query completed successfully
+  FORMERR, //  DNS Query Format Error
+  SERVFAIL, // Server failed to complete the DNS request
+  NXDOMAIN, //  Domain name does not exist.
+  NOTIMP, //  Function not implemented
+  REFUSED, // The server refused to answer for the query
+  YXDOMAIN, //  Name that should not exist, does exist
+  XRRSET, //  RRset that should not exist, does exist
+  NOTAUTH, //  Server not authoritative for the zone
+  NOTZONE, //  Name not in zone
+}
+
+// As described in https://datatracker.ietf.org/doc/html/rfc1035#section-4.1
+export type DNSPacket = {
+  type: 'query' | 'response';
+  rcode: DNSReturnCode;
+  id: number;
+  flags: number;
+  questions: DNSQuestion[];
+  answers: RecordAnswer[];
+  additionals: [];
+  authorities: [];
+};
