@@ -97,7 +97,7 @@ export type DNSQuestion = {
   name: string;
 };
 
-export type RecordAnswer = {
+export type DNSAnswer = {
   type: RecordType;
   class: DNSClass;
   name: string;
@@ -126,7 +126,7 @@ export type DNSPacket = {
   id: number;
   flags: number;
   questions: DNSQuestion[];
-  answers: RecordAnswer[];
+  answers: DNSAnswer[];
   additionals: [];
   authorities: [];
 };
