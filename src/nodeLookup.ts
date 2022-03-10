@@ -47,7 +47,7 @@ const internalCreateNodeLookup =
       return;
     }
 
-    const addresses = zone[family === 6 ? 'aaaa' : 'a'];
+    const addresses = zone[family === 6 ? 'AAAA' : 'A'];
 
     if (!addresses || addresses.length === 0) {
       callback(

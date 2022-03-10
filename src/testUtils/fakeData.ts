@@ -11,15 +11,15 @@ export const createDappyZone = (zone: Partial<DappyZone> = {}): DappyZone => {
     {
       $origin: 'example.com',
       $ttl: 3600,
-      a: [
-        { name: '@', ip: '127.0.0.1' },
+      A: [
+        { name: 'example.com', ip: '127.0.0.1' },
         { name: 'foo', ip: '127.0.0.1' },
       ],
       aaaa: [
         { name: '@', ip: '::1' },
         { name: 'foo', ip: '::1' },
       ],
-      tlsa: [
+      TLSA: [
         {
           name: '@',
           certUsage: 3,

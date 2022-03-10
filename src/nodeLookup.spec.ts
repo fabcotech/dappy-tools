@@ -42,8 +42,8 @@ describe('nodeLookup', () => {
 
   it('should returns all IPv6 addresses', (done) => {
     const zone = createDappyZone({
-      a: [{ name: '@', ip: '127.0.0.1' }],
-      aaaa: [
+      A: [{ name: '@', ip: '127.0.0.1' }],
+      AAAA: [
         { name: '@', ip: '::1' },
         { name: '@', ip: '::2' },
       ],
@@ -53,7 +53,7 @@ describe('nodeLookup', () => {
 
     lookup('foo', { family: 6 }, (err, address: string, family: string) => {
       try {
-        expect(address).to.eql(zone.aaaa![0].ip);
+        expect(address).to.eql(zone.AAAA![0].ip);
         expect(family).to.eql(6);
         done();
       } catch (e) {

@@ -299,7 +299,7 @@ describe('lookup', () => {
   it('coResolveRequest with 3 network members (absolute: 2, accuracy: 66%): success scenario (3:abb => b) ', async () => {
     const fakeZone1 = createDappyZone();
     const fakeZone2 = createDappyZone({
-      a: [{ name: '@', ip: '192.168.1.1' }],
+      A: [{ name: '@', ip: '192.168.1.1' }],
     });
     const createEncodedZone = (zone: DappyZone) => [
       Buffer.from(
@@ -338,7 +338,7 @@ describe('lookup', () => {
   it('coResolveRequest with 9 network members (absolute: 4, accuracy: 66%): success scenario (9:baabaa => a)', async () => {
     const fakeZone1 = createDappyZone();
     const fakeZone2 = createDappyZone({
-      a: [{ name: '@', ip: '192.168.1.1' }],
+      A: [{ name: '@', ip: '192.168.1.1' }],
     });
     const createEncodedZone = (zone: DappyZone) => [
       Buffer.from(
@@ -389,7 +389,7 @@ describe('lookup', () => {
   it('coResolveRequest with 7 network members (absolute: 4, accuracy: 66%): failed scenario  (7:bbbaaaa => e)', async () => {
     const fakeZone1 = createDappyZone();
     const fakeZone2 = createDappyZone({
-      a: [{ name: '@', ip: '192.168.1.1' }],
+      A: [{ name: '@', ip: '192.168.1.1' }],
     });
     const createEncodedZone = (zone: DappyZone) => [
       Buffer.from(

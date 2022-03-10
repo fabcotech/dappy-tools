@@ -59,9 +59,9 @@ export type RRTLSA = ResourceRecord & {
 export type DappyZone = {
   $origin: string;
   $ttl?: number;
-  tlsa: RRTLSA[];
-  a?: RRA[];
-  aaaa?: RRAAAA[];
+  TLSA: RRTLSA[];
+  A?: RRA[];
+  AAAA?: RRAAAA[];
 };
 
 export type DappyNodeErrorResponse = {

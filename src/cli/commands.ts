@@ -224,11 +224,11 @@ export const lookupCommand: Command = {
 
     const record = await api.lookup(name, options);
 
-    if (!record || !record.a) {
+    if (!record || !record.A) {
       api.print(`Record ${name} not found`);
       return 1;
     }
-    api.print(`${name} => ${record.a[0].ip}`);
+    api.print(`${name} => ${record.A[0].ip}`);
     return 0;
   },
 };
