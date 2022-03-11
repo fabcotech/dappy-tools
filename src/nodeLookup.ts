@@ -1,12 +1,12 @@
 import dns from 'dns';
-import { DappyZone } from './types';
+import { NamePacket } from './model/NamePacket';
 
 import { lookup as dappyLookupRecord } from './lookup';
 
 export function createCached(action: typeof dappyLookupRecord) {
   const cache: {
     [key: string]: {
-      value: DappyZone;
+      value: NamePacket;
       hit: number;
       age: number;
     };
@@ -14,12 +14,10 @@ export function createCached(action: typeof dappyLookupRecord) {
 
   return async (name: string) => {
     if (!cache[name]) {
-      const zone = await action(name);
-      if (!zone) {
-        return undefined;
-      }
+      const value = await action(name);
+
       cache[name] = {
-        value: zone,
+        value,
         hit: 0,
         age: Date.now(),
       };
@@ -37,17 +35,17 @@ const internalCreateNodeLookup =
     options: dns.LookupOneOptions,
     callback: (...args: any[]) => void,
   ) => {
-    const zone = await lookupFn(name);
+    const packet = await lookupFn(name);
     const family = options.family === 6 ? 6 : 4;
 
-    if (!zone) {
+    if (!packet.answers || !packet.answers.length) {
       callback(
         new Error(`No address found for name ${name} (format: IPv${family})`),
       );
       return;
     }
 
-    const addresses = zone[family === 6 ? 'AAAA' : 'A'];
+    const addresses = packet.answers.map(({ data }) => data);
 
     if (!addresses || addresses.length === 0) {
       callback(
@@ -58,16 +56,17 @@ const internalCreateNodeLookup =
       return;
     }
 
-    callback(null, addresses[0].ip, family);
+    callback(null, addresses[0], family);
   };
 
 const createGetCA =
   (lookupFn: typeof dappyLookupRecord) => async (name: string) => {
-    const record = await lookupFn(name);
-    if (!record) {
-      throw new Error(`No zone found for name ${name}`);
+    const packet = await lookupFn(name);
+    const cert = (packet.answers || []).find(({ type }) => type === 'CERT');
+    if (!packet.answers || !cert) {
+      throw new Error(`No cert found for name ${name}`);
     }
-    return record;
+    return cert;
   };
 
 export const internalCreateCachedNodeLookup =

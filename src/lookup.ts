@@ -1,33 +1,16 @@
 import { resolver, ResolverOutput } from 'beesjs';
+import { dappyNetworks } from './dappyNetworks';
+import { nodeRequest } from './utils/nodeRequest';
+import { hashString } from './utils/hashString';
+import { tryParseJSON } from './utils/parse';
+import { isNamePacket, NamePacket } from './model/NamePacket';
 import {
-  DappyLookupOptions,
-  DappyNodeResponse,
+  isDappyNetwork,
   DappyNetwork,
   DappyNetworkId,
   DappyNetworkMember,
-  DappyNodeErrorResponse,
-  DappyNodeSuccessResponse,
-  DappyZone,
-} from './types';
-import { dappyNetworks } from './dappyNetworks';
-import { nodeRequest } from './utils/nodeRequest';
-import {
-  isIP,
-  isStringNotEmpty,
-  match,
-  isBase64String,
-  isObjectWith,
-  isArrayNotEmptyOf,
-  isBoolean,
-  isOptional,
-  isNumber,
-  isIPv4,
-  isIPv6,
-} from './utils/validation';
-import { hashString } from './utils/hashString';
-import { get } from './utils/get';
-import { JSONArray, JSONObject, JSONValue } from './utils/json';
-import { tryParseJSON } from './utils/parse';
+} from './model/DappyNetwork';
+import { DappyLookupOptions } from './types';
 
 const DEFAULT_DAPPY_NETWORK = 'd';
 const GET_X_RECORD_PATH = '/get-x-records';
@@ -50,20 +33,6 @@ export type GetDappyNetworks = () => Promise<
 
 export const getDappyNetworkStaticList: GetDappyNetworks = () =>
   Promise.resolve(dappyNetworks);
-
-export const isDappyNetwork = (
-  network: JSONArray | string,
-): network is DappyNetworkMember[] => {
-  return isArrayNotEmptyOf(
-    isObjectWith({
-      hostname: isStringNotEmpty,
-      ip: isIP,
-      port: match(/^\d{1,5}$/),
-      scheme: match(/^http(s)?$/),
-      caCert: isOptional(isBase64String),
-    }),
-  )(network);
-};
 
 export const createGetDappyNetworkMembers =
   (getDappyNetworks: GetDappyNetworks) =>
@@ -89,67 +58,9 @@ export const getDappyNetworkMembers = createGetDappyNetworkMembers(
   getDappyNetworkStaticList,
 );
 
-export const isDappyNodeResponse = (
-  response: JSONValue,
-): response is DappyNodeResponse => {
-  return isObjectWith({
-    success: isBoolean,
-  })(response);
-};
-
-export const isDappyNodeSuccessResponse = (
-  response: JSONObject,
-): response is DappyNodeSuccessResponse =>
-  isDappyNodeResponse(response) && response.success;
-
-export const isDappyNodeResponseError = (
-  response: JSONObject,
-): response is DappyNodeErrorResponse =>
-  isDappyNodeResponse(response) && !response.success;
-
-export const isDappyZone = (data: JSONObject): data is DappyZone => {
-  return isObjectWith({
-    $origin: isStringNotEmpty,
-    $ttl: isNumber,
-    a: isOptional(
-      isArrayNotEmptyOf(
-        isObjectWith({
-          name: isStringNotEmpty,
-          ttl: isOptional(isNumber),
-          ip: isIPv4,
-        }),
-      ),
-    ),
-    aaaa: isOptional(
-      isArrayNotEmptyOf(
-        isObjectWith({
-          name: isStringNotEmpty,
-          ttl: isOptional(isNumber),
-          ip: isIPv6,
-        }),
-      ),
-    ),
-    tlsa: isOptional(
-      isArrayNotEmptyOf(
-        isObjectWith({
-          name: isStringNotEmpty,
-          ttl: isOptional(isNumber),
-          certUsage: isNumber,
-          selector: isNumber,
-          matchingType: isNumber,
-          cert: isStringNotEmpty,
-        }),
-      ),
-    ),
-  })(data);
-};
-
-export const createGetZone =
+export const createGetRecords =
   (request: typeof nodeRequest) =>
-  async (
-    name: string,
-    options: DappyNetworkMember,
-  ): Promise<DappyZone | undefined> => {
+  async (name: string, options: DappyNetworkMember) => {
     const { hostname, port, scheme, ip, caCert } = options;
     const reqOptions: Parameters<typeof request>[0] = {
       scheme,
@@ -172,38 +83,19 @@ export const createGetZone =
 
     const jsonResponse = tryParseJSON(rawResponse);
 
-    if (!jsonResponse) {
+    if (!jsonResponse || Array.isArray(jsonResponse)) {
       throw new Error(
         `Could not parse response from ${scheme}://${hostname}:${port}/${GET_X_RECORD_PATH}`,
       );
     }
 
-    if (!isDappyNodeResponse(jsonResponse)) {
+    if (!isNamePacket(jsonResponse)) {
       throw new Error(
-        `Dappy node response is incorrect: ${JSON.stringify(jsonResponse)}`,
+        `Name packet is incorrect: ${JSON.stringify(jsonResponse)}`,
       );
     }
 
-    if (isDappyNodeResponseError(jsonResponse)) {
-      throw new Error(jsonResponse.error.message);
-    } else {
-      const rawData = get<string>(jsonResponse, 'records[0].data');
-      if (!rawData) {
-        return undefined;
-      }
-
-      const jsonData = tryParseJSON(rawData);
-
-      if (!jsonData) {
-        throw new Error(
-          `Could not parse zone data from ${scheme}://${hostname}:${port}/${GET_X_RECORD_PATH}`,
-        );
-      }
-      if (!isDappyZone(jsonData as any)) {
-        throw new Error(`Dappy zone is incorrect: ${JSON.stringify(jsonData)}`);
-      }
-      return jsonData as DappyZone;
-    }
+    return jsonResponse;
   };
 
 const getHashOfMajorityResult = (resolved: ResolverOutput) =>
@@ -213,17 +105,17 @@ const getHashOfMajorityResult = (resolved: ResolverOutput) =>
 
 export const createCoResolveRequest =
   (request: typeof nodeRequest) =>
-  async (name: string, options?: DappyLookupOptions) => {
-    const getZone = createGetZone(request);
+  async (name: string, options?: DappyLookupOptions): Promise<NamePacket> => {
+    const getRecords = createGetRecords(request);
     const members = await getDappyNetworkMembers(options?.dappyNetwork);
 
-    const results: Record<string, DappyZone | undefined> = {};
+    const results: Record<string, NamePacket> = {};
     const resolved = await resolver(
       async (id) => {
         try {
-          const zone = await getZone(name, members[Number(id)]);
-          const hash = hashString(JSON.stringify(zone));
-          results[hash] = zone;
+          const namePacket = await getRecords(name, members[Number(id)]);
+          const hash = hashString(JSON.stringify(namePacket));
+          results[hash] = namePacket;
 
           return {
             type: 'SUCCESS',

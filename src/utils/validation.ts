@@ -1,3 +1,7 @@
+type ValuePredicat = (v: any) => boolean;
+
+export const not = (fn: ValuePredicat) => (v: any) => !fn(v);
+
 export const isUndefined = (v: any) => v === undefined;
 
 export function isStringNotEmpty(v: string) {
@@ -55,8 +59,6 @@ export function isBase64String(v: string) {
   return match(base64Regex)(v);
 }
 
-type ValuePredicat = (v: any) => boolean;
-
 export const isOptional = (fn: ValuePredicat) => (v: any) => {
   return v === undefined || fn(v);
 };
@@ -76,4 +78,8 @@ export const isArrayNotEmptyOf = (predicat: ValuePredicat) => (v: any) => {
   }
 
   return v.every(predicat);
+};
+
+export const isOneOf = (predicats: ValuePredicat[]) => (v: any) => {
+  return predicats.some((predicat) => predicat(v));
 };

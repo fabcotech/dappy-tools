@@ -1,148 +1,42 @@
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
-import { DappyNetworkId, DappyZone } from '.';
+import { DappyNetworkId } from '.';
 import {
-  createGetZone,
   createCoResolveRequest,
   getDappyNetworkMembers,
-  isDappyNodeResponse,
-  isDappyNodeResponseError,
-  isDappyZone,
-  isDappyNetwork,
   createGetDappyNetworkMembers,
+  createGetRecords,
 } from './lookup';
 import { spyFns } from './testUtils/spyFns';
 import {
-  fakeDappyNodeSuccessResponse,
-  createDappyZone,
+  createNamePacketSuccessResponse,
   getFakeDappyNetworkMember,
-  fakeDappyNodeErrorResponse,
-} from './testUtils/fakeData';
+} from './model/fakeData';
+import { RecordType } from './model/ResourceRecords';
 
 chai.use(spies);
 
 describe('lookup', () => {
-  it('isDappyNodeResponse()', () => {
-    const dappyNodeResponse = fakeDappyNodeSuccessResponse();
-    expect(isDappyNodeResponse(dappyNodeResponse)).to.eql(true);
-    const notDappyDappyResponse = {
-      foo: 'bar',
-    };
-    expect(isDappyNodeResponse(notDappyDappyResponse)).to.eql(false);
-  });
+  it('createGetRecords() should return NamePacket for an existing name', async () => {
+    const namePacket = createNamePacketSuccessResponse();
+    const fakeRequest = () => Promise.resolve(JSON.stringify(namePacket));
 
-  it('isDappyNodeResponseError()', () => {
-    const errorResponse = fakeDappyNodeErrorResponse();
-    expect(isDappyNodeResponseError(errorResponse)).to.eql(true);
-    const successResponse = fakeDappyNodeSuccessResponse();
-    expect(isDappyNodeResponseError(successResponse)).to.eql(false);
-  });
-
-  it('isDappyZone()', () => {
-    const dappyZone = createDappyZone();
-    expect(isDappyZone(dappyZone)).to.eql(true);
-    const notDappyZone = {
-      foo: 'bar',
-    };
-    expect(isDappyZone(notDappyZone)).to.eql(false);
-  });
-
-  it('isDappyNetwork()', async () => {
-    expect(isDappyNetwork([{ hostname: '' }])).to.eql(false);
-    expect(
-      isDappyNetwork([
-        {
-          hostname: 'hostname',
-          ip: '127.0.0.1',
-          port: '123',
-          scheme: 'https',
-          caCert: Buffer.from('wrong_ca_cert', 'utf8').toString('base64'),
-        },
-      ]),
-    ).to.eql(true);
-
-    expect(
-      isDappyNetwork([
-        {
-          hostname: 'hostname',
-          ip: '127.0.0.1',
-          port: '123',
-          scheme: 'https',
-        },
-      ]),
-    ).to.eql(true);
-  });
-
-  it('getZone() should return a DappyZone for an existing name', async () => {
-    const zone = createDappyZone();
-    const encodedZone = JSON.stringify({
-      success: true,
-      records: [
-        {
-          data: JSON.stringify(zone),
-        },
-      ],
-    });
-
-    const fakeRequest = () => Promise.resolve(encodedZone);
-
-    const r = await createGetZone(fakeRequest)(
-      'foo',
+    const r = await createGetRecords(fakeRequest)(
+      'example.com',
       getFakeDappyNetworkMember(),
     );
-    expect(r).to.eql(zone);
+    expect(r).to.eql(namePacket);
   });
 
-  it('getZone() return undefined for an unknown name', async () => {
-    const encodedZone = JSON.stringify({
-      success: true,
-      records: [
-        {
-          id: 'foo',
-          notfound: 'true',
-        },
-      ],
-    });
-
-    const fakeRequest = () => Promise.resolve(encodedZone);
-
-    const r = await createGetZone(fakeRequest)(
-      'foo',
-      getFakeDappyNetworkMember(),
-    );
-    expect(r).to.eql(undefined, "Expected 'undefined' to be returned");
-  });
-
-  it('getZone() throw an error on rchain error', async () => {
-    const encodedZone = JSON.stringify({
-      success: false,
-      error: {
-        message: 'unknown error',
-      },
-    });
-
-    const fakeRequest = () => Promise.resolve(encodedZone);
-
-    let throwExp = false;
-    try {
-      await createGetZone(fakeRequest)('foo', getFakeDappyNetworkMember());
-    } catch (e) {
-      throwExp = true;
-      expect((e as Error).message).to.eql('unknown error');
-    }
-
-    expect(throwExp).to.equal(true, 'Expected an error to be thrown');
-  });
-
-  it('getZone() network connectivity issue', async () => {
+  it('createGetRecords() network connectivity issue', async () => {
     const fakeRequest = () => {
       throw new Error('connect ECONNREFUSED 127.0.0.1:31000');
     };
 
     let throwExp;
     try {
-      await createGetZone(fakeRequest)(
+      await createGetRecords(fakeRequest)(
         'foo',
         getFakeDappyNetworkMember({
           ip: '127.0.0.1',
@@ -158,12 +52,12 @@ describe('lookup', () => {
     );
   });
 
-  it('getZone() return non JSON value', async () => {
+  it('createGetRecords() return non JSON value', async () => {
     const fakeRequest = () => Promise.resolve('NOT PARSABLE JSON');
 
     let throwExp;
     try {
-      await createGetZone(fakeRequest)('foo', getFakeDappyNetworkMember());
+      await createGetRecords(fakeRequest)('foo', getFakeDappyNetworkMember());
     } catch (e) {
       throwExp = e;
     }
@@ -173,7 +67,7 @@ describe('lookup', () => {
     );
   });
 
-  it('getZone() Dappy node response is incorrect', async () => {
+  it('createGetRecords() Dappy node response is incorrect', async () => {
     const encodedZone = JSON.stringify({
       foo: 'bar',
     });
@@ -181,7 +75,7 @@ describe('lookup', () => {
 
     let throwExp;
     try {
-      const r = await createGetZone(fakeRequest)(
+      const r = await createGetRecords(fakeRequest)(
         'foo',
         getFakeDappyNetworkMember(),
       );
@@ -191,61 +85,13 @@ describe('lookup', () => {
     }
 
     expect((throwExp as Error).message).to.eql(
-      `Dappy node response is incorrect: ${JSON.stringify({
+      `Name packet is incorrect: ${JSON.stringify({
         foo: 'bar',
       })}`,
     );
   });
 
-  xit('getZone() returns http error code ', async () => {});
-
-  it('getZone() could not parse dappy response data', async () => {
-    const encodedZone = JSON.stringify({
-      success: true,
-      records: [
-        {
-          data: 'NOT PARSABLE JSON',
-        },
-      ],
-    });
-
-    const fakeRequest = () => Promise.resolve(encodedZone);
-
-    let throwExp;
-    try {
-      await createGetZone(fakeRequest)('foo', getFakeDappyNetworkMember());
-    } catch (e) {
-      throwExp = e;
-    }
-
-    expect((throwExp as Error).message).to.match(
-      /^Could not parse zone data from/,
-    );
-  });
-
-  it('getZone() Dappy zone is incorrect', async () => {
-    const encodedZone = JSON.stringify({
-      success: true,
-      records: [
-        {
-          data: JSON.stringify({ foo: 'bar' }),
-        },
-      ],
-    });
-
-    const fakeRequest = () => Promise.resolve(encodedZone);
-
-    let throwExp;
-    try {
-      await createGetZone(fakeRequest)('foo', getFakeDappyNetworkMember());
-    } catch (e) {
-      throwExp = e;
-    }
-
-    expect((throwExp as Error).message).to.eql(
-      `Dappy zone is incorrect: ${JSON.stringify({ foo: 'bar' })}`,
-    );
-  });
+  xit('createGetRecords() returns http error code ', async () => {});
 
   it('getDappyNetworkMembers() unknown dappy network', async () => {
     let exp;
@@ -297,27 +143,23 @@ describe('lookup', () => {
     expect((await getNetwork())[0].ip).to.eql('DNETWORK_MEMBER_1_IP');
   });
   it('coResolveRequest with 3 network members (absolute: 2, accuracy: 66%): success scenario (3:abb => b) ', async () => {
-    const fakeZone1 = createDappyZone();
-    const fakeZone2 = createDappyZone({
-      A: [{ name: '@', ip: '192.168.1.1' }],
+    const namePacket1 = createNamePacketSuccessResponse();
+    const namePacket2 = createNamePacketSuccessResponse({
+      answers: [
+        {
+          name: '@',
+          data: '192.168.1.1',
+          type: RecordType.A,
+          ttl: 60,
+          class: 'IN',
+        },
+      ],
     });
-    const createEncodedZone = (zone: DappyZone) => [
-      Buffer.from(
-        JSON.stringify({
-          success: true,
-          records: [
-            {
-              data: JSON.stringify(zone),
-            },
-          ],
-        }),
-      ),
-    ];
 
     const fakeRequest = spyFns([
-      () => Promise.resolve(createEncodedZone(fakeZone1)),
-      () => Promise.resolve(createEncodedZone(fakeZone2)),
-      () => Promise.resolve(createEncodedZone(fakeZone2)),
+      () => Promise.resolve(JSON.stringify(namePacket1)),
+      () => Promise.resolve(JSON.stringify(namePacket2)),
+      () => Promise.resolve(JSON.stringify(namePacket2)),
     ]);
 
     const coResolve = createCoResolveRequest(fakeRequest);
@@ -331,38 +173,34 @@ describe('lookup', () => {
       dappyNetwork,
     });
 
-    expect(zone).to.eql(fakeZone2);
+    expect(zone).to.eql(namePacket2);
     expect(fakeRequest).to.have.been.called.exactly(3);
   });
 
   it('coResolveRequest with 9 network members (absolute: 4, accuracy: 66%): success scenario (9:baabaa => a)', async () => {
-    const fakeZone1 = createDappyZone();
-    const fakeZone2 = createDappyZone({
-      A: [{ name: '@', ip: '192.168.1.1' }],
+    const namePacket1 = createNamePacketSuccessResponse();
+    const namePacket2 = createNamePacketSuccessResponse({
+      answers: [
+        {
+          name: '@',
+          data: '192.168.1.1',
+          type: RecordType.A,
+          ttl: 60,
+          class: 'IN',
+        },
+      ],
     });
-    const createEncodedZone = (zone: DappyZone) => [
-      Buffer.from(
-        JSON.stringify({
-          success: true,
-          records: [
-            {
-              data: JSON.stringify(zone),
-            },
-          ],
-        }),
-      ),
-    ];
 
     const fakeRequest = spyFns([
-      () => Promise.resolve(createEncodedZone(fakeZone2)),
-      () => Promise.resolve(createEncodedZone(fakeZone1)),
-      () => Promise.resolve(createEncodedZone(fakeZone1)),
-      () => Promise.resolve(createEncodedZone(fakeZone2)),
-      () => Promise.resolve(createEncodedZone(fakeZone1)),
-      () => Promise.resolve(createEncodedZone(fakeZone1)),
-      () => Promise.resolve(createEncodedZone(fakeZone1)),
-      () => Promise.resolve(createEncodedZone(fakeZone1)),
-      () => Promise.resolve(createEncodedZone(fakeZone1)),
+      () => Promise.resolve(JSON.stringify(namePacket2)),
+      () => Promise.resolve(JSON.stringify(namePacket1)),
+      () => Promise.resolve(JSON.stringify(namePacket1)),
+      () => Promise.resolve(JSON.stringify(namePacket2)),
+      () => Promise.resolve(JSON.stringify(namePacket1)),
+      () => Promise.resolve(JSON.stringify(namePacket1)),
+      () => Promise.resolve(JSON.stringify(namePacket1)),
+      () => Promise.resolve(JSON.stringify(namePacket1)),
+      () => Promise.resolve(JSON.stringify(namePacket1)),
     ]);
 
     const coResolve = createCoResolveRequest(fakeRequest);
@@ -382,36 +220,32 @@ describe('lookup', () => {
       dappyNetwork,
     });
 
-    expect(zone).to.eql(fakeZone1);
+    expect(zone).to.eql(namePacket1);
     expect(fakeRequest).to.have.been.called.exactly(6);
   });
 
   it('coResolveRequest with 7 network members (absolute: 4, accuracy: 66%): failed scenario  (7:bbbaaaa => e)', async () => {
-    const fakeZone1 = createDappyZone();
-    const fakeZone2 = createDappyZone({
-      A: [{ name: '@', ip: '192.168.1.1' }],
+    const namePacket1 = createNamePacketSuccessResponse();
+    const namePacket2 = createNamePacketSuccessResponse({
+      answers: [
+        {
+          name: '@',
+          data: '192.168.1.1',
+          type: RecordType.A,
+          ttl: 60,
+          class: 'IN',
+        },
+      ],
     });
-    const createEncodedZone = (zone: DappyZone) => [
-      Buffer.from(
-        JSON.stringify({
-          success: true,
-          records: [
-            {
-              data: JSON.stringify({ ...zone }),
-            },
-          ],
-        }),
-      ),
-    ];
 
     const fakeRequest = spyFns([
-      () => Promise.resolve(createEncodedZone(fakeZone2)),
-      () => Promise.resolve(createEncodedZone(fakeZone2)),
-      () => Promise.resolve(createEncodedZone(fakeZone2)),
-      () => Promise.resolve(createEncodedZone(fakeZone1)),
-      () => Promise.resolve(createEncodedZone(fakeZone1)),
-      () => Promise.resolve(createEncodedZone(fakeZone1)),
-      () => Promise.resolve(createEncodedZone(fakeZone1)),
+      () => Promise.resolve(JSON.stringify(namePacket2)),
+      () => Promise.resolve(JSON.stringify(namePacket2)),
+      () => Promise.resolve(JSON.stringify(namePacket2)),
+      () => Promise.resolve(JSON.stringify(namePacket1)),
+      () => Promise.resolve(JSON.stringify(namePacket1)),
+      () => Promise.resolve(JSON.stringify(namePacket1)),
+      () => Promise.resolve(JSON.stringify(namePacket1)),
     ]);
 
     const coResolve = createCoResolveRequest(fakeRequest);
@@ -440,19 +274,7 @@ describe('lookup', () => {
   });
 
   it('coResolveRequest with 3 network members (absolute: 2, accuracy: 66%): failed scenario  (3:eea => e)', async () => {
-    const fakeZone = createDappyZone();
-    const createEncodedZone = () => [
-      Buffer.from(
-        JSON.stringify({
-          success: true,
-          records: [
-            {
-              data: JSON.stringify({ ...fakeZone }),
-            },
-          ],
-        }),
-      ),
-    ];
+    const namePacket = createNamePacketSuccessResponse();
 
     const fakeRequest = spyFns([
       () => {
@@ -461,7 +283,7 @@ describe('lookup', () => {
       () => {
         throw new Error('fake error');
       },
-      () => Promise.resolve(createEncodedZone()),
+      () => Promise.resolve(JSON.stringify(namePacket)),
     ]);
 
     const coResolve = createCoResolveRequest(fakeRequest);

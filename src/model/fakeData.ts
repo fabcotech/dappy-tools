@@ -1,32 +1,55 @@
-import {
-  DappyNetworkMember,
-  DappyNodeErrorResponse,
-  DappyNodeSuccessResponse,
-  DappyZone,
-} from '../types';
-import { mergeDeep } from './mergeDeep';
+import { DappyNetworkMember } from './DappyNetwork';
+import { NameZone } from './NameZone';
+import { NamePacket, ReturnCode, PacketType } from './NamePacket';
 
-export const createDappyZone = (zone: Partial<DappyZone> = {}): DappyZone => {
+import { mergeDeep } from '../testUtils/mergeDeep';
+import { RRA, RRAAAA, RRCERT } from './ResourceRecords';
+
+export const createRRA = (rra: Partial<RRA> = {}): RRA => {
   return mergeDeep(
     {
-      $origin: 'example.com',
-      $ttl: 3600,
-      A: [
-        { name: 'example.com', ip: '127.0.0.1' },
-        { name: 'foo', ip: '127.0.0.1' },
-      ],
-      aaaa: [
-        { name: '@', ip: '::1' },
-        { name: 'foo', ip: '::1' },
-      ],
-      TLSA: [
-        {
-          name: '@',
-          certUsage: 3,
-          selector: 1,
-          matchingType: 1,
-          cert: '123456789ABCDEF',
-        },
+      name: '@',
+      type: 'A',
+      ip: '127.0.0.1',
+    },
+    rra,
+  );
+};
+
+export const createRRAAAA = (rraaaa: Partial<RRAAAA> = {}): RRAAAA => {
+  return mergeDeep(
+    {
+      name: '@',
+      type: 'AAAA',
+      ip: '::1',
+    },
+    rraaaa,
+  );
+};
+
+export const createRRCERT = (rrcert: Partial<RRCERT> = {}): RRCERT => {
+  return mergeDeep(
+    {
+      name: '@',
+      type: 'CERT',
+      cert: '123456789ABCDEF',
+    },
+    rrcert,
+  );
+};
+
+export const createNameZone = (zone: Partial<NameZone> = {}): NameZone => {
+  return mergeDeep(
+    {
+      origin: 'example.com',
+      ttl: 3600,
+      records: [
+        createRRA(),
+        createRRAAAA(),
+        createRRCERT(),
+        createRRA({ name: 'foo' }),
+        createRRAAAA({ name: 'foo' }),
+        createRRCERT({ name: 'foo' }),
       ],
     },
     zone,
@@ -48,30 +71,78 @@ export const getFakeDappyNetworkMember = (
     networkInfo,
   );
 
-export const fakeDappyNodeSuccessResponse = (
-  successResponse: Partial<DappyNodeSuccessResponse> = {},
-): DappyNodeSuccessResponse =>
-  mergeDeep(
+export const createNamePacketQuery = (
+  packet: Partial<NamePacket> = {},
+): NamePacket => {
+  return mergeDeep(
     {
-      success: true,
-      records: [
+      version: '1.0.0',
+      type: PacketType.QUERY,
+      rcode: ReturnCode.NOERROR,
+      id: 0,
+      flags: 0,
+      questions: [
         {
-          data: JSON.stringify(createDappyZone()),
+          name: 'example.com',
+          type: 'A',
+          class: 'IN',
         },
       ],
     },
-    successResponse,
+    packet,
   );
+};
 
-export const fakeDappyNodeErrorResponse = (
-  errorResponse: Partial<DappyNodeErrorResponse> = {},
-): DappyNodeErrorResponse =>
-  mergeDeep(
+export const createNamePacketSuccessResponse = (
+  packet: Partial<NamePacket> = {},
+): NamePacket => {
+  return mergeDeep(
     {
-      success: false,
-      error: {
-        message: 'fake error',
-      },
+      version: '1.0.0',
+      type: PacketType.RESPONSE,
+      rcode: ReturnCode.NOERROR,
+      id: 0,
+      flags: 0,
+      questions: [
+        {
+          name: 'example.com',
+          type: 'A',
+          class: 'IN',
+        },
+      ],
+      answers: [
+        {
+          name: 'example.com',
+          type: 'A',
+          class: 'IN',
+          ttl: 60,
+          data: '127.0.0.1',
+        },
+      ],
     },
-    errorResponse,
+    packet,
   );
+};
+
+export const createNamePacketErrorResponse = (
+  packet: Partial<NamePacket> = {},
+): NamePacket => {
+  return mergeDeep(
+    {
+      version: '1.0.0',
+      type: PacketType.RESPONSE,
+      rcode: ReturnCode.SERVFAIL,
+      id: 0,
+      flags: 0,
+      questions: [
+        {
+          name: 'example.com',
+          type: 'A',
+          class: 'IN',
+        },
+      ],
+      answers: [],
+    },
+    packet,
+  );
+};

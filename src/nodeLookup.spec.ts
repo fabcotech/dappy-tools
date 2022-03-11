@@ -2,14 +2,19 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
 import { internalCreateCachedNodeLookup } from './nodeLookup';
-import { createDappyZone } from './testUtils/fakeData';
+import {
+  createNamePacketErrorResponse,
+  createNamePacketSuccessResponse,
+} from './model/fakeData';
+import { ReturnCode } from '.';
+import { RecordType } from './model/ResourceRecords';
 
 chai.use(spies);
 
 describe('nodeLookup', () => {
   it('create a cached version of dappy lookup for node', (done) => {
-    const zone = createDappyZone();
-    const fakeDappyLookup = () => Promise.resolve(zone);
+    const namePacket = createNamePacketSuccessResponse();
+    const fakeDappyLookup = () => Promise.resolve(namePacket);
     const { lookup } = internalCreateCachedNodeLookup(fakeDappyLookup)();
 
     lookup('foo', {}, (err, address, family) => {
@@ -24,36 +29,49 @@ describe('nodeLookup', () => {
     });
   });
   it('dappy lookup should be called once', (done) => {
-    const zone = createDappyZone();
-    const fakeDappyLookup = chai.spy(() => Promise.resolve(zone));
+    const namePacket = createNamePacketSuccessResponse({
+      answers: [
+        {
+          type: RecordType.CERT,
+          class: 'IN',
+          ttl: 3600,
+          data: 'foo',
+          name: '@',
+        },
+      ],
+    });
+    const fakeDappyLookup = chai.spy(() => Promise.resolve(namePacket));
     const { lookup, getCA } = internalCreateCachedNodeLookup(fakeDappyLookup)();
 
-    getCA('foo').then(() => {
-      lookup('foo', {}, () => {
-        try {
-          expect(fakeDappyLookup).to.have.been.called.exactly(1);
-          done();
-        } catch (e) {
-          done(e);
-        }
+    getCA('example.com')
+      .then(() => {
+        lookup('example.com', {}, () => {
+          try {
+            expect(fakeDappyLookup).to.have.been.called.exactly(1);
+            done();
+          } catch (e) {
+            done(e);
+          }
+        });
+      })
+      .catch((e) => {
+        done(e);
       });
-    });
   });
 
   it('should returns all IPv6 addresses', (done) => {
-    const zone = createDappyZone({
-      A: [{ name: '@', ip: '127.0.0.1' }],
-      AAAA: [
-        { name: '@', ip: '::1' },
-        { name: '@', ip: '::2' },
+    const namePacket = createNamePacketSuccessResponse({
+      answers: [
+        { name: '@', class: 'IN', ttl: 60, type: RecordType.AAAA, data: '::1' },
+        { name: '@', class: 'IN', ttl: 60, type: RecordType.AAAA, data: '::2' },
       ],
     });
-    const fakeDappyLookup = chai.spy(() => Promise.resolve(zone));
+    const fakeDappyLookup = chai.spy(() => Promise.resolve(namePacket));
     const { lookup } = internalCreateCachedNodeLookup(fakeDappyLookup)();
 
     lookup('foo', { family: 6 }, (err, address: string, family: string) => {
       try {
-        expect(address).to.eql(zone.AAAA![0].ip);
+        expect(address).to.eql(namePacket.answers[0].data);
         expect(family).to.eql(6);
         done();
       } catch (e) {
@@ -63,13 +81,18 @@ describe('nodeLookup', () => {
   });
 
   it('lookup() should throw error on unknown name', (done) => {
-    const fakeDappyLookup = () => Promise.resolve(undefined);
+    const fakeDappyLookup = () =>
+      Promise.resolve(
+        createNamePacketErrorResponse({
+          rcode: ReturnCode.NXDOMAIN,
+        }),
+      );
     const { lookup } = internalCreateCachedNodeLookup(fakeDappyLookup)();
 
-    lookup('foo', {}, (err) => {
+    lookup('example.com', {}, (err) => {
       try {
         expect(err.message).to.equal(
-          'No address found for name foo (format: IPv4)',
+          'No address found for name example.com (format: IPv4)',
         );
         done();
       } catch (e) {
@@ -78,7 +101,12 @@ describe('nodeLookup', () => {
     });
   });
   it('getCA() should throw error on unknown name', async () => {
-    const fakeDappyLookup = () => Promise.resolve(undefined);
+    const fakeDappyLookup = () =>
+      Promise.resolve(
+        createNamePacketErrorResponse({
+          rcode: ReturnCode.NXDOMAIN,
+        }),
+      );
     const { getCA } = internalCreateCachedNodeLookup(fakeDappyLookup)();
 
     let throwExp;
@@ -88,6 +116,6 @@ describe('nodeLookup', () => {
       throwExp = e;
     }
 
-    expect((throwExp as any).message).to.equal('No zone found for name foo');
+    expect((throwExp as any).message).to.equal('No cert found for name foo');
   });
 });

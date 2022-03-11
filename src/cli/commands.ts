@@ -1,4 +1,4 @@
-import { DappyNetwork } from '..';
+import { DappyNetwork, ReturnCode } from '..';
 import { DappyLookupOptions, DappyNetworkId } from '../types';
 import { Api } from './api';
 
@@ -11,7 +11,7 @@ import {
   isOptional,
 } from '../utils/validation';
 import { parseUrl, tryParseJSON } from '../utils/parse';
-import { isDappyNetwork } from '../lookup';
+import { isDappyNetwork } from '../model/DappyNetwork';
 
 export interface Command {
   description: string;
@@ -222,13 +222,18 @@ export const lookupCommand: Command = {
     api.print(`Looking up name ${name}`);
     api.print('');
 
-    const record = await api.lookup(name, options);
+    const packet = await api.lookup(name, options);
 
-    if (!record || !record.A) {
-      api.print(`Record ${name} not found`);
+    if (
+      packet.rcode === ReturnCode.NXDOMAIN ||
+      packet.rcode === ReturnCode.NOTZONE ||
+      !packet.answers ||
+      packet.answers.length === 0
+    ) {
+      api.print(`Record(s) ${name} not found`);
       return 1;
     }
-    api.print(`${name} => ${record.A[0].ip}`);
+    api.print(`${name} => ${packet.answers[0].data}`);
     return 0;
   },
 };

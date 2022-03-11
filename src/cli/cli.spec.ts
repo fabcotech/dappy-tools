@@ -1,5 +1,6 @@
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
+import { createNamePacketQuery } from '../model/fakeData';
 import { runCli, processCli } from './cli';
 
 chai.use(spies);
@@ -9,7 +10,7 @@ describe('cli (core)', () => {
     const shutdown = chai.spy();
     const api = {
       print: () => {},
-      lookup: () => Promise.resolve(undefined),
+      lookup: () => Promise.resolve(createNamePacketQuery()),
       readFile: () => Promise.resolve(''),
     };
     const commands = {
@@ -41,7 +42,7 @@ describe('cli (core)', () => {
     const shutdown = chai.spy();
     const api = {
       print: chai.spy(),
-      lookup: () => Promise.resolve(undefined),
+      lookup: () => Promise.resolve(createNamePacketQuery()),
       readFile: () => Promise.resolve(''),
     };
     const commands = {
@@ -73,7 +74,7 @@ describe('cli (core)', () => {
       },
       api: {
         print: () => {},
-        lookup: () => Promise.resolve(undefined),
+        lookup: () => Promise.resolve(createNamePacketQuery()),
         readFile: () => Promise.resolve(''),
       },
     });
@@ -88,7 +89,7 @@ describe('cli (core)', () => {
       commands: {},
       api: {
         print,
-        lookup: () => Promise.resolve(undefined),
+        lookup: () => Promise.resolve(createNamePacketQuery()),
         readFile: () => Promise.resolve(''),
       },
     });
@@ -108,7 +109,7 @@ describe('cli (core)', () => {
       },
       api: {
         print: () => {},
-        lookup: () => Promise.resolve(undefined),
+        lookup: () => Promise.resolve(createNamePacketQuery()),
         readFile: () => Promise.resolve(''),
       },
     });
