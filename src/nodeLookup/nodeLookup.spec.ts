@@ -5,9 +5,9 @@ import { internalCreateCachedNodeLookup } from './nodeLookup';
 import {
   createNamePacketErrorResponse,
   createNamePacketSuccessResponse,
-} from './model/fakeData';
-import { ReturnCode } from '.';
-import { RecordType } from './model/ResourceRecords';
+} from '../model/fakeData';
+import { ReturnCode } from '../model/NamePacket';
+import { RecordType } from '../model/ResourceRecords';
 
 chai.use(spies);
 

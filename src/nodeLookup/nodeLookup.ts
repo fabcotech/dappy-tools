@@ -1,7 +1,7 @@
 import dns from 'dns';
-import { NamePacket } from './model/NamePacket';
+import { NamePacket } from '../model/NamePacket';
 
-import { lookup as dappyLookupRecord } from './lookup';
+import { lookup as dappyLookupRecord } from '../lookup';
 
 export function createCached(action: typeof dappyLookupRecord) {
   const cache: {
