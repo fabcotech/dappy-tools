@@ -36,6 +36,7 @@
       "args": [
         "./bin/dappy-lookup-debug.ts",
         "${input:dappy-name}",
+        "${input:record-type}",
         "--network=${input:dappy-network}",
       ],
       "cwd": "${workspaceFolder}",
@@ -61,6 +62,7 @@
       "args": [
         "./bin/dappy-lookup-debug.ts",
         "${input:dappy-name}",
+        "${input:record-type}",
         "--endpoint=${input:dappy-node-http-endpoint}",
       ],
       "cwd": "${workspaceFolder}",
@@ -86,6 +88,7 @@
       "args": [
         "./bin/dappy-lookup-debug.ts",
         "${input:dappy-name}",
+        "${input:record-type}",
         "--endpoint=${input:dappy-node-https-endpoint}",
         "--hostname=${input:dappy-node-hostname}",
         "--cacert=${input:dappy-node-cacert}",
@@ -113,6 +116,7 @@
       "args": [
         "./bin/dappy-lookup-debug.ts",
         "${input:dappy-name}",
+        "${input:record-type}",
         "--network-file=${input:dappy-network-file}"
       ],
       "cwd": "${workspaceFolder}",
@@ -132,7 +136,17 @@
       "id": "dappy-name",
       "description": "The name to lookup",
       "type": "promptString",
-      "default": "dappy",
+      "default": "example.dappy",
+    },
+    {
+      "id": "record-type",
+      "description": "record type",
+      "type": "pickString",
+      "options": [
+        "A",
+        "AAAA",
+        "CERT"
+      ]
     },
     {
       "id": "dappy-network-file",

@@ -2,6 +2,7 @@ import dns from 'dns';
 // import { NamePacket } from '../model/NamePacket';
 
 import { lookup as dappyLookupRecord } from '../lookup';
+import { RecordType } from '../model/ResourceRecords';
 
 export const nodeLookup =
   (lookupFn: typeof dappyLookupRecord) =>
@@ -10,7 +11,10 @@ export const nodeLookup =
     options: dns.LookupOneOptions,
     callback: (...args: any[]) => void,
   ) => {
-    const packet = await lookupFn(name);
+    const packet = await lookupFn(
+      name,
+      options.family === 6 ? RecordType.AAAA : RecordType.A,
+    );
     const family = options.family === 6 ? 6 : 4;
 
     if (!packet.answers || !packet.answers.length) {

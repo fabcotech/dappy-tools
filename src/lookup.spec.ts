@@ -23,7 +23,8 @@ describe('lookup', () => {
     const fakeRequest = () => Promise.resolve(JSON.stringify(namePacket));
 
     const r = await createGetRecords(fakeRequest)(
-      'example.com',
+      'example.dappy',
+      RecordType.A,
       getFakeDappyNetworkMember(),
     );
     expect(r).to.eql(namePacket);
@@ -37,7 +38,8 @@ describe('lookup', () => {
     let throwExp;
     try {
       await createGetRecords(fakeRequest)(
-        'foo',
+        'example.dappy',
+        RecordType.A,
         getFakeDappyNetworkMember({
           ip: '127.0.0.1',
           port: '31000',
@@ -57,7 +59,11 @@ describe('lookup', () => {
 
     let throwExp;
     try {
-      await createGetRecords(fakeRequest)('foo', getFakeDappyNetworkMember());
+      await createGetRecords(fakeRequest)(
+        'example.dappy',
+        RecordType.A,
+        getFakeDappyNetworkMember(),
+      );
     } catch (e) {
       throwExp = e;
     }
@@ -76,7 +82,8 @@ describe('lookup', () => {
     let throwExp;
     try {
       const r = await createGetRecords(fakeRequest)(
-        'foo',
+        'example.dappy',
+        RecordType.A,
         getFakeDappyNetworkMember(),
       );
       console.log(r);
@@ -169,11 +176,11 @@ describe('lookup', () => {
       getFakeDappyNetworkMember(),
       getFakeDappyNetworkMember(),
     ];
-    const zone = await coResolve('foo', {
+    const packet = await coResolve('example.dappy', RecordType.A, {
       dappyNetwork,
     });
 
-    expect(zone).to.eql(namePacket2);
+    expect(packet).to.eql(namePacket2);
     expect(fakeRequest).to.have.been.called.exactly(3);
   });
 
@@ -216,7 +223,7 @@ describe('lookup', () => {
       getFakeDappyNetworkMember(),
       getFakeDappyNetworkMember(),
     ];
-    const zone = await coResolve('foo', {
+    const zone = await coResolve('example.dappy', RecordType.A, {
       dappyNetwork,
     });
 
@@ -262,14 +269,14 @@ describe('lookup', () => {
 
     let exp;
     try {
-      await coResolve('foo', {
+      await coResolve('example.dappy', RecordType.A, {
         dappyNetwork,
       });
     } catch (err) {
       exp = err;
     }
     expect((exp as Error).message).to.match(
-      /Name foo not resolved: Unaccurate state/,
+      /Name example.dappy not resolved: Unaccurate state/,
     );
   });
 
@@ -296,14 +303,14 @@ describe('lookup', () => {
 
     let exp;
     try {
-      await coResolve('foo', {
+      await coResolve('example.dappy', RecordType.A, {
         dappyNetwork,
       });
     } catch (err) {
       exp = err;
     }
     expect((exp as Error).message).to.match(
-      /Name foo not resolved: Out of nodes/,
+      /Name example.dappy not resolved: Out of nodes/,
     );
   });
 });

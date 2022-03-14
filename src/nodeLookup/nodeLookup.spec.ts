@@ -17,7 +17,7 @@ describe('nodeLookup', () => {
     const fakeDappyLookup = () => Promise.resolve(namePacket);
     const lookup = nodeLookup(fakeDappyLookup);
 
-    lookup('example.com', {}, (err, address, family) => {
+    lookup('example.dappy', {}, (err, address, family) => {
       try {
         expect(err).to.equal(null);
         expect(address).to.equal('127.0.0.1');
@@ -40,7 +40,7 @@ describe('nodeLookup', () => {
     const lookup = nodeLookup(fakeDappyLookup);
 
     lookup(
-      'example.com',
+      'example.dappy',
       { family: 6 },
       (err, address: string, family: string) => {
         try {
@@ -63,10 +63,10 @@ describe('nodeLookup', () => {
       );
     const lookup = nodeLookup(fakeDappyLookup);
 
-    lookup('example.com', {}, (err) => {
+    lookup('example.dappy', {}, (err) => {
       try {
         expect(err.message).to.equal(
-          'No address found for name example.com (format: IPv4)',
+          'No address found for name example.dappy (format: IPv4)',
         );
         done();
       } catch (e) {

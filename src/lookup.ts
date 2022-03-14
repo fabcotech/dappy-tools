@@ -11,6 +11,7 @@ import {
   DappyNetworkMember,
 } from './model/DappyNetwork';
 import { DappyLookupOptions } from './types';
+import { RecordType } from './model/ResourceRecords';
 
 const DEFAULT_DAPPY_NETWORK = 'd';
 const GET_X_RECORD_PATH = '/get-x-records';
@@ -60,7 +61,7 @@ export const getDappyNetworkMembers = createGetDappyNetworkMembers(
 
 export const createGetRecords =
   (request: typeof nodeRequest) =>
-  async (name: string, options: DappyNetworkMember) => {
+  async (name: string, recordType: RecordType, options: DappyNetworkMember) => {
     const { hostname, port, scheme, ip, caCert } = options;
     const reqOptions: Parameters<typeof request>[0] = {
       scheme,
@@ -105,7 +106,11 @@ const getHashOfMajorityResult = (resolved: ResolverOutput) =>
 
 export const createCoResolveRequest =
   (request: typeof nodeRequest) =>
-  async (name: string, options?: DappyLookupOptions): Promise<NamePacket> => {
+  async (
+    name: string,
+    recordType: RecordType,
+    options?: DappyLookupOptions,
+  ): Promise<NamePacket> => {
     const getRecords = createGetRecords(request);
     const members = await getDappyNetworkMembers(options?.dappyNetwork);
 
@@ -113,7 +118,11 @@ export const createCoResolveRequest =
     const resolved = await resolver(
       async (id) => {
         try {
-          const namePacket = await getRecords(name, members[Number(id)]);
+          const namePacket = await getRecords(
+            name,
+            recordType,
+            members[Number(id)],
+          );
           const hash = hashString(JSON.stringify(namePacket));
           results[hash] = namePacket;
 
@@ -144,6 +153,14 @@ export const createCoResolveRequest =
     return results[getHashOfMajorityResult(resolved)];
   };
 
-export const lookup = (name: string, options?: DappyLookupOptions) => {
-  return createCoResolveRequest(nodeRequest)(name, options);
+export const lookup = (
+  name: string,
+  recordType: string,
+  options?: DappyLookupOptions,
+) => {
+  return createCoResolveRequest(nodeRequest)(
+    name,
+    RecordType[recordType as keyof typeof RecordType],
+    options,
+  );
 };

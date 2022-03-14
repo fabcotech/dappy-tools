@@ -181,27 +181,37 @@ const formatNetwork = (network: DappyNetwork): string => {
 
 export const lookupCommand: Command = {
   description: dedent`
-    Lookup a name in dappy network.
-    Built-in networks are:
+    Lookup name records in dappy network.
+    Positioned arguments:
+      1. name: <name to lookup>
+      2. record type: A, AAAA, CERT
+    Optional arguments:
+      --network=<network_id>
+      --endpoint=<http_url>
+      --hostname=<hostname>
+      --cacert=<ca_cert_file_path>
+      --network-file=<network_json_file_path>
+
+    Built-in network ids are:
       - d
       - gamma
 
     Examples:
-      # Lookup name in dappy network (mainnet)
-      dappy-lookup name
-      # Lookup name in dappy gamma network
-      dappy-lookup name --network=gamma
-      # Lookup name using a custom dappy-node over http
-      dappy-lookup name --endpoint=http://127.0.0.1:8080
-      # Lookup name using a custom dappy-node over https
-      dappy-lookup name --endpoint=https://127.0.0.1:443 --hostname=localhost --cacert=./cert.pem
-      # Lookup name using a custom dappy-node network defined in a JSON config file
-      dappy-lookup name --network-file=./custom-network.json
+      # Lookup A records for example.dappy in dappy network (mainnet)
+      dappy-lookup example.dappy A
+      # Lookup A records for example.dappy in dappy gamma network
+      dappy-lookup example.dappy A --network=gamma
+      # Lookup A records for example.dappy using a custom dappy-node over http
+      dappy-lookup example.dappy A --endpoint=http://127.0.0.1:8080
+      # Lookup A records for example.dappy using a custom dappy-node over https
+      dappy-lookup example.dappy A --endpoint=https://127.0.0.1:443 --hostname=localhost --cacert=./cert.pem
+      # Lookup A records for example.dappy using a custom dappy-node network defined in a JSON config file
+      dappy-lookup example.dappy A --network-file=./custom-network.json
 
       Here is the json config file scheme of a Dappy-node network:
       [
         {
-          "ip": "<IPV4_ADDRESS>",
+          "ip": "<IP_ADDRESS>",
           "port": <PORT>,
           "hostname": "<HOSTNAME>",
           "scheme": "<HTTP | HTTPS>",
@@ -209,11 +219,17 @@ export const lookupCommand: Command = {
         }
       ]
   `,
-  action: async ([name, ...rest], api) => {
+  action: async ([name, recordType, ...rest], api) => {
     if (!name) {
       api.print('missing name');
       return 1;
     }
+
+    if (!recordType || !['A', 'AAAA', 'CERT'].includes(recordType)) {
+      api.print('missing record type');
+      return 1;
+    }
+
     const options: DappyLookupOptions = {
       dappyNetwork: await getNetwork(rest, api.readFile),
     };
@@ -222,7 +238,7 @@ export const lookupCommand: Command = {
     api.print(`Looking up name ${name}`);
     api.print('');
 
-    const packet = await api.lookup(name, options);
+    const packet = await api.lookup(name, recordType, options);
 
     if (
       packet.rcode === ReturnCode.NXDOMAIN ||

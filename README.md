@@ -116,7 +116,7 @@ https.get('https://example.dappy/', {
 ```typescript
 function lookup(
   name: string,
-  name: 'A' | 'AAAA' | 'CERT',
+  recordType: 'A' | 'AAAA' | 'CERT',
   options: {
     cacheMaxHit: number;
     cacheTTL: number;

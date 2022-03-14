@@ -96,6 +96,17 @@ describe('cli (commands)', () => {
     expect(print).to.have.been.called.with('missing name');
     expect(code).to.eql(1);
   });
+  it('lookup: missing record type', async () => {
+    const lookup = () => Promise.resolve(createNamePacketQuery());
+    const print = chai.spy();
+    const code = await lookupCommand.action(['example.dappy'], {
+      lookup,
+      print,
+      readFile: () => Promise.resolve(''),
+    });
+    expect(print).to.have.been.called.with('missing record type');
+    expect(code).to.eql(1);
+  });
   it('lookup: record not found', async () => {
     const lookup = () =>
       Promise.resolve(
@@ -104,12 +115,12 @@ describe('cli (commands)', () => {
         }),
       );
     const print = chai.spy();
-    const code = await lookupCommand.action(['example.com'], {
+    const code = await lookupCommand.action(['example.dappy', 'A'], {
       lookup,
       print,
       readFile: () => Promise.resolve(''),
     });
-    expect(print).to.have.been.called.with('Record(s) example.com not found');
+    expect(print).to.have.been.called.with('Record(s) example.dappy not found');
     expect(code).to.eql(1);
   });
   it('lookup: specify existing network', async () => {
@@ -118,13 +129,13 @@ describe('cli (commands)', () => {
     );
     const print = chai.spy();
 
-    await lookupCommand.action(['example.com', '--network=gamma'], {
+    await lookupCommand.action(['example.dappy', 'A', '--network=gamma'], {
       lookup,
       print,
       readFile: () => Promise.resolve(''),
     });
 
-    expect(lookup).to.have.been.called.with('example.com', {
+    expect(lookup).to.have.been.called.with('example.dappy', {
       dappyNetwork: 'gamma',
     });
   });

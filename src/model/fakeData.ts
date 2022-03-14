@@ -41,7 +41,7 @@ export const createRRCERT = (rrcert: Partial<RRCERT> = {}): RRCERT => {
 export const createNameZone = (zone: Partial<NameZone> = {}): NameZone => {
   return mergeDeep(
     {
-      origin: 'example.com',
+      origin: 'example.dappy',
       ttl: 3600,
       records: [
         createRRA(),
@@ -83,7 +83,7 @@ export const createNamePacketQuery = (
       flags: 0,
       questions: [
         {
-          name: 'example.com',
+          name: 'example.dappy',
           type: 'A',
           class: 'IN',
         },
@@ -105,14 +105,14 @@ export const createNamePacketSuccessResponse = (
       flags: 0,
       questions: [
         {
-          name: 'example.com',
+          name: 'example.dappy',
           type: 'A',
           class: 'IN',
         },
       ],
       answers: [
         {
-          name: 'example.com',
+          name: 'example.dappy',
           type: 'A',
           class: 'IN',
           ttl: 60,
@@ -136,7 +136,7 @@ export const createNamePacketErrorResponse = (
       flags: 0,
       questions: [
         {
-          name: 'example.com',
+          name: 'example.dappy',
           type: 'A',
           class: 'IN',
         },
