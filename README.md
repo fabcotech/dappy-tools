@@ -1,10 +1,19 @@
 # dappy-lookup
 
-A library that resolves names from dappy name system (written in Typescript).
+A library written in Typescript that resolves names from Dappy name system.
 
-## Dappy documentation
+Dappy Name System, (DappyNS) is a next generation name system which:
 
-You can find Dappy documentation [here](https://fabco.gitbook.io/dappy-spec/).
+- Is compliant with [DNS RFC 1035](https://datatracker.ietf.org/doc/html/rfc1035)
+- Security-first designed by implementing DNS over HTTPS ([RFC 8484](https://datatracker.ietf.org/doc/html/rfc8484))
+- Persisted and distributed by blockchain [RChain](https://rchain.coop/)
+- Enable clients to query in a trustless manner name records on the blockchain using:
+  - A network of dappy name servers highly secured
+  - A [co-resolution mecanism](https://fabco.gitbook.io/dappy-spec/glossary/multi-request) to distribute the trust over the network
+
+## Dappy name system documentation
+
+You can find documentation [here](https://fabco.gitbook.io/dappy-spec/specs-and-web-standards/name-system).
 
 ## Installing
 
@@ -16,7 +25,7 @@ npm i -S dappy-lookup
 
 ## You don't have a dappy name ? Mint in one.
 
-Using dappy-browser ...
+Using dappy-cli ...
 
 ## Examples
 
@@ -28,14 +37,23 @@ Here is an example to get you started:
 import { lookup } from 'dappy-lookup';
 
 async function run() {
-    const record = await lookup('your-dappy-name');
-    console.log(record);
+    // lookup the A records for example.com
+    const recordsA = await lookup('your-dappy-name', 'A');
+    console.log(recordsA);
+
+    // lookup the AAAA records for example.com
+    const recordsAAAA = await lookup('your-dappy-name', 'AAAA');
+    console.log(recordsAAAA);
+
+    // lookup the CERT records for example.com
+    const recordsCERT = await lookup('your-dappy-name', 'CERT');
+    console.log(recordsCERT);
 });
 
 run();
 ```
 
-This example above will resolve a name on default dappy networki which is the `mainnet` network.
+This example above will resolve a name on default dappy network which is the `mainnet` network.
 
 Next example do the same but on `gamma` network
 
@@ -43,8 +61,9 @@ Next example do the same but on `gamma` network
 import { lookup } from 'dappy-lookup';
 
 async function run() {
-    const record = await lookup('your-dappy-name', { network: 'gamma' });
-    console.log(record);
+    // lookup the A records for example.com on gamma network
+    const recordA = await lookup('your-dappy-name', 'A', { network: 'gamma' });
+    console.log(recordA);
 });
 
 run();
@@ -54,17 +73,16 @@ run();
 
 It's a really a pain point to get a valid CA certificate and to install it at operating system level.
 
-On dappy name system, name records not only store addresses but also CA certificates.
-So, dappy-lookup enable to retrieve CA certificate associated with the address in the same request. The example below demonstrates how to do this:
+On dappy name system, name servers not only distribute IPv4 (**A** records) and IPv6 addresses (**AAAA** records) but also certificates to trust over **CERT** records (alternative of [DANE](https://datatracker.ietf.org/doc/html/rfc6698)). It enable dappy-lookup client to fetch dynamically and in a trusted manner (using coresolution mecanism) CA certificates.
+
+The example below demonstrates how to do this:
 
 ```typescript
-import { createNodeLookup } from 'dappy-lookup';
-
-const { getCA, lookup } = createNodeLookup();
+import { lookup, nodeLookup } from 'dappy-lookup';
 
 https.get('https://your-dappy-name/', {
-    lookup,
-    ca: await getCA('your-dappy-name'),
+    lookup: nodeLookup,
+    ca: await lookup('your-dappy-name', 'CERT'),
 }, (res) => {
   ...
 });
@@ -72,19 +90,17 @@ https.get('https://your-dappy-name/', {
 
 NodeJS enables to override [lookup function](https://nodejs.org/api/http.html#httprequesturl-options-callback) for [HTTP](https://nodejs.org/api/http.html) and [HTTPS](https://nodejs.org/api/https.html) native modules.
 
-So dappy-lookup provide a lookup function (created with `createNodeLookup` factory function) with the same signature as [dns.lookup](https://nodejs.org/api/dns.html#dnslookuphostname-options-callback) provided by NodeJS.
+So dappy-lookup provide a lookup function (created with `nodeLookup`) with the same signature as [dns.lookup](https://nodejs.org/api/dns.html#dnslookuphostname-options-callback) provided by NodeJS.
 
 ### NodeJS requests using dappy-lookup
 
-The example below shows how to replace native NodeJS lookup function with the dappy-lookup equivalent function. In this example the certificate is not recovered dynamically, it is installed on the operating system.
+The example below shows how to replace native NodeJS lookup function with the dappy-lookup equivalent function. In this example the certificate is not recovered dynamically, it is installed previously on the operating system.
 
 ```typescript
-import { createNodeLookup } from 'dappy-lookup';
-
-const { nodeLookup } = createNodeLookup();
+import { nodeLookup } from 'dappy-lookup';
 
 https.get('https://your-dappy-name/', {
-    lookup,
+    lookup: nodeLookup,
 }, (res) => {
   ...
 });
@@ -97,46 +113,65 @@ https.get('https://your-dappy-name/', {
 ```typescript
 function lookup(
   name: string,
+  name: 'A' | 'AAAA' | 'CERT',
   options: {
     cacheMaxHit: number;
     cacheTTL: number;
     dappyNetwork: 'd' | 'gamma';
   }
 ) =>
-  Promise<DappyRecord>;
+  Promise<NamePacket>;
 
-interface DappyRecord {
-    values: DappyRecordValue[];
-    ca: string[];
-}
+export type NamePacket = {
+  version: string;
+  type: 'query' | 'response';
+  rcode: ReturnCode;
+  id?: number;
+  flags: number;
+  questions: {
+    type: 'A' | 'AAAA' | 'CERT';
+    class: 'IN';
+    name: string;
+  }[];
+  answers: {
+    type: 'A' | 'AAAA' | 'CERT';
+    class: 'IN';
+    name: string;
+    ttl: number;
+    data: string;
+  }[];
+  additionals: [];
+  authorities: [];
+};
 
-interface DappyRecordValue {
-    value: string;
-    kind: string;
+export enum ReturnCode {
+  NOERROR, // DNS Query completed successfully
+  FORMERR, //  DNS Query Format Error
+  SERVFAIL, // Server failed to complete the DNS request
+  NXDOMAIN, //  Domain name does not exist.
+  NOTIMP, //  Function not implemented
+  REFUSED, // The server refused to answer for the query
+  YXDOMAIN, //  Name that should not exist, does exist
+  XRRSET, //  RRset that should not exist, does exist
+  NOTAUTH, //  Server not authoritative for the zone
+  NOTZONE, //  Name not in zone
 }
 
 ```
 
-Resolve name on dappy name system.
+Resolve **A** record on dappy name system.
 
 Example:
 
 ```typescript
-const record = await lookup('your-dappy-name');
-console.log(record);
+const recordA = await lookup('your-dappy-name', 'A');
+console.log(recordA);
 ```
 
 ### `createNodeLookup()`
 
 ```ts
-function createNodeLookup (
-  options: {
-    cacheMaxHit: number;
-    cacheTTL: number;
-    network: 'mainnet' | 'gamma';
-  }
-) => {
-  nodeLookup: (
+ function nodeLookup(
     name: string,
     options?: {
       all?: boolean;
@@ -145,26 +180,20 @@ function createNodeLookup (
       verbatim?: boolean;
     },
     callback: (err: Error, address: string, family: number) => void;
-  ) => void,
-  getCA: (name: string) => Promise<string[]>;
+  ) => void;
 }
 ```
 
-Create 2 functions that share a common cache to store name records:
-
-- `lookup()`: function that can be used by [HTTP](https://nodejs.org/api/http.html) and [HTTPS](https://nodejs.org/api/https.html) NodeJS modules to resolve names.
-- `getCA()`: get CA certificate for a given name
+`lookup()` can be used by [HTTP](https://nodejs.org/api/http.html) and [HTTPS](https://nodejs.org/api/https.html) NodeJS modules to resolve names.
 
 Example:
 
 ```ts
-import { createNodeLookup } from 'dappy-lookup';
-
-const { getCA, lookup } = createNodeLookup();
+import { nodeLookup, lookup } from 'dappy-lookup';
 
 https.get('https://secureservice', {
-  lookup,
-  ca: await getCA('secureservice'),
+  lookup: nodeLookup,
+  ca: await lookup('secureservice', 'CERT'),
 }, (res) => {
   ...
 });
