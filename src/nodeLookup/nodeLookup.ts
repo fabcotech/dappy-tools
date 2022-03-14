@@ -1,34 +1,9 @@
 import dns from 'dns';
-import { NamePacket } from '../model/NamePacket';
+// import { NamePacket } from '../model/NamePacket';
 
 import { lookup as dappyLookupRecord } from '../lookup';
 
-export function createCached(action: typeof dappyLookupRecord) {
-  const cache: {
-    [key: string]: {
-      value: NamePacket;
-      hit: number;
-      age: number;
-    };
-  } = {};
-
-  return async (name: string) => {
-    if (!cache[name]) {
-      const value = await action(name);
-
-      cache[name] = {
-        value,
-        hit: 0,
-        age: Date.now(),
-      };
-    } else {
-      cache[name].hit += 1;
-    }
-    return cache[name].value;
-  };
-}
-
-const internalCreateNodeLookup =
+export const nodeLookup =
   (lookupFn: typeof dappyLookupRecord) =>
   async (
     name: string,
@@ -58,26 +33,3 @@ const internalCreateNodeLookup =
 
     callback(null, addresses[0], family);
   };
-
-const createGetCA =
-  (lookupFn: typeof dappyLookupRecord) => async (name: string) => {
-    const packet = await lookupFn(name);
-    const cert = (packet.answers || []).find(({ type }) => type === 'CERT');
-    if (!packet.answers || !cert) {
-      throw new Error(`No cert found for name ${name}`);
-    }
-    return cert;
-  };
-
-export const internalCreateCachedNodeLookup =
-  (lookupFn: typeof dappyLookupRecord) => () => {
-    const cachedLookup = createCached(lookupFn);
-
-    return {
-      lookup: internalCreateNodeLookup(cachedLookup),
-      getCA: createGetCA(cachedLookup),
-    };
-  };
-
-export const createNodeLookup =
-  internalCreateCachedNodeLookup(dappyLookupRecord);
