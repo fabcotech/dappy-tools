@@ -11,6 +11,9 @@ DappyNS is a next generation name system which:
   - A network of dappy name servers highly secured
   - A [co-resolution mecanism](https://fabco.gitbook.io/dappy-spec/glossary/multi-request) to distribute the trust over the network
 
+DappyNS is a trustless and secure way to distribute your public data with your partners, clients or devices (IOT). PKI certificates are good candidates.
+DappyNS can also help to organize and publish your DAO data due to to its hierarchical nature.
+
 ## DappyNS documentation
 
 You can find documentation [here](https://fabco.gitbook.io/dappy-spec/specs-and-web-standards/name-system).
