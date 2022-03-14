@@ -168,7 +168,7 @@ const recordA = await lookup('your-dappy-name', 'A');
 console.log(recordA);
 ```
 
-### `createNodeLookup()`
+### `nodeLookup()`
 
 ```ts
  function nodeLookup(
