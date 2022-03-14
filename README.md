@@ -37,16 +37,16 @@ Here is an example to get you started:
 import { lookup } from 'dappy-lookup';
 
 async function run() {
-    // lookup the A records for example.com
-    const recordsA = await lookup('your-dappy-name', 'A');
+    // lookup the A records for example.dappy
+    const recordsA = await lookup('example.dappy', 'A');
     console.log(recordsA);
 
-    // lookup the AAAA records for example.com
-    const recordsAAAA = await lookup('your-dappy-name', 'AAAA');
+    // lookup the AAAA records for example.dappy
+    const recordsAAAA = await lookup('example.dappy', 'AAAA');
     console.log(recordsAAAA);
 
-    // lookup the CERT records for example.com
-    const recordsCERT = await lookup('your-dappy-name', 'CERT');
+    // lookup the CERT records for example.dappy
+    const recordsCERT = await lookup('example.dappy', 'CERT');
     console.log(recordsCERT);
 });
 
@@ -61,8 +61,8 @@ Next example do the same but on `gamma` network
 import { lookup } from 'dappy-lookup';
 
 async function run() {
-    // lookup the A records for example.com on gamma network
-    const recordA = await lookup('your-dappy-name', 'A', { network: 'gamma' });
+    // lookup the A records for example.dappy on gamma network
+    const recordA = await lookup('example.dappy', 'A', { network: 'gamma' });
     console.log(recordA);
 });
 
@@ -82,7 +82,7 @@ import { lookup, nodeLookup } from 'dappy-lookup';
 
 https.get('https://your-dappy-name/', {
     lookup: nodeLookup,
-    ca: await lookup('your-dappy-name', 'CERT'),
+    ca: await lookup('example.dappy', 'CERT'),
 }, (res) => {
   ...
 });
@@ -99,7 +99,7 @@ The example below shows how to replace native NodeJS lookup function with the da
 ```typescript
 import { nodeLookup } from 'dappy-lookup';
 
-https.get('https://your-dappy-name/', {
+https.get('https://example.dappy/', {
     lookup: nodeLookup,
 }, (res) => {
   ...
@@ -164,7 +164,7 @@ Resolve **A** record on dappy name system.
 Example:
 
 ```typescript
-const recordA = await lookup('your-dappy-name', 'A');
+const recordA = await lookup('example.dappy', 'A');
 console.log(recordA);
 ```
 
@@ -191,9 +191,9 @@ Example:
 ```ts
 import { nodeLookup, lookup } from 'dappy-lookup';
 
-https.get('https://secureservice', {
+https.get('https://example.dappy', {
   lookup: nodeLookup,
-  ca: await lookup('secureservice', 'CERT'),
+  ca: await lookup('example.dappy', 'CERT'),
 }, (res) => {
   ...
 });
