@@ -1,8 +1,8 @@
 # dappy-lookup
 
-A library written in Typescript that resolves names from Dappy name system.
+A library written in Typescript that resolves names from Dappy name system (DappyNS).
 
-Dappy Name System, (DappyNS) is a next generation name system which:
+DappyNS is a next generation name system which:
 
 - Is compliant with [DNS RFC 1035](https://datatracker.ietf.org/doc/html/rfc1035)
 - Security-first designed by implementing DNS over HTTPS ([RFC 8484](https://datatracker.ietf.org/doc/html/rfc8484))
@@ -73,7 +73,7 @@ run();
 
 It's a really a pain point to get a valid CA certificate and to install it at operating system level.
 
-On dappy name system, name servers not only distribute IPv4 (**A** records) and IPv6 addresses (**AAAA** records) but also certificates to trust over **CERT** records (alternative of [DANE](https://datatracker.ietf.org/doc/html/rfc6698)). It enable dappy-lookup client to fetch dynamically and in a trusted manner (using coresolution mecanism) CA certificates.
+On DappyNS, name servers not only distribute IPv4 (**A** records) and IPv6 addresses (**AAAA** records) but also certificates to trust over **CERT** records (alternative of [DANE](https://datatracker.ietf.org/doc/html/rfc6698)). It enable dappy-lookup client to fetch dynamically and in a trusted manner (using coresolution mecanism) CA certificates.
 
 The example below demonstrates how to do this:
 
@@ -159,7 +159,7 @@ export enum ReturnCode {
 
 ```
 
-Resolve **A** record on dappy name system.
+Resolve **A** record on DappyNS.
 
 Example:
 
