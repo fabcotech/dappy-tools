@@ -80,7 +80,7 @@ The example below demonstrates how to do this:
 ```typescript
 import { lookup, nodeLookup } from 'dappy-lookup';
 
-https.get('https://your-dappy-name/', {
+https.get('https://example.dappy/', {
     lookup: nodeLookup,
     ca: await lookup('example.dappy', 'CERT'),
 }, (res) => {
