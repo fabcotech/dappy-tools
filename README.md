@@ -37,15 +37,15 @@ Here is an example to get you started:
 import { lookup } from 'dappy-lookup';
 
 async function run() {
-    // lookup the A records for example.dappy
+    // lookup the A records for example.dappy on d network
     const recordsA = await lookup('example.dappy', 'A');
     console.log(recordsA);
 
-    // lookup the AAAA records for example.dappy
+    // lookup the AAAA records for example.dappy on d network
     const recordsAAAA = await lookup('example.dappy', 'AAAA');
     console.log(recordsAAAA);
 
-    // lookup the CERT records for example.dappy
+    // lookup the CERT records for example.dappy on d network
     const recordsCERT = await lookup('example.dappy', 'CERT');
     console.log(recordsCERT);
 });
@@ -53,9 +53,9 @@ async function run() {
 run();
 ```
 
-This example above will resolve a name on default dappy network which is the `mainnet` network.
+This example above will resolve a name on default dappy network which is the `d` network, which is the DappyNS production ready network.
 
-Next example do the same but on `gamma` network
+Next example do the same but on `gamma` network (used for testing purposes)
 
 ```typescript
 import { lookup } from 'dappy-lookup';
