@@ -11,7 +11,7 @@ Dappy Name System, (DappyNS) is a next generation name system which:
   - A network of dappy name servers highly secured
   - A [co-resolution mecanism](https://fabco.gitbook.io/dappy-spec/glossary/multi-request) to distribute the trust over the network
 
-## Dappy name system documentation
+## DappyNS documentation
 
 You can find documentation [here](https://fabco.gitbook.io/dappy-spec/specs-and-web-standards/name-system).
 
