@@ -1,4 +1,6 @@
 import { resolver, ResolverOutput } from 'beesjs';
+import dnsPacket from 'dns-packet';
+
 import { dappyNetworks } from './dappyNetworks';
 import { nodeRequest } from './utils/nodeRequest';
 import { hashString } from './utils/hashString';
@@ -63,19 +65,29 @@ export const createGetRecords =
   (request: typeof nodeRequest) =>
   async (name: string, recordType: RecordType, options: DappyNetworkMember) => {
     const { hostname, port, scheme, ip, caCert } = options;
+    const dnsQuery = dnsPacket.encode({
+      type: 'query',
+      id: 0,
+      flags: dnsPacket.RECURSION_DESIRED,
+      questions: [
+        {
+          name,
+          type: recordType,
+        },
+      ],
+    });
     const reqOptions: Parameters<typeof request>[0] = {
       scheme,
       host: ip,
       port,
-      path: GET_X_RECORD_PATH,
+      path: '/dns-query',
       method: 'POST',
       headers: {
         Host: hostname,
-        'Content-Type': 'application/json',
+        'content-type': 'application/dns-message',
+        'content-length': dnsQuery.length,
       },
-      body: {
-        names: [name],
-      },
+      body: dnsQuery,
     };
     if (caCert) {
       reqOptions.ca = Buffer.from(caCert, 'base64').toString();

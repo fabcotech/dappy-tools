@@ -47,6 +47,7 @@
     "@rollup/plugin-typescript": "^8.3.0",
     "@types/chai": "^4.3.0",
     "@types/chai-spies": "^1.0.3",
+    "@types/dns-packet": "^5.2.4",
     "@types/mocha": "^9.1.0",
     "@typescript-eslint/eslint-plugin": "^5.11.0",
     "@typescript-eslint/parser": "^5.11.0",
@@ -67,6 +68,7 @@
     "typescript": "^4.5.5"
   },
   "dependencies": {
-    "beesjs": "github:fabcotech/beesjs#2.0.3"
+    "beesjs": "github:fabcotech/beesjs#2.0.3",
+    "dns-packet": "^5.3.1"
   }
 }

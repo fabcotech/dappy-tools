@@ -6,7 +6,7 @@ import { JSONObject } from './json';
 export const nodeRequest = async (
   options: https.RequestOptions & {
     scheme: 'http' | 'https';
-    body?: JSONObject;
+    body?: JSONObject | Buffer | string;
   },
 ) => {
   const schemes = {
@@ -30,7 +30,9 @@ export const nodeRequest = async (
       });
     });
 
-    if (options.body) req.write(JSON.stringify(options.body));
+    if (options.body) {
+      req.write(options.body);
+    }
 
     req.on('error', (e) => {
       reject(e);

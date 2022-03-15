@@ -1,7 +1,9 @@
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
-import { DappyNetworkId } from '.';
+import dnsPacket from 'dns-packet';
+
+import { DappyNetworkId, DappyNetworkMember } from '.';
 import {
   createCoResolveRequest,
   getDappyNetworkMembers,
@@ -18,6 +20,48 @@ import { RecordType } from './model/ResourceRecords';
 chai.use(spies);
 
 describe('lookup', () => {
+  it('createGetRecords() should make a DoH compliant request', async () => {
+    const namePacket = createNamePacketSuccessResponse();
+    const fakeRequest = chai.spy(() =>
+      Promise.resolve(JSON.stringify(namePacket)),
+    );
+    const fakeMember = getFakeDappyNetworkMember() as DappyNetworkMember & {
+      caCert: string;
+    };
+    await createGetRecords(fakeRequest)(
+      'example.dappy',
+      RecordType.A,
+      fakeMember,
+    );
+
+    const dnsQuery = dnsPacket.encode({
+      type: 'query',
+      id: 0,
+      flags: dnsPacket.RECURSION_DESIRED,
+      questions: [
+        {
+          name: 'example.dappy',
+          type: 'A',
+        },
+      ],
+    });
+
+    expect(fakeRequest).to.have.been.called.with({
+      scheme: fakeMember.scheme,
+      host: fakeMember.ip,
+      port: fakeMember.port,
+      path: '/dns-query',
+      method: 'POST',
+      headers: {
+        Host: fakeMember.hostname,
+        'content-type': 'application/dns-message',
+        'content-length': dnsQuery.length,
+      },
+      body: dnsQuery,
+      ca: Buffer.from(fakeMember.caCert, 'base64').toString(),
+    });
+  });
+
   it('createGetRecords() should return NamePacket for an existing name', async () => {
     const namePacket = createNamePacketSuccessResponse();
     const fakeRequest = () => Promise.resolve(JSON.stringify(namePacket));
