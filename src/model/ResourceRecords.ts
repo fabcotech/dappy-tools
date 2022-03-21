@@ -3,6 +3,7 @@ import {
   isOptional,
   isStringNotEmpty,
   isNumber,
+  match,
 } from '../utils/validation';
 
 import { JSONObject } from '../utils/json';
@@ -22,37 +23,40 @@ export type ResourceRecord = {
 
 // Simplified version of A RR from RFC 1035
 export type RRA = ResourceRecord & {
-  ip: string;
+  data: string;
 };
 
 export const isRRA = (data: JSONObject): data is RRA =>
   isObjectWith({
     name: isStringNotEmpty,
     ttl: isOptional(isNumber),
-    ip: isStringNotEmpty,
+    data: isStringNotEmpty,
+    type: match(/^A$/),
   })(data);
 
 // Simplified version of AAAA RR from RFC 1035
 export type RRAAAA = ResourceRecord & {
-  ip: string;
+  data: string;
 };
 
 export const isRRAAAA = (data: JSONObject): data is RRAAAA =>
   isObjectWith({
     name: isStringNotEmpty,
     ttl: isOptional(isNumber),
-    ip: isStringNotEmpty,
+    data: isStringNotEmpty,
+    type: match(/^AAAA$/),
   })(data);
 
 export type RRCERT = ResourceRecord & {
-  cert: string;
+  data: string;
 };
 
 export const isRRCERT = (data: JSONObject): data is RRCERT =>
   isObjectWith({
     name: isStringNotEmpty,
     ttl: isOptional(isNumber),
-    cert: isStringNotEmpty,
+    data: isStringNotEmpty,
+    type: match(/^CERT$/),
   })(data);
 
 export type RR = RRA | RRAAAA | RRCERT;

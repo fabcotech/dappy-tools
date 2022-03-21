@@ -10,7 +10,7 @@ export const createRRA = (rra: Partial<RRA> = {}): RRA => {
     {
       name: '@',
       type: 'A',
-      ip: '127.0.0.1',
+      data: '127.0.0.1',
     },
     rra,
   );
@@ -21,7 +21,7 @@ export const createRRAAAA = (rraaaa: Partial<RRAAAA> = {}): RRAAAA => {
     {
       name: '@',
       type: 'AAAA',
-      ip: '::1',
+      data: '::1',
     },
     rraaaa,
   );
@@ -32,7 +32,7 @@ export const createRRCERT = (rrcert: Partial<RRCERT> = {}): RRCERT => {
     {
       name: '@',
       type: 'CERT',
-      cert: '123456789ABCDEF',
+      data: '123456789ABCDEF',
     },
     rrcert,
   );

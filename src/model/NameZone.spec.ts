@@ -15,7 +15,7 @@ describe('NameZone', () => {
     };
     expect(isNameZone(notNameZone)).to.eql(false);
     const zoneWithUnknowRR = createNameZone({
-      records: [{ name: 'foo', type: 'unknown', data: 'unknowo' } as any],
+      records: [{ name: 'foo', type: 'unknown', data: 'unknown' } as any],
     });
     expect(isNameZone(zoneWithUnknowRR)).to.eql(false);
   });
