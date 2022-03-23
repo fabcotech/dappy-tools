@@ -249,7 +249,11 @@ export const lookupCommand: Command = {
       api.print(`Record(s) ${name} not found`);
       return 1;
     }
-    api.print(`${name} => ${packet.answers[0].data}`);
+
+    packet.answers.forEach((answer) => {
+      api.print(`${answer.name} => ${packet.answers[0].data} ${answer.type}`);
+    });
+
     return 0;
   },
 };

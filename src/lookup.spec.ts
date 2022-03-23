@@ -1,7 +1,7 @@
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
-import dnsPacket from 'dns-packet';
+import dnsPacket, { Packet } from 'dns-packet';
 
 import { DappyNetworkId, DappyNetworkMember } from '.';
 import {
@@ -23,7 +23,7 @@ describe('lookup', () => {
   it('createGetRecords() should make a DoH compliant request', async () => {
     const namePacket = createNamePacketSuccessResponse();
     const fakeRequest = chai.spy(() =>
-      Promise.resolve(JSON.stringify(namePacket)),
+      Promise.resolve(dnsPacket.encode(namePacket as Packet)),
     );
     const fakeMember = getFakeDappyNetworkMember() as DappyNetworkMember & {
       caCert: string;
@@ -63,15 +63,17 @@ describe('lookup', () => {
   });
 
   it('createGetRecords() should return NamePacket for an existing name', async () => {
-    const namePacket = createNamePacketSuccessResponse();
-    const fakeRequest = () => Promise.resolve(JSON.stringify(namePacket));
+    const namePacket = dnsPacket.encode(
+      createNamePacketSuccessResponse() as Packet,
+    );
+    const fakeRequest = () => Promise.resolve(namePacket);
 
     const r = await createGetRecords(fakeRequest)(
       'example.dappy',
       RecordType.A,
       getFakeDappyNetworkMember(),
     );
-    expect(r).to.eql(namePacket);
+    expect(r).to.eql(dnsPacket.decode(namePacket));
   });
 
   it('createGetRecords() network connectivity issue', async () => {
@@ -99,7 +101,7 @@ describe('lookup', () => {
   });
 
   it('createGetRecords() return non JSON value', async () => {
-    const fakeRequest = () => Promise.resolve('NOT PARSABLE JSON');
+    const fakeRequest = () => Promise.resolve(Buffer.from('not json'));
 
     let throwExp;
     try {
@@ -114,31 +116,6 @@ describe('lookup', () => {
 
     expect((throwExp as Error).message).to.match(
       /^Could not parse response from/,
-    );
-  });
-
-  it('createGetRecords() Dappy node response is incorrect', async () => {
-    const encodedZone = JSON.stringify({
-      foo: 'bar',
-    });
-    const fakeRequest = () => Promise.resolve(encodedZone);
-
-    let throwExp;
-    try {
-      const r = await createGetRecords(fakeRequest)(
-        'example.dappy',
-        RecordType.A,
-        getFakeDappyNetworkMember(),
-      );
-      console.log(r);
-    } catch (e) {
-      throwExp = e;
-    }
-
-    expect((throwExp as Error).message).to.eql(
-      `Name packet is incorrect: ${JSON.stringify({
-        foo: 'bar',
-      })}`,
     );
   });
 
@@ -194,23 +171,27 @@ describe('lookup', () => {
     expect((await getNetwork())[0].ip).to.eql('DNETWORK_MEMBER_1_IP');
   });
   it('coResolveRequest with 3 network members (absolute: 2, accuracy: 66%): success scenario (3:abb => b) ', async () => {
-    const namePacket1 = createNamePacketSuccessResponse();
-    const namePacket2 = createNamePacketSuccessResponse({
-      answers: [
-        {
-          name: '@',
-          data: '192.168.1.1',
-          type: RecordType.A,
-          ttl: 60,
-          class: 'IN',
-        },
-      ],
-    });
+    const namePacket1 = dnsPacket.encode(
+      createNamePacketSuccessResponse() as Packet,
+    );
+    const namePacket2 = dnsPacket.encode(
+      createNamePacketSuccessResponse({
+        answers: [
+          {
+            name: '@',
+            data: '192.168.1.1',
+            type: RecordType.A,
+            ttl: 60,
+            class: 'IN',
+          },
+        ],
+      }) as Packet,
+    );
 
     const fakeRequest = spyFns([
-      () => Promise.resolve(JSON.stringify(namePacket1)),
-      () => Promise.resolve(JSON.stringify(namePacket2)),
-      () => Promise.resolve(JSON.stringify(namePacket2)),
+      () => Promise.resolve(namePacket1),
+      () => Promise.resolve(namePacket2),
+      () => Promise.resolve(namePacket2),
     ]);
 
     const coResolve = createCoResolveRequest(fakeRequest);
@@ -224,34 +205,38 @@ describe('lookup', () => {
       dappyNetwork,
     });
 
-    expect(packet).to.eql(namePacket2);
+    expect(packet).to.eql(dnsPacket.decode(namePacket2));
     expect(fakeRequest).to.have.been.called.exactly(3);
   });
 
   it('coResolveRequest with 9 network members (absolute: 4, accuracy: 66%): success scenario (9:baabaa => a)', async () => {
-    const namePacket1 = createNamePacketSuccessResponse();
-    const namePacket2 = createNamePacketSuccessResponse({
-      answers: [
-        {
-          name: '@',
-          data: '192.168.1.1',
-          type: RecordType.A,
-          ttl: 60,
-          class: 'IN',
-        },
-      ],
-    });
+    const namePacket1 = dnsPacket.encode(
+      createNamePacketSuccessResponse() as Packet,
+    );
+    const namePacket2 = dnsPacket.encode(
+      createNamePacketSuccessResponse({
+        answers: [
+          {
+            name: '@',
+            data: '192.168.1.1',
+            type: RecordType.A,
+            ttl: 60,
+            class: 'IN',
+          },
+        ],
+      }) as Packet,
+    );
 
     const fakeRequest = spyFns([
-      () => Promise.resolve(JSON.stringify(namePacket2)),
-      () => Promise.resolve(JSON.stringify(namePacket1)),
-      () => Promise.resolve(JSON.stringify(namePacket1)),
-      () => Promise.resolve(JSON.stringify(namePacket2)),
-      () => Promise.resolve(JSON.stringify(namePacket1)),
-      () => Promise.resolve(JSON.stringify(namePacket1)),
-      () => Promise.resolve(JSON.stringify(namePacket1)),
-      () => Promise.resolve(JSON.stringify(namePacket1)),
-      () => Promise.resolve(JSON.stringify(namePacket1)),
+      () => Promise.resolve(namePacket2),
+      () => Promise.resolve(namePacket1),
+      () => Promise.resolve(namePacket1),
+      () => Promise.resolve(namePacket2),
+      () => Promise.resolve(namePacket1),
+      () => Promise.resolve(namePacket1),
+      () => Promise.resolve(namePacket1),
+      () => Promise.resolve(namePacket1),
+      () => Promise.resolve(namePacket1),
     ]);
 
     const coResolve = createCoResolveRequest(fakeRequest);
@@ -271,32 +256,36 @@ describe('lookup', () => {
       dappyNetwork,
     });
 
-    expect(zone).to.eql(namePacket1);
+    expect(zone).to.eql(dnsPacket.decode(namePacket1));
     expect(fakeRequest).to.have.been.called.exactly(6);
   });
 
   it('coResolveRequest with 7 network members (absolute: 4, accuracy: 66%): failed scenario  (7:bbbaaaa => e)', async () => {
-    const namePacket1 = createNamePacketSuccessResponse();
-    const namePacket2 = createNamePacketSuccessResponse({
-      answers: [
-        {
-          name: '@',
-          data: '192.168.1.1',
-          type: RecordType.A,
-          ttl: 60,
-          class: 'IN',
-        },
-      ],
-    });
+    const namePacket1 = dnsPacket.encode(
+      createNamePacketSuccessResponse() as Packet,
+    );
+    const namePacket2 = dnsPacket.encode(
+      createNamePacketSuccessResponse({
+        answers: [
+          {
+            name: '@',
+            data: '192.168.1.1',
+            type: RecordType.A,
+            ttl: 60,
+            class: 'IN',
+          },
+        ],
+      }) as Packet,
+    );
 
     const fakeRequest = spyFns([
-      () => Promise.resolve(JSON.stringify(namePacket2)),
-      () => Promise.resolve(JSON.stringify(namePacket2)),
-      () => Promise.resolve(JSON.stringify(namePacket2)),
-      () => Promise.resolve(JSON.stringify(namePacket1)),
-      () => Promise.resolve(JSON.stringify(namePacket1)),
-      () => Promise.resolve(JSON.stringify(namePacket1)),
-      () => Promise.resolve(JSON.stringify(namePacket1)),
+      () => Promise.resolve(namePacket2),
+      () => Promise.resolve(namePacket2),
+      () => Promise.resolve(namePacket2),
+      () => Promise.resolve(namePacket1),
+      () => Promise.resolve(namePacket1),
+      () => Promise.resolve(namePacket1),
+      () => Promise.resolve(namePacket1),
     ]);
 
     const coResolve = createCoResolveRequest(fakeRequest);

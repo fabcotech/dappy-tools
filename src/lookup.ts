@@ -4,8 +4,7 @@ import dnsPacket from 'dns-packet';
 import { dappyNetworks } from './dappyNetworks';
 import { nodeRequest } from './utils/nodeRequest';
 import { hashString } from './utils/hashString';
-import { tryParseJSON } from './utils/parse';
-import { isNamePacket, NamePacket } from './model/NamePacket';
+import { NamePacket } from './model/NamePacket';
 import {
   isDappyNetwork,
   DappyNetwork,
@@ -14,9 +13,10 @@ import {
 } from './model/DappyNetwork';
 import { DappyLookupOptions } from './types';
 import { RecordType } from './model/ResourceRecords';
+import { JSONObject } from './utils/json';
 
 const DEFAULT_DAPPY_NETWORK = 'd';
-const GET_X_RECORD_PATH = '/get-x-records';
+const DNS_QUERY_PATH = '/dns-query';
 
 const CO_RESOLUTION_SETTINGS: {
   [key: number]: { absolute: number; accuracy: number };
@@ -61,6 +61,14 @@ export const getDappyNetworkMembers = createGetDappyNetworkMembers(
   getDappyNetworkStaticList,
 );
 
+export const tryParseDnsPacket = (raw: Buffer): JSONObject | undefined => {
+  try {
+    return dnsPacket.decode(raw) as JSONObject;
+  } catch (e) {
+    return undefined;
+  }
+};
+
 export const createGetRecords =
   (request: typeof nodeRequest) =>
   async (name: string, recordType: RecordType, options: DappyNetworkMember) => {
@@ -80,7 +88,7 @@ export const createGetRecords =
       scheme,
       host: ip,
       port,
-      path: '/dns-query',
+      path: DNS_QUERY_PATH,
       method: 'POST',
       headers: {
         Host: hostname,
@@ -94,17 +102,11 @@ export const createGetRecords =
     }
     const rawResponse = await request(reqOptions);
 
-    const jsonResponse = tryParseJSON(rawResponse);
+    const jsonResponse = tryParseDnsPacket(rawResponse);
 
     if (!jsonResponse || Array.isArray(jsonResponse)) {
       throw new Error(
-        `Could not parse response from ${scheme}://${hostname}:${port}/${GET_X_RECORD_PATH}`,
-      );
-    }
-
-    if (!isNamePacket(jsonResponse)) {
-      throw new Error(
-        `Name packet is incorrect: ${JSON.stringify(jsonResponse)}`,
+        `Could not parse response from ${scheme}://${hostname}:${port}/${DNS_QUERY_PATH}`,
       );
     }
 
@@ -136,7 +138,7 @@ export const createCoResolveRequest =
             members[Number(id)],
           );
           const hash = hashString(JSON.stringify(namePacket));
-          results[hash] = namePacket;
+          results[hash] = namePacket as NamePacket;
 
           return {
             type: 'SUCCESS',

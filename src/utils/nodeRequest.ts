@@ -13,7 +13,7 @@ export const nodeRequest = async (
     http,
     https,
   };
-  return new Promise<string>((resolve, reject) => {
+  return new Promise<Buffer>((resolve, reject) => {
     const req = schemes[options.scheme].request(options, (res) => {
       const data: Uint8Array[] = [];
 
@@ -26,7 +26,7 @@ export const nodeRequest = async (
       });
 
       res.on('end', () => {
-        resolve(Buffer.concat(data).toString());
+        resolve(Buffer.concat(data));
       });
     });
 
