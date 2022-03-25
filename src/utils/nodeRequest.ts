@@ -13,9 +13,9 @@ export const nodeRequest = async (
     http,
     https,
   };
-  return new Promise<Buffer>((resolve, reject) => {
+  return new Promise<(string | Buffer)[]>((resolve, reject) => {
     const req = schemes[options.scheme].request(options, (res) => {
-      const data: Uint8Array[] = [];
+      const data: (string | Buffer)[] = [];
 
       res.on('data', (chunk) => {
         data.push(chunk);
@@ -26,7 +26,7 @@ export const nodeRequest = async (
       });
 
       res.on('end', () => {
-        resolve(Buffer.concat(data));
+        resolve(data);
       });
     });
 
