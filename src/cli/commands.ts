@@ -251,7 +251,7 @@ export const lookupCommand: Command = {
     }
 
     packet.answers.forEach((answer) => {
-      api.print(`${answer.name} => ${packet.answers[0].data} ${answer.type}`);
+      api.print(`${answer.name} => ${packet.answers[0].data} ${recordType}`);
     });
 
     return 0;

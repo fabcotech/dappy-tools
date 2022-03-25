@@ -20,6 +20,7 @@ export const createPostJSONQuery =
       method: 'POST',
       headers: {
         Host: hostname,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(queryArgs),
     };
