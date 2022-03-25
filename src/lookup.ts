@@ -22,6 +22,9 @@ export const lookup = (
         },
         options,
       );
+
+    // Don't execute a DNS overs HTTPS query for CERT records.
+    // Rather execute a POST query to /get-certificates instead.
     case 'CERT':
       return createCoResolveQuery(
         createPostJSONQuery(nodeRequest, {
