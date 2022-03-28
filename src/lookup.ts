@@ -4,8 +4,7 @@ import { DappyLookupOptions } from './types';
 import { RecordType } from './model/ResourceRecords';
 import { createCoResolveQuery } from './coResolveQuery';
 import { createDohQuery } from './queries/dohQuery';
-import { createPostJSONQuery } from './queries/postJSONQuery';
-import { CERT_QUERY_PATH } from './getCertificates';
+import { getCertificates } from './getCertificates';
 
 export const lookup = (
   name: string,
@@ -26,11 +25,7 @@ export const lookup = (
     // Don't execute a DNS overs HTTPS query for CERT records.
     // Rather execute a POST query to /get-certificates instead.
     case 'CERT':
-      return createCoResolveQuery(
-        createPostJSONQuery(nodeRequest, {
-          path: CERT_QUERY_PATH,
-        }),
-      )({ names: [name] }, options);
+      return getCertificates(name, options);
     default:
       throw new Error(`Unsupported record type: ${recordType}`);
   }

@@ -5,8 +5,11 @@ import { nodeRequest } from './utils/nodeRequest';
 
 export const CERT_QUERY_PATH = '/get-certificates';
 
-export const getCertificates = (name: string, options?: DappyLookupOptions) =>
-  createCoResolveQuery(
+export const getCertificates = async (
+  name: string,
+  options?: DappyLookupOptions,
+) => {
+  const r = await createCoResolveQuery(
     createPostJSONQuery(nodeRequest, { path: CERT_QUERY_PATH }),
   )(
     {
@@ -14,3 +17,11 @@ export const getCertificates = (name: string, options?: DappyLookupOptions) =>
     },
     options,
   );
+  return {
+    ...r,
+    answers: r.answers.map((a) => ({
+      ...a,
+      data: Buffer.from(a.data, 'base64').toString('utf8'),
+    })),
+  };
+};
