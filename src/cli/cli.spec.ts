@@ -5,6 +5,8 @@ import { runCli, processCli } from './cli';
 
 chai.use(spies);
 
+const writeFile = chai.spy(() => Promise.resolve());
+
 describe('cli (core)', () => {
   it('must shutdown with command return code', async () => {
     const shutdown = chai.spy();
@@ -12,6 +14,7 @@ describe('cli (core)', () => {
       print: () => {},
       lookup: () => Promise.resolve(createNamePacketQuery()),
       readFile: () => Promise.resolve(''),
+      writeFile: () => Promise.resolve(),
     };
     const commands = {
       foo: {
@@ -44,6 +47,7 @@ describe('cli (core)', () => {
       print: chai.spy(),
       lookup: () => Promise.resolve(createNamePacketQuery()),
       readFile: () => Promise.resolve(''),
+      writeFile,
     };
     const commands = {
       foo: {
@@ -76,6 +80,7 @@ describe('cli (core)', () => {
         print: () => {},
         lookup: () => Promise.resolve(createNamePacketQuery()),
         readFile: () => Promise.resolve(''),
+        writeFile,
       },
     });
     expect(fooAction).to.have.been.called.with(['param1', 'param2']);
@@ -91,6 +96,7 @@ describe('cli (core)', () => {
         print,
         lookup: () => Promise.resolve(createNamePacketQuery()),
         readFile: () => Promise.resolve(''),
+        writeFile,
       },
     });
     expect(print).to.have.been.called.with('missing command');
@@ -111,6 +117,7 @@ describe('cli (core)', () => {
         print: () => {},
         lookup: () => Promise.resolve(createNamePacketQuery()),
         readFile: () => Promise.resolve(''),
+        writeFile,
       },
     });
     expect(fooAction).to.have.been.called.with(['param1', 'param2']);

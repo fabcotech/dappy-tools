@@ -1,4 +1,4 @@
-import { readFile as nodeReadFile } from 'fs';
+import { readFile as nodeReadFile, writeFile as nodeWriteFile } from 'fs';
 
 import { lookup } from '..';
 
@@ -19,8 +19,21 @@ export const readFile = (path: string): Promise<string> => {
   });
 };
 
+export const writeFile = (path: string, data: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    nodeWriteFile(path, data, { encoding: 'utf8' }, (err) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve();
+    });
+  });
+};
+
 export interface Api {
   print: typeof print;
   lookup: typeof lookup;
   readFile: (path: string) => Promise<string>;
+  writeFile: (path: string, data: string) => Promise<void>;
 }

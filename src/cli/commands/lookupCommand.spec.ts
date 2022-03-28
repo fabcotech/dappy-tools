@@ -14,30 +14,34 @@ import { dedent } from '../utils/dedent';
 
 chai.use(spies);
 
-describe('cli (commands)', () => {
-  it('lookup: missing name', async () => {
+const writeFile = chai.spy(() => Promise.resolve());
+
+describe('cli command lookup', () => {
+  it('missing name', async () => {
     const lookup = () => Promise.resolve(createNamePacketQuery());
     const print = chai.spy();
     const code = await lookupCommand.action([], {
       lookup,
       print,
       readFile: () => Promise.resolve(''),
+      writeFile,
     });
     expect(print).to.have.been.called.with('missing name');
     expect(code).to.eql(1);
   });
-  it('lookup: missing record type', async () => {
+  it('missing record type', async () => {
     const lookup = () => Promise.resolve(createNamePacketQuery());
     const print = chai.spy();
     const code = await lookupCommand.action(['example.dappy'], {
       lookup,
       print,
       readFile: () => Promise.resolve(''),
+      writeFile,
     });
     expect(print).to.have.been.called.with('missing record type');
     expect(code).to.eql(1);
   });
-  it('lookup: record not found', async () => {
+  it('record not found', async () => {
     const lookup = () =>
       Promise.resolve(
         createNamePacketErrorResponse({
@@ -49,11 +53,12 @@ describe('cli (commands)', () => {
       lookup,
       print,
       readFile: () => Promise.resolve(''),
+      writeFile,
     });
     expect(print).to.have.been.called.with('Record(s) example.dappy not found');
     expect(code).to.eql(1);
   });
-  it('lookup: specify existing network', async () => {
+  it('specify existing network', async () => {
     const lookup = chai.spy(() =>
       Promise.resolve(createNamePacketSuccessResponse()),
     );
@@ -63,31 +68,32 @@ describe('cli (commands)', () => {
       lookup,
       print,
       readFile: () => Promise.resolve(''),
+      writeFile,
     });
 
     expect(lookup).to.have.been.called.with('example.dappy', {
       dappyNetwork: 'gamma',
     });
   });
-  it('lookup: getArgsMap()', () => {
+  it('getArgsMap()', () => {
     expect(getArgsMap(['--network=gamma', '--foo=bar', '--baz'])).to.eql({
       network: 'gamma',
       foo: 'bar',
       baz: true,
     });
   });
-  it('lookup: isNetworkIdArgs()', () => {
+  it('isNetworkIdArgs()', () => {
     expect(
       isNetworkIdArgs({
         network: 'gamma',
       }),
     ).to.eql(true);
   });
-  it('lookup: getNetwork() using network id', async () => {
+  it('getNetwork() using network id', async () => {
     const readFile = () => Promise.resolve('');
     expect(await getNetwork(['--network=gamma'], readFile)).to.eql('gamma');
   });
-  it('lookup: getNetwork() using custom dappy-node over http', async () => {
+  it('getNetwork() using custom dappy-node over http', async () => {
     const readFile = () => Promise.resolve('');
     expect(
       await getNetwork(
@@ -104,7 +110,7 @@ describe('cli (commands)', () => {
     ]);
   });
 
-  it('lookup: getNetwork() using custom dappy-node over https', async () => {
+  it('getNetwork() using custom dappy-node over https', async () => {
     const caCertContent = dedent`
     -----BEGIN CERTIFICATE-----
     MIIC/DCCAeQCCQCRsoDGhEth/DANBgkqhkiG9w0BAQsFADBAMQswCQYDVQQGEwJG
@@ -146,7 +152,7 @@ describe('cli (commands)', () => {
       },
     ]);
   });
-  it('lookup: getNetwork() using custom network file (1 member)', async () => {
+  it('getNetwork() using custom network file (1 member)', async () => {
     const customNetworkMember = getFakeDappyNetworkMember();
     const readFile = () => Promise.resolve(JSON.stringify(customNetworkMember));
 
@@ -154,7 +160,7 @@ describe('cli (commands)', () => {
       [customNetworkMember],
     );
   });
-  it('lookup: getNetwork() using custom network file (3 members)', async () => {
+  it('getNetwork() using custom network file (3 members)', async () => {
     const customNetworkMember = getFakeDappyNetworkMember();
     const readFile = () =>
       Promise.resolve(
@@ -169,7 +175,7 @@ describe('cli (commands)', () => {
       [customNetworkMember, customNetworkMember, customNetworkMember],
     );
   });
-  it('lookup: getNetwork() using custom network file that fail to load', async () => {
+  it('getNetwork() using custom network file that fail to load', async () => {
     const readFile = () => Promise.reject(new Error('File not found'));
 
     let error;

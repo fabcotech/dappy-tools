@@ -6,8 +6,10 @@ import { dedent } from '../utils/dedent';
 
 chai.use(spies);
 
-describe('cli (commands)', () => {
-  it('help: no arguments, list all commands', async () => {
+const writeFile = chai.spy(() => Promise.resolve());
+
+describe('cli command: help', () => {
+  it('no arguments, list all commands', async () => {
     let stdout = '';
     const print = (str: string) => {
       stdout += `${str}\n`;
@@ -26,6 +28,7 @@ describe('cli (commands)', () => {
       print,
       lookup: () => Promise.resolve(createNamePacketQuery()),
       readFile: () => Promise.resolve(''),
+      writeFile,
     });
     expect(stdout).to.contains(dedent`
     Available commands:
@@ -33,7 +36,7 @@ describe('cli (commands)', () => {
       * bar
     `);
   });
-  it('help: display command description', async () => {
+  it('display command description', async () => {
     let stdout = '';
     const print = (str: string) => {
       stdout += `${str}\n`;
@@ -56,10 +59,11 @@ describe('cli (commands)', () => {
       print,
       lookup: () => Promise.resolve(createNamePacketQuery()),
       readFile: () => Promise.resolve(''),
+      writeFile,
     });
     expect(stdout).to.contains(commands.foo.description);
   });
-  it('help: command not found', async () => {
+  it('command not found', async () => {
     let stdout = '';
     const print = (str: string) => {
       stdout += `${str}\n`;
@@ -69,6 +73,7 @@ describe('cli (commands)', () => {
       print,
       lookup: () => Promise.resolve(createNamePacketQuery()),
       readFile: () => Promise.resolve(''),
+      writeFile,
     });
     expect(stdout).to.contains('command not found');
     expect(code).to.eql(1);

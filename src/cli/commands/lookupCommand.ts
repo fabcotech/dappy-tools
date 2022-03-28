@@ -25,6 +25,7 @@ export const formatNetwork = (network: DappyNetwork): string => {
 export const lookupCommand: Command = {
   description: dedent`
     Lookup name records in dappy network.
+    
     Positioned arguments:
       1. name: <name to lookup>
       2. record type: A, AAAA, CERT
