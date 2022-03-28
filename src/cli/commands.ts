@@ -12,6 +12,18 @@ import {
 } from '../utils/validation';
 import { parseUrl, tryParseJSON } from '../utils/parse';
 import { isDappyNetwork } from '../model/DappyNetwork';
+import { asciiTable } from './utils/asciiTable';
+
+const MAX_RECORD_DISPLAY_LENGTH = 80;
+const normalizeAnswerData = (data: string) => {
+  const singleLineData = data.replace(/\n/, '');
+
+  if (singleLineData.length > MAX_RECORD_DISPLAY_LENGTH) {
+    return `${singleLineData.substring(0, MAX_RECORD_DISPLAY_LENGTH)}...`;
+  }
+
+  return singleLineData;
+};
 
 export interface Command {
   description: string;
@@ -250,9 +262,13 @@ export const lookupCommand: Command = {
       return 1;
     }
 
-    packet.answers.forEach((answer) => {
-      api.print(`${answer.name} => ${packet.answers[0].data} ${recordType}`);
-    });
+    const responseTable = packet.answers.map((answer) => [
+      answer.name,
+      normalizeAnswerData(answer.data),
+      recordType,
+    ]);
+
+    api.print(asciiTable(responseTable));
 
     return 0;
   },
