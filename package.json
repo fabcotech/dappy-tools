@@ -1,6 +1,6 @@
 {
   "name": "dappy-lookup",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "library that resolves names from dappy name system",
   "author": "FABCO <contact@fabco.tech>",
   "license": "MIT",
