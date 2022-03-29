@@ -94,14 +94,9 @@ export const lookupCommand: Command = {
       return 1;
     }
 
-    const debufferizeTXTData = (data: string) =>
-      Buffer.from(data).toString('utf8');
-
     const responseTable = packet.answers.map((answer) => [
       answer.name,
-      normalizeAnswerData(
-        recordType === 'TXT' ? debufferizeTXTData(answer.data[0]) : answer.data,
-      ),
+      normalizeAnswerData(answer.data),
       recordType,
     ]);
 

@@ -1,4 +1,4 @@
-import dnsPacket from 'dns-packet';
+import dnsPacket, { Packet } from 'dns-packet';
 
 import { JSONObject } from '../utils/json';
 import { nodeRequest } from '../utils/nodeRequest';
@@ -7,7 +7,7 @@ import { DappyNetworkMember } from '../model/DappyNetwork';
 
 const DNS_QUERY_PATH = '/dns-query';
 
-export const tryParseDnsPacket = (raw: Buffer): JSONObject | undefined => {
+export const tryParseDnsPacket = (raw: Buffer): Packet | undefined => {
   try {
     return dnsPacket.decode(raw) as JSONObject;
   } catch (e) {
@@ -59,5 +59,16 @@ export const createDohQuery =
       );
     }
 
-    return jsonResponse;
+    const packet = {
+      ...jsonResponse,
+      answers: (jsonResponse.answers || []).map((answer: any) => ({
+        ...answer,
+        data:
+          answer.type === 'TXT'
+            ? Buffer.from(answer.data[0] as string).toString('utf8')
+            : answer.data,
+      })),
+    };
+
+    return packet as any;
   };
