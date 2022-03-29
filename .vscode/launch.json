@@ -143,6 +143,7 @@
         "./bin/dappy-lookup-debug.ts",
         "savecertificate",
         "${input:dappy-name}",
+        "--out=${input:certificate-filename}",
         "--network-file=${input:dappy-network-file}"
       ],
       "cwd": "${workspaceFolder}",
@@ -203,6 +204,12 @@
       "description": "Dappy node hostname",
       "type": "promptString",
       "default": "./dappynode.crt",
+    },
+    {
+      "id": "certificate-filename",
+      "description": "Dappy node hostname",
+      "type": "promptString",
+      "default": "certificate",
     },
     {
       "id": "dappy-network",
