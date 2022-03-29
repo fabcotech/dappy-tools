@@ -85,12 +85,11 @@ export const lookupCommand: Command = {
 
     const packet = await api.lookup(name, recordType, options);
 
-    if (
-      packet.rcode === ReturnCode.NXDOMAIN ||
-      packet.rcode === ReturnCode.NOTZONE ||
-      !packet.answers ||
-      packet.answers.length === 0
-    ) {
+    if (packet.rcode !== ReturnCode.NOERROR) {
+      api.print(`Error (${packet.rcode})`);
+    }
+
+    if (!packet.answers || packet.answers.length === 0) {
       api.print(`Record(s) ${name} not found`);
       return 1;
     }
