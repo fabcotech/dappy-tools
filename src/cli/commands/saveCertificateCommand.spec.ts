@@ -22,7 +22,7 @@ describe('cli command: savecertificate', () => {
     });
     expect(fakeWriteFile).to.have.been.called.with(
       'example.pem',
-      Buffer.from(fakeCertificate, 'base64').toString('utf8'),
+      fakeCertificate,
     );
     expect(r).to.eql(0);
   });
@@ -57,11 +57,11 @@ describe('cli command: savecertificate', () => {
     });
     expect(fakeWriteFile).to.have.been.first.called.with(
       'example-1.pem',
-      Buffer.from(fakeCertificate, 'base64').toString('utf8'),
+      fakeCertificate,
     );
     expect(fakeWriteFile).to.have.been.second.called.with(
       'example-2.pem',
-      Buffer.from(fakeCertificate, 'base64').toString('utf8'),
+      fakeCertificate,
     );
     expect(r).to.eql(0);
   });

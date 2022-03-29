@@ -52,10 +52,7 @@ export const saveCertificateCommand: Command = {
         packet.answers.length > 1 ? `-${i + 1}` : ''
       }.pem`;
       // eslint-disable-next-line no-await-in-loop
-      await api.writeFile(
-        filename,
-        Buffer.from(answer.data, 'base64').toString('utf8'),
-      );
+      await api.writeFile(filename, answer.data);
       api.print(`Certificate ${name} found and saved to ./${filename}`);
     }
 

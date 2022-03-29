@@ -129,6 +129,32 @@
         "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json",
         "TS_NODE_COMPILER_OPTIONS": "{\"module\": \"commonjs\" }"
       }
+    },
+    {
+      "name": "cli savecertificate (custom network file)",
+      "type": "node",
+      "request": "launch",
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "ts-node/register",
+      ],
+      "args": [
+        "./bin/dappy-lookup-debug.ts",
+        "savecertificate",
+        "${input:dappy-name}",
+        "--network-file=${input:dappy-network-file}"
+      ],
+      "cwd": "${workspaceFolder}",
+      "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": [
+        "<node_internals>/**",
+        "node_modules/**"
+      ],
+      "env": {
+        "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json",
+        "TS_NODE_COMPILER_OPTIONS": "{\"module\": \"commonjs\" }"
+      }
     }
   ],
   "inputs": [
