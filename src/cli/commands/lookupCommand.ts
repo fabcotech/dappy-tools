@@ -5,6 +5,7 @@ import { asciiTable } from '../utils/asciiTable';
 import { Command } from './command';
 
 const MAX_RECORD_DISPLAY_LENGTH = 80;
+
 const normalizeAnswerData = (data: string) => {
   const singleLineData = data.replace(/\n/, '');
 
@@ -28,7 +29,7 @@ export const lookupCommand: Command = {
     
     Positioned arguments:
       1. name: <name to lookup>
-      2. record type: A, AAAA, CERT
+      2. record type: A, AAAA, CERT, TXT
     Optional arguments:
       --network=<network_id>
       --endpoint=<http_url>
@@ -69,7 +70,7 @@ export const lookupCommand: Command = {
       return 1;
     }
 
-    if (!recordType || !['A', 'AAAA', 'CERT'].includes(recordType)) {
+    if (!recordType || !['A', 'AAAA', 'CERT', 'TXT'].includes(recordType)) {
       api.print('missing record type');
       return 1;
     }
@@ -94,9 +95,14 @@ export const lookupCommand: Command = {
       return 1;
     }
 
+    const debufferizeTXTData = (data: string) =>
+      Buffer.from(data).toString('utf8');
+
     const responseTable = packet.answers.map((answer) => [
       answer.name,
-      normalizeAnswerData(answer.data),
+      normalizeAnswerData(
+        recordType === 'TXT' ? debufferizeTXTData(answer.data[0]) : answer.data,
+      ),
       recordType,
     ]);
 

@@ -14,6 +14,7 @@ export const lookup = (
   switch (recordType) {
     case 'A':
     case 'AAAA':
+    case 'TXT':
       return createCoResolveQuery(createDohQuery(nodeRequest))(
         {
           name,
