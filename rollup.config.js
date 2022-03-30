@@ -16,19 +16,11 @@ export default [
       { file: pkg.main, format: 'cjs' },
       { file: pkg.module, format: 'es' },
     ],
-    plugins: [
-      resolve(),
-      commonjs(),
-      typescript({ tsconfig: './tsconfig.json' }),
-    ],
+    plugins: [commonjs(), typescript({ tsconfig: './tsconfig.json' })],
   },
   {
     input: 'src/cli/index.ts',
     output: [{ file: pkg.cli, format: 'cjs' }],
-    plugins: [
-      resolve(),
-      commonjs(),
-      typescript({ tsconfig: './tsconfig.json' }),
-    ],
+    plugins: [commonjs(), typescript({ tsconfig: './tsconfig.json' })],
   },
 ];
