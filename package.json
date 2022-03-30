@@ -22,7 +22,8 @@
   "module": "dist/dappy-lookup.esm.js",
   "cli": "dist/dappy-lookup-cli.js",
   "files": [
-    "dist"
+    "dist/",
+    "bin/"
   ],
   "engines": {
     "node": ">=16"
