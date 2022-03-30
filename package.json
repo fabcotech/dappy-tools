@@ -1,5 +1,5 @@
 {
-  "name": "@dappy/bees",
+  "name": "@fabcotech/bees",
   "version": "2.0.3",
   "description": "Javascript library that retreives data from public distributed ledgers, and decides which answer to reject or accept.",
   "main": "dist/index.js",
