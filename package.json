@@ -34,7 +34,8 @@
     "build:types": "rm -rf build && tsc -p ./tsconfig.json --outDir build --declaration true && api-extractor run",
     "lint": "eslint src --ext .ts",
     "lint:fix": "npm run lint -- --fix",
-    "format": "prettier --write 'src/**/*.ts'"
+    "format": "prettier --write 'src/**/*.ts'",
+    "prepare": "husky install"
   },
   "bin": "./bin/dappy-lookup",
   "devDependencies": {
