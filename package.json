@@ -18,10 +18,12 @@
     "dns"
   ],
   "main": "dist/dappy-lookup.cjs.js",
+  "types": "dist/index.d.ts",
   "module": "dist/dappy-lookup.esm.js",
   "cli": "dist/dappy-lookup-cli.js",
   "files": [
     "dist/",
+    "dist/index.d.ts",
     "bin/"
   ],
   "engines": {

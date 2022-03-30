@@ -1,4 +1,4 @@
-import { resolver, ResolverOutput } from 'beesjs';
+import { resolver, ResolverOutput } from '@fabcotech/bees';
 
 import { dappyNetworks } from './dappyNetworks';
 import { hashString } from './utils/hashString';
