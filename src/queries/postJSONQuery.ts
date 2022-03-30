@@ -1,6 +1,7 @@
 import { tryParseJSON } from '../utils/parse';
 import { nodeRequest } from '../utils/nodeRequest';
 import { DappyNetworkMember } from '../model/DappyNetwork';
+import { JSONObject } from '../types';
 
 type PostJSONQueryOptions = {
   path: string;
@@ -8,7 +9,7 @@ type PostJSONQueryOptions = {
 
 export const createPostJSONQuery =
   (request: typeof nodeRequest, queryOptions: PostJSONQueryOptions) =>
-  async (queryArgs: { names: string[] }, options: DappyNetworkMember) => {
+  async (body: JSONObject, options: DappyNetworkMember) => {
     const { hostname, port, scheme, ip, caCert } = options;
     const { path } = queryOptions;
 
@@ -22,7 +23,7 @@ export const createPostJSONQuery =
         Host: hostname,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(queryArgs),
+      body: JSON.stringify(body),
     };
     if (caCert) {
       reqOptions.ca = Buffer.from(caCert, 'base64').toString();
