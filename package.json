@@ -1,13 +1,13 @@
 {
-  "name": "dappy-lookup",
-  "version": "2.0.3",
+  "name": "@fabcotech/dappy-lookup",
+  "version": "2.0.4",
   "description": "library that resolves names from dappy name system",
   "author": "FABCO <contact@fabco.tech>",
   "license": "MIT",
   "homepage": "https://github.com/fabcotech/dappy-lookup",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fabcotech/dappy-lookup"
+    "url": "git+https://github.com/fabcotech/dappy-lookup.git"
   },
   "keywords": [
     "dappy",
@@ -37,7 +37,9 @@
     "format": "prettier --write 'src/**/*.ts'",
     "prepare": "husky install"
   },
-  "bin": "./bin/dappy-lookup",
+  "bin": {
+    "dappy-lookup": "bin/dappy-lookup"
+  },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.19.4",
     "@rollup/plugin-commonjs": "^21.0.1",
@@ -66,7 +68,10 @@
     "typescript": "^4.5.5"
   },
   "dependencies": {
-    "beesjs": "github:fabcotech/beesjs#2.0.3",
+    "@fabcotech/bees": "2.0.3",
     "dns-packet": "^5.3.1"
+  },
+  "bugs": {
+    "url": "https://github.com/fabcotech/dappy-lookup/issues"
   }
 }
