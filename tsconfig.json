@@ -1,27 +1,22 @@
 {
+  "include": [
+    "src/**/*.ts",
+  ],
+  "exclude": [
+    "node_modules",
+    "**/node_modules/*"
+  ],
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": { "*": ["dist/*"] },
-    "declaration": true,
-    "declarationDir": "./dist/",
-    "target": "es5",
-    "lib": [
-      "dom",
-      "es5"
-    ],
-    "allowJs": false,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "commonjs",
+    "outDir": "./dist",
+    "target": "es6",
+    "module": "esnext",
     "moduleResolution": "node",
-    "isolatedModules": true,
-    "noEmit": false,
-    "jsx": "react",
-    "strictNullChecks": true,
-    "sourceMap": true
-  },
-  "include": ["src/index.ts"]
+    "strict": true,
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true
+  }
 }
