@@ -18,7 +18,6 @@
     "dns"
   ],
   "main": "dist/dappy-lookup.cjs.js",
-  "browser": "dist/dappy-lookup.umd.js",
   "module": "dist/dappy-lookup.esm.js",
   "cli": "dist/dappy-lookup-cli.js",
   "files": [
