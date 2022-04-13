@@ -4,7 +4,95 @@
 
 ### lookup
 
+Lookup name records in dappy network.
+
+Positioned arguments:
+
+1. name: `<name to lookup>`
+2. record type: A, AAAA, CERT, TXT
+
+Optional arguments:
+
+- --network=`<network_id>`
+- --endpoint=`<http_url>`
+- --hostname=`<hostname>`
+- --cacert=`<ca_cert_file_path>`
+- --network-file=`<network_json_file_path>`
+
+Built-in network ids are:
+
+- d
+- gamma
+
+Examples:
+
+```sh
+# Lookup A records for example.dappy in dappy network (mainnet)
+dappy-lookup example.dappy A
+
+# Lookup A records for example.dappy in dappy gamma network
+dappy-lookup example.dappy A --network=gamma
+
+# Lookup A records for example.dappy using a custom dappy-node over http
+dappy-lookup example.dappy A --endpoint=http://127.0.0.1:8080
+
+# Lookup A records for example.dappy using a custom dappy-node over https
+dappy-lookup example.dappy A --endpoint=https://127.0.0.1:443 --hostname=localhost --cacert=./cert.pem
+
+# Lookup A records for example.dappy using a custom dappy-node network defined in a JSON config file
+dappy-lookup example.dappy A --network-file=./custom-network.json
+```
+
+Here is the json config file scheme of a Dappy-node network:
+
+```json
+[
+  {
+    "ip": "<IP_ADDRESS>",
+    "port": <PORT>,
+    "hostname": "<HOSTNAME>",
+    "scheme": "<HTTP | HTTPS>",
+    "caCert": "<BASE_64_ENCODED_CA_CERTIFICATE>"
+  }
+]
+```
+
 ### savecertificate
+
+Retrieve certificates from Dappy name system.
+They are saved as PEM format in the local file system.
+If multiple certificates are found, they are suffixed with a number.
+
+Positioned arguments:
+
+1. name: `<certificate name>`
+
+Optional arguments:
+
+- --out=`<certificate_path>`
+- --network=`<network_id>`
+- --endpoint=`<http_url>`
+- --hostname=`<hostname>`
+- --cacert=`<ca_cert_file_path>`
+- --network-file=`<network_json_file_path>`
+
+Built-in network ids are:
+
+- d
+- gamma
+
+Examples:
+
+```sh
+# Download example.dappy certificate(s) using dappy network (mainnet)
+dappy-lookup savecertificate example.dappy
+
+# Download example.dappy certificate(s) using gamma network, save it/them to custom path
+dappy-lookup savecertificate example.dappy --out=customname.pem --network=gamma
+
+# Download example.dappy certificate(s) using a custom dappy-node network defined in a JSON config file
+dappy-lookup savecertificate example.dappy --network-file=./custom-network.json
+```
 
 ## API Reference
 
