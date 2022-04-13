@@ -47,16 +47,16 @@ import { lookup } from 'dappy-lookup';
 
 async function run() {
     // lookup the A records for example.dappy on d network
-    const recordsA = await lookup('example.dappy', 'A');
-    console.log(recordsA);
+    const packetA = await lookup('example.dappy', 'A');
+    console.log(packet);
 
     // lookup the AAAA records for example.dappy on d network
-    const recordsAAAA = await lookup('example.dappy', 'AAAA');
-    console.log(recordsAAAA);
+    const packetAAAA = await lookup('example.dappy', 'AAAA');
+    console.log(packet);
 
     // lookup the CERT records for example.dappy on d network
-    const recordsCERT = await lookup('example.dappy', 'CERT');
-    console.log(recordsCERT);
+    const packetCERT = await lookup('example.dappy', 'CERT');
+    console.log(packet);
 });
 
 run();
@@ -71,8 +71,8 @@ import { lookup } from 'dappy-lookup';
 
 async function run() {
     // lookup the A records for example.dappy on gamma network
-    const recordA = await lookup('example.dappy', 'A', { network: 'gamma' });
-    console.log(recordA);
+    const packetA = await lookup('example.dappy', 'A', { network: 'gamma' });
+    console.log(packetA);
 });
 
 run();
