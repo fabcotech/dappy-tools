@@ -123,37 +123,6 @@ const recordA = await lookup('example.dappy', 'A');
 console.log(recordA);
 ```
 
-**`nodeLookup()`**
-
-```ts
- function nodeLookup(
-    name: string,
-    options?: {
-      all?: boolean;
-      family?: number;
-      hints?: number;
-      verbatim?: boolean;
-    },
-    callback: (err: Error, address: string, family: number) => void;
-  ) => void;
-}
-```
-
-`lookup()` can be used by [HTTP](https://nodejs.org/api/http.html) and [HTTPS](https://nodejs.org/api/https.html) NodeJS modules to resolve names.
-
-Example:
-
-```ts
-import { nodeLookup, lookup } from 'dappy-lookup';
-
-https.get('https://example.dappy', {
-  lookup: nodeLookup,
-  ca: await lookup('example.dappy', 'CERT'),
-}, (res) => {
-  ...
-});
-```
-
 **`getCertificates()`**
 
 ```ts
@@ -207,7 +176,36 @@ const response = await coResolvePostJsonQuery(
 console.log(response);
 ```
 
-**`dappyNetworks`**
+**`nodeLookup()`**
+
+```ts
+ function nodeLookup(
+    name: string,
+    options?: {
+      all?: boolean;
+      family?: number;
+      hints?: number;
+      verbatim?: boolean;
+    },
+    callback: (err: Error, address: string, family: number) => void;
+  ) => void;
+}
+```
+
+`nodeLookup()` can be used by [HTTP](https://nodejs.org/api/http.html) and [HTTPS](https://nodejs.org/api/https.html) NodeJS modules to resolve names.
+
+Example:
+
+```ts
+import { nodeLookup, lookup } from 'dappy-lookup';
+
+https.get('https://example.dappy', {
+  lookup: nodeLookup,
+  ca: await lookup('example.dappy', 'CERT'),
+}, (res) => {
+  ...
+});
+```
 
 ### Co-resolution known errors
 
