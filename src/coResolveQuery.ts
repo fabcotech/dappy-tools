@@ -2,7 +2,6 @@ import { resolver, ResolverOutput } from '@fabcotech/bees';
 
 import { dappyNetworks } from './dappyNetworks';
 import { hashString } from './utils/hashString';
-import { NamePacket } from './model/NamePacket';
 import {
   isDappyNetwork,
   DappyNetwork,
@@ -68,20 +67,17 @@ type QueryType<TQuery> = (
 ) => Promise<JSONObject>;
 
 export const createCoResolveQuery =
-  <TQuery>(query: QueryType<TQuery>) =>
-  async (
-    queryArgs: TQuery,
-    options?: DappyLookupOptions,
-  ): Promise<NamePacket> => {
+  <TQuery, TResult extends object>(query: QueryType<TQuery>) =>
+  async (queryArgs: TQuery, options?: DappyLookupOptions): Promise<TResult> => {
     const members = await getDappyNetworkMembers(options?.dappyNetwork);
 
-    const results: Record<string, NamePacket> = {};
+    const results: Record<string, TResult> = {};
     const resolved = await resolver(
       async (id) => {
         try {
-          const namePacket = await query(queryArgs, members[Number(id)]);
-          const hash = hashString(JSON.stringify(namePacket));
-          results[hash] = namePacket as NamePacket;
+          const reponse = await query(queryArgs, members[Number(id)]);
+          const hash = hashString(JSON.stringify(reponse));
+          results[hash] = reponse as TResult;
 
           return {
             type: 'SUCCESS',

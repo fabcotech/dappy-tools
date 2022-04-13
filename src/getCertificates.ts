@@ -5,7 +5,7 @@ import { nodeRequest } from './utils/nodeRequest';
 
 export const CERT_QUERY_PATH = '/get-certificates';
 
-export const decodeCertificates = (packet: NamePacket) => {
+export const decodeCertificates = (packet: NamePacket): NamePacket => {
   return {
     ...packet,
     answers: packet.answers.map((a) => ({
@@ -15,11 +15,16 @@ export const decodeCertificates = (packet: NamePacket) => {
   };
 };
 
+type GetCertificatesArgs = {
+  names: string[];
+  options?: DappyLookupOptions;
+};
+
 export const getCertificates = async (
   name: string,
   options?: DappyLookupOptions,
 ) => {
-  const packet = await createCoResolveQuery(
+  const packet = await createCoResolveQuery<GetCertificatesArgs, NamePacket>(
     createPostJSONQuery(nodeRequest, { path: CERT_QUERY_PATH }),
   )(
     {

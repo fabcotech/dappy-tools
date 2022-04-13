@@ -1,6 +1,6 @@
 import { nodeRequest } from './utils/nodeRequest';
 
-import { DappyLookupOptions } from './types';
+import { DappyLookupOptions, NamePacket } from './types';
 import { RecordType } from './model/ResourceRecords';
 import { createCoResolveQuery } from './coResolveQuery';
 import { createDohQuery } from './queries/dohQuery';
@@ -21,7 +21,7 @@ export const lookup = (
           recordType: RecordType[recordType as keyof typeof RecordType],
         },
         options,
-      );
+      ) as Promise<NamePacket>;
 
     // Don't execute a DNS overs HTTPS query for CERT records.
     // Rather execute a POST query to /get-certificates instead.

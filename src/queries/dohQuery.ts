@@ -4,6 +4,7 @@ import { JSONObject } from '../utils/json';
 import { nodeRequest } from '../utils/nodeRequest';
 import { RecordType } from '../model/ResourceRecords';
 import { DappyNetworkMember } from '../model/DappyNetwork';
+import { NamePacket } from '../types';
 
 const DNS_QUERY_PATH = '/dns-query';
 
@@ -70,5 +71,5 @@ export const createDohQuery =
       })),
     };
 
-    return packet as any;
+    return packet as NamePacket;
   };
