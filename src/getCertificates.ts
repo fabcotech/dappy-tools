@@ -1,9 +1,14 @@
 import { createCoResolveQuery } from './coResolveQuery';
 import { createPostJSONQuery } from './queries/postJSONQuery';
-import { DappyLookupOptions, NamePacket } from './types';
+import {
+  DappyLookupOptions,
+  NamePacket,
+  PacketType,
+  RecordType,
+} from './types';
 import { nodeRequest } from './utils/nodeRequest';
 
-export const CERT_QUERY_PATH = '/get-certificates';
+export const CERT_QUERY_PATH = '/dns-query-extended';
 
 export const decodeCertificates = (packet: NamePacket): NamePacket => {
   return {
@@ -16,9 +21,8 @@ export const decodeCertificates = (packet: NamePacket): NamePacket => {
 };
 
 type GetCertificatesArgs = {
-  names: string[];
   options?: DappyLookupOptions;
-};
+} & Partial<NamePacket>;
 
 export const getCertificates = async (
   name: string,
@@ -28,7 +32,15 @@ export const getCertificates = async (
     createPostJSONQuery(nodeRequest, { path: CERT_QUERY_PATH }),
   )(
     {
-      names: [name],
+      type: PacketType.QUERY,
+      id: 0,
+      questions: [
+        {
+          name,
+          type: RecordType.CERT,
+          class: 'IN',
+        },
+      ],
     },
     options,
   );

@@ -70,7 +70,10 @@ export const lookupCommand: Command = {
       return 1;
     }
 
-    if (!recordType || !['A', 'AAAA', 'CERT', 'TXT'].includes(recordType)) {
+    if (
+      !recordType ||
+      !['A', 'AAAA', 'CERT', 'TXT', 'CSP'].includes(recordType)
+    ) {
       api.print('missing record type');
       return 1;
     }

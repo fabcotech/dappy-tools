@@ -173,7 +173,8 @@
         "A",
         "AAAA",
         "CERT",
-        "TXT"
+        "TXT",
+        "CSP"
       ]
     },
     {
