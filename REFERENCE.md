@@ -9,7 +9,7 @@ Lookup name records in dappy network.
 Positioned arguments:
 
 1. name: `<name to lookup>`
-2. record type: A, AAAA, CERT, TXT
+2. record type: A, AAAA, CERT, TXT, CSP
 
 Optional arguments:
 
@@ -103,7 +103,7 @@ dappy-lookup savecertificate example.dappy --network-file=./custom-network.json
 ```ts
 function lookup(
   name: string,
-  recordType: 'A' | 'AAAA' | 'CERT',
+  recordType: 'A' | 'AAAA' | 'CERT' | 'CSP' | 'CERT',
   options: {
     dappyNetwork: 'd' | 'gamma';
   }
@@ -225,12 +225,12 @@ export type NamePacket = {
   id?: number;
   flags: number;
   questions: {
-    type: 'A' | 'AAAA' | 'TXT' | 'CERT';
+    type: 'A' | 'AAAA' | 'TXT' | 'CERT' | 'CSP';
     class: 'IN';
     name: string;
   }[];
   answers: {
-    type: 'A' | 'AAAA' | 'TXT' | 'CERT';
+    type: 'A' | 'AAAA' | 'TXT' | 'CERT' | 'CSP';
     class: 'IN';
     name: string;
     ttl: number;
