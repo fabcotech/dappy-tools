@@ -161,7 +161,7 @@ const exampleCertificate = record.answers[0].data;
 console.log(exampleCertificate);
 ```
 
-**`coResolvePostJsonQuer()`**
+**`coResolvePostJsonQuery()`**
 
 ```ts
 function coResolvePostJsonQuery(
@@ -212,9 +212,11 @@ Example:
 ```ts
 import { nodeLookup, lookup } from 'dappy-lookup';
 
+const { answers: [{ data: ca }]} = await lookup('example.dappy', 'CERT')
+
 https.get('https://example.dappy', {
   lookup: nodeLookup,
-  ca: await lookup('example.dappy', 'CERT'),
+  ca
 }, (res) => {
   ...
 });

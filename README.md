@@ -89,9 +89,11 @@ The example below demonstrates how to do this:
 ```typescript
 import { lookup, nodeLookup } from 'dappy-lookup';
 
+const { answers: [{ data: ca }]} = await lookup('example.dappy', 'CERT')
+
 https.get('https://example.dappy/', {
     lookup: nodeLookup,
-    ca: await lookup('example.dappy', 'CERT'),
+    ca,
 }, (res) => {
   ...
 });
