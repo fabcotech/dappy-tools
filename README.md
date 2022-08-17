@@ -29,7 +29,7 @@ You can find documentation [here](https://fabco.gitbook.io/dappy-spec/specs-and-
 ### Node.js
 
 ```sh
-npm i -S dappy-lookup
+npm i -S @fabcotech/dappy-lookup
 ```
 
 ## You don't have a dappy name ? Mint in one.
