@@ -105,7 +105,7 @@ function lookup(
   name: string,
   recordType: 'A' | 'AAAA' | 'CERT' | 'CSP' | 'CERT',
   options: {
-    dappyNetwork: 'd' | 'gamma';
+    dappyNetwork: 'd' | 'gamma' | DappyNetworkMember[];
   }
 ) =>
   Promise<NamePacket>;
@@ -116,11 +116,24 @@ Co-resolve **A** record on DappyNS.
 
 Co-resolve queries can produce different errors, you can read about them [here](REFERENCE.md#co-resolution-known-errors)
 
-Example:
+Example on d network (production):
 
 ```ts
 const recordA = await lookup('example.dappy', 'A');
 console.log(recordA);
+```
+
+Example on custom local network, using a [local dappy-node](https://github.com/fabcotech/dappy-node#quick-start-up):
+
+```ts
+const recordA = await lookup('example.dappy', 'A', [
+  {
+    scheme: 'http',
+    hostname: 'localhost',
+    port: '3001',
+    ip: '127.0.0.1',
+  },
+]);
 ```
 
 **`getCertificates()`**
@@ -129,7 +142,7 @@ console.log(recordA);
 function getCertificates(
   name: string
   options?: {
-    dappyNetwork: 'd' | 'gamma';
+    dappyNetwork: 'd' | 'gamma' | DappyNetworkMember[];
   }
 ): Promise<NamePacket>
 ```
@@ -157,7 +170,7 @@ function coResolvePostJsonQuery(
     body: any;
   },
   options?: {
-    dappyNetwork: 'd' | 'gamma';
+    dappyNetwork: 'd' | 'gamma' | DappyNetworkMember[];
   },
 ): Promise<NamePacket>;
 ```
@@ -252,4 +265,20 @@ export enum ReturnCode {
   NOTAUTH, //  Server not authoritative for the zone
   NOTZONE, //  Name not in zone
 }
+```
+
+**DappyNetwork**
+
+```ts
+export type DappyNetwork = DappyNetworkId | DappyNetworkMember[];
+
+export type DappyNetworkId = 'd' | 'gamma';
+
+export type DappyNetworkMember = {
+  scheme: 'https' | 'http';
+  hostname: string;
+  port: string;
+  caCert?: string;
+  ip: string;
+};
 ```
