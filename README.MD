@@ -1,6 +1,6 @@
 ## Bees js
 
-General purpose 0 dependency NodeJS library for reading in distributed ledgers or distributed databases in a trustless manner.
+JS library that does co-resolution / retrieves arbitrary resources on arbitrary DLTs, blockchains or networks in a trustless manner.
 
 Beesjs has been initiated in the dappy project [dappy.tech](https://dappy.tech), to address the problem of unique trustful API endpoints in name systems like the DNS, and more broadly the problem of reading the blockchain state without trusting a node.
 
