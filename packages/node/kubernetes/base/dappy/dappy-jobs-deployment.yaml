@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dappy-jobs
+spec:
+  selector:
+    matchLabels:
+      app: dappy-jobs
+  template:
+    metadata:
+      labels:
+        app: dappy-jobs
+    spec:
+      containers:
+        - image: fabcotech/dappy-node:latest
+          name: get-contract-logs
+          imagePullPolicy: Always
+          env:
+            - name: DAPPY_JOBS_REDIS_URL
+              value: redis://redis:6379/1
+            - name: DAPPY_JOBS_LOGS_INTERVAL
+              value: '1000'
+            - name: DAPPY_NODE_START_JOBS
+              value: 'true'
+            - name: DAPPY_RCHAIN_READ_ONLY
+              value: http://rnode:40403
+          command:
+          - sh
+          - '-c'
+          - node dist/ZoneProviders/rchain/jobs/cache-contract-logs.js
+      restartPolicy: Always
