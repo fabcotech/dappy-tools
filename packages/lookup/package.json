@@ -1,0 +1,77 @@
+{
+  "name": "@fabcotech/dappy-lookup",
+  "version": "2.2.4",
+  "description": "library that resolves names from dappy name system",
+  "author": "FABCO <contact@fabco.tech>",
+  "license": "MIT",
+  "homepage": "https://github.com/fabcotech/dappy-lookup",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fabcotech/dappy-lookup.git"
+  },
+  "keywords": [
+    "dappy",
+    "rchain",
+    "blockchain",
+    "domain",
+    "name system",
+    "dns"
+  ],
+  "main": "dist/dappy-lookup.cjs.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/dappy-lookup.esm.js",
+  "cli": "dist/dappy-lookup-cli.js",
+  "files": [
+    "dist/",
+    "dist/index.d.ts",
+    "bin/"
+  ],
+  "engines": {
+    "node": ">=16"
+  },
+  "scripts": {
+    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'src/**/*.spec.ts'",
+    "test:watch": "TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'src/**/*.spec.ts' --watch --watch-files *.ts",
+    "build": "rm -rf dist && rollup -c",
+    "build:types": "rm -rf build && tsc -p ./tsconfig.json --outDir build --declaration true && api-extractor run",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "npm run lint -- --fix",
+    "format": "prettier --write 'src/**/*.ts'"
+  },
+  "bin": {
+    "dappy-lookup": "bin/dappy-lookup"
+  },
+  "devDependencies": {
+    "@microsoft/api-extractor": "^7.19.4",
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-node-resolve": "^13.1.3",
+    "@rollup/plugin-typescript": "^8.3.0",
+    "@types/chai": "^4.3.0",
+    "@types/chai-spies": "^1.0.3",
+    "@types/dns-packet": "^5.2.4",
+    "@types/mocha": "^9.1.0",
+    "@typescript-eslint/eslint-plugin": "^5.11.0",
+    "@typescript-eslint/parser": "^5.11.0",
+    "chai": "^4.3.6",
+    "chai-spies": "^1.0.0",
+    "eslint": "^8.8.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^16.1.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-prettier": "^4.0.0",
+    "mocha": "^9.2.0",
+    "prettier": "^2.5.1",
+    "rollup": "^2.67.2",
+    "ts-node": "^10.5.0",
+    "tslib": "^2.3.1",
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "@fabcotech/bees": "^2.0.5",
+    "dns-packet": "^5.3.1"
+  },
+  "bugs": {
+    "url": "https://github.com/fabcotech/dappy-lookup/issues"
+  }
+}
