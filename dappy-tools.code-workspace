@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"path": "packages/node"
+		},
+		{
+			"path": "packages/bees"
+		},
+		{
+			"path": "packages/gossip"
+		},
+		{
+			"path": "packages/lookup"
+		},				
+		{
+			"path": "."
+		},
+
+	],
+	"settings": {}
+}
