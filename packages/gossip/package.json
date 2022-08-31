@@ -1,11 +1,13 @@
 {
-  "name": "gossip",
+  "name": "@fabcotech/gossip",
   "version": "1.0.0",
   "author": "FABCO",
   "description": "Utils use to sign, verify and air messages sent between and to nodes of the dappy network for zone management.",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build:dev": "npx rollup -c rollup.config.js",
+    "build": "rm -rf dist && rollup -c",
+    "build:types": "rm -rf build && tsc -p ./tsconfig.json --outDir build --declaration true && api-extractor run",
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'src/*.spec.ts'"
   },
   "jest": {
@@ -14,6 +16,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.19.4",
     "@fabcotech/dappy-lookup": "^2.2.3",
     "@rollup/plugin-replace": "^3.0.0",
     "@types/chai": "^4.3.0",
@@ -21,7 +24,6 @@
     "@types/mocha": "^9.1.0",
     "blakejs": "^1.2.1",
     "chai": "^4.3.6",
-    "elliptic": "^6.5.4",
     "mocha": "^9.2.0",
     "rollup": "1.26.0",
     "rollup-plugin-commonjs": "^10.1.0",
@@ -30,5 +32,8 @@
     "rollup-plugin-sourcemaps": "^0.6.3",
     "rollup-plugin-typescript": "^1.0.1",
     "ts-node": "^10.5.0"
+  },
+  "dependencies": {
+    "elliptic": "^6.5.4"
   }
 }
