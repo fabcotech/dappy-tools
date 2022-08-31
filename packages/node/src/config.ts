@@ -1,5 +1,7 @@
 import path from 'path';
 
+import { dappyNetworks, DappyNetworkId, DappyNetworkMember } from '@fabcotech/dappy-lookup';
+
 const DAPPY_CONFIG_FILE_NAME = 'dappyrc';
 const DAPPY_BROWSER_MIN_VERSION = '0.5.4';
 
@@ -74,13 +76,44 @@ export function initConfig() {
       parseInt(process.env.DAPPY_NODE_LAST_BLOCK_JOB_INTERVAL || '', 10) ||
       40000,
     dappyNodeStartJobs: process.env.DAPPY_NODE_START_JOBS === 'true',
-    dappyNetwork: process.env.DAPPY_NETWORK || 'unknown',
+    dappyNetworkId: process.env.DAPPY_NETWORK_ID || 'none',
+    dappyNetworkSelfHostname: process.env.DAPPY_NETWORK_SELF_HOSTNAME || 'localhost',
+    dappyNetwork: [] as DappyNetworkMember[],
     dappyLogPath: process.env.DAPPY_LOG_PATH || './logs',
 
     redisDb: process.env.DAPPY_NODE_REDIS_DB || 1,
     redisHost: process.env.DAPPY_NODE_REDIS_HOST || 'localhost',
     redisPort: parseInt(process.env.DAPPY_NODE_REDIS_PORT || '', 10) || 6379,
   };
+
+  if (cfg.dappyNetworkId === 'unknown') {
+    try {
+      cfg.dappyNetwork = require(
+        path.resolve(process.cwd(), 'dappyNetwork.js')
+      );
+      console.log('Dappy network loaded from ./dappyNetwork.js')
+    } catch (err) {
+      console.log('Dappy network is unknown and ./dappyNetwork.js does not exist, maybe you want to set DAPPY_NETWORK_ID=none ?');
+      process.exit();
+    }
+  } else {
+    if (dappyNetworks[cfg.dappyNetworkId as DappyNetworkId]) {
+      cfg.dappyNetwork = dappyNetworks[cfg.dappyNetworkId as DappyNetworkId];
+      console.log(`Will use dappy network ${cfg.dappyNetworkId} with ${Object.keys(cfg.dappyNetwork).length} members for gossip !`)
+    } else {
+      console.log(`Dappy network ${cfg.dappyNetwork} not found`);
+      process.exit();
+    }
+  }
+
+  if (cfg.dappyNetwork.find((a: any) => {
+    return a.hostname === cfg.dappyNetworkSelfHostname
+  })) {
+    console.log('Identified self in dappy network !')
+  } else {
+    console.log(`hostname ${cfg.dappyNetworkSelfHostname} was not found in dappy network`);
+    process.exit();
+  }
 
   config = cfg;
 

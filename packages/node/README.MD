@@ -107,9 +107,14 @@ Below, here are all environments variables read by dappy-node.
 | DAPPY_NODE_CACHING | Yes | `60` | record ttl cache. Disabled if set to `0` |
 | DAPPY_NODE_ENABLE_REQUEST_METRICS | Yes | `false` | Activate metrics |
 | DAPPY_NODE_SENTRY_URL | No | `false` | Send logs to sentry |
-| DAPPY_NETWORK | Yes | `unknown` | `unknown`, `gamma`, `beta` or `d` |
+| DAPPY_NETWORK_ID | Yes | `unknown`, `gamma`, `beta` or `d` |
+| DAPPY_NETWORK_SELF_HOSTNAME | Yes | `localhost1`, `fabco`, `anothermember` |
 | DAPPY_LOG_PATH | Yes | `./logs` | path to log warning and errors |
 | NODES_FILE | No |  |  |
+
+if DAPPY_NETWORK_ID is `unknown`, the program will try to load a dappy network from the file `./dappyNetwork.js`.
+
+DAPPY_NETWORK_SELF_HOSTNAME is your username in the dappy network, this is used to avoid gossiping messages to self. You can find it in any dappy network reference.
 
 #### Environment variables read when rchain is used as zone provider
 

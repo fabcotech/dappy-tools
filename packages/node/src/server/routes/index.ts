@@ -10,10 +10,12 @@ import { getCurrentZoneProvider } from '../../ZoneProviders';
 import { getStore } from '../../store';
 import { createGetZones } from './get-zones';
 import { createHandleGossip } from './handle-gossip'
+import { getConfig } from '../../config';
 
 export function getRouter() {
   const router = Router();
   const store = getStore();
+  const config = getConfig();
 
   const { getZones, saveZone } = getCurrentZoneProvider();
 
@@ -50,7 +52,9 @@ export function getRouter() {
     bodyParser.json(),
     createHandleGossip(
       getZones,
-      saveZone
+      saveZone,
+      config.dappyNetwork,
+      config.dappyNetworkSelfHostname
     )
   );
 

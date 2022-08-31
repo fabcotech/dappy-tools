@@ -1,13 +1,24 @@
+import https from 'https';
 import { Request, Response } from 'express';
 import { NameZone } from '../../model/NameZone';
-import { checkZoneTransaction } from '../../../../gossip';
+import { checkZoneTransaction, gossip } from '../../../../gossip';
+import { log } from '../../log';
+import { DappyNetworkMember } from '@fabcotech/dappy-lookup';
+
+const ROUNDS_OF_GOSSIP = 1;
 
 export const createHandleGossip =
   (
     getZones: (names: string[]) => Promise<NameZone[]>,
     saveZone: (zone: NameZone) => Promise<void>,
+    dappyNetwork: DappyNetworkMember[],
+    dappyNetworkSelfHostname: string
 ) =>
   async (req: Request, res: Response) => {
+
+    let gossipToDappyNetwork = false;
+    log('/gossip ' + req.body.data.zone.origin);
+
     if (!req.body || !req.body.data || !req.body.signature) {
       res.send('Need data and signature').status(400);
       return;
@@ -54,7 +65,7 @@ export const createHandleGossip =
           req.body.data.zone
         );
         res.send("Zone created").status(200);
-        return;
+        gossipToDappyNetwork = true;
       } catch (err) {
         res.send(err).status(403);
         return;
@@ -93,10 +104,57 @@ export const createHandleGossip =
           req.body.data.zone
         );
         res.send("Zone updated").status(200);
-        return;
+        gossipToDappyNetwork = true;
       } catch (err) {
         res.send((err as unknown as any).message || 'Unauthorized').status(403);
         return;
       }
+    }
+
+    if (gossipToDappyNetwork && (!req.body.gossip || req.body.gossip < ROUNDS_OF_GOSSIP)) {
+      log(`will gossip to ${dappyNetwork.length - 1} members`);
+      gossip(
+        dappyNetwork.filter(dnm => dnm.hostname !== dappyNetworkSelfHostname),
+        (dnm: any) => {
+          return new Promise((reso, reje) => {
+            const options = {
+              minVersion: 'TLSv1.3',
+              rejectUnauthorized: true,
+              ca: dnm.caCert,
+              host: dnm.ip,
+              method: 'POST',
+              port: dnm.port,
+              path: `/gossip`,
+              headers: {
+                'Content-Type': 'application/json',
+                Host: dnm.hostname,
+              },
+            };
+            const req2 = https.request(options as any, (res2) => {
+              if (res2.statusCode === 200) {
+                reso(true);
+              } else {
+                reje('Status code not 200')
+              }
+            });
+            req2.on('error', err => {
+              reje(err)
+            })
+            req2.end(
+              JSON.stringify({
+                ...req.body,
+                gossip: 1
+              })
+            )
+          })
+        }
+      ).then(results => {
+        log(`result of gossip `);
+        console.log(JSON.stringify(results));
+      })
+      .catch(err => {
+        console.log('critical error gossip should never fail');
+        console.log(err);
+      })
     }
   };

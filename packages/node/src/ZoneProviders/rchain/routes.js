@@ -33,7 +33,7 @@ const getInfo = (store) => (req, res) => {
       dappyNodeVersion: config.dappyNodeVersion,
       dappyBrowserMinVersion: config.dappyBrowserMinVersion,
       dappyBrowserDownloadLink: config.dappyBrowserDownloadLink,
-      dappyNetwork: config.dappyNetwork,
+      dappyNetworkId: config.dappyNetworkId,
       rchainNamesMasterRegistryUri: config.dappyNamesMasterRegistryUri,
       rchainNamesContractId: config.dappyNamesContractId,
       rchainNetwork: config.rchainNetwork,
