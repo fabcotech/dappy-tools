@@ -34,9 +34,22 @@ export const zoneProvider: ZoneProvider = {
     return Router();
   },
   saveZone: async (zone: NameZone) => {
-    await connection<NameZoneTable>('zones').insert({
-      domain: zone.origin,
-      zone,
-    });
+    const result = await connection<NameZoneTable>('zones')
+      .select({
+        zone: 'zone',
+      })
+      .where('domain', zone.origin);
+    if (result[0]) {
+      await connection<NameZoneTable>('zones')
+        .where('domain', zone.origin)
+        .update({
+          zone,
+        });
+    } else {
+      await connection<NameZoneTable>('zones').insert({
+        domain: zone.origin,
+        zone,
+      });
+    }
   },
 };

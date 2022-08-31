@@ -9,6 +9,7 @@ import { createUpdateZone } from './update-zone';
 import { getCurrentZoneProvider } from '../../ZoneProviders';
 import { getStore } from '../../store';
 import { createGetZones } from './get-zones';
+import { createHandleGossip } from './handle-gossip'
 
 export function getRouter() {
   const router = Router();
@@ -44,6 +45,14 @@ export function getRouter() {
   );
 
   router.post('/get-zones', bodyParser.json(), createGetZones(getZones));
+  router.post(
+    '/gossip',
+    bodyParser.json(),
+    createHandleGossip(
+      getZones,
+      saveZone
+    )
+  );
 
   return router;
 }

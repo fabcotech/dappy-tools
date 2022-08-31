@@ -19,7 +19,6 @@
     "pg:stop": "docker compose stop pg adminer",
     "pg:open-adminer": "open http://localhost:8082/?pgsql=pg&username=postgres&db=dappy&ns=public&table=zones",
     "deploy-name-system": "./bin/dappy-deploy-name-system",
-    "prepare": "husky install",
     "pg:migrate": "knex migrate:latest --knexfile src/ZoneProviders/postgresql/knex.js",
     "pg:seed": "knex seed:run --knexfile src/ZoneProviders/postgresql/knex.js"
   },
@@ -76,7 +75,6 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-prettier": "^4.0.0",
-    "husky": "^7.0.4",
     "mocha": "^9.1.3",
     "prettier": "^2.6.1",
     "ts-node": "^10.7.0",
