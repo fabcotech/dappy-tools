@@ -4,6 +4,7 @@ import { NameZone } from '../../model/NameZone';
 import { checkZoneTransaction, gossip } from '../../../../gossip';
 import { log } from '../../log';
 import { DappyNetworkMember } from '@fabcotech/dappy-lookup';
+import jsonStableStringify from '../../utils/jsonStableStringify';
 
 const ROUNDS_OF_GOSSIP = 1;
 
@@ -30,31 +31,34 @@ export const createHandleGossip =
     }
 
     const ownerTxt = (req.body.data.zone.records || [])
-      .find((r: any) => r.type === 'TXT' && r.data.startsWith("OWNER="))
+      .find((r: any) => r.type === 'TXT' && r.data.startsWith("OWNER="));
+    let publicKey = '';
     if (!ownerTxt) {
       res.send('Need an owner as TXT record').status(400);
       return;
+    } else {
+      publicKey = ownerTxt.data.slice(6);
+      if (publicKey.length !== 130) {
+        res.send('Public key must be of length 130').status(400);
+        return;
+      }
+    }
+
+    const zones = await getZones([req.body.data.zone.origin]);
+
+    // todo
+    /*
+      Does dappyNetwork[0].publicKey has the right to create+update ?
+    */
+
+    if (zones[0]) {
+      if (jsonStableStringify(zones[0]) === jsonStableStringify(req.body.data.zone)) {
+        res.send("Zone already exists and unchanged").status(200);
+        return;
+      }
     }
 
     if (req.body.data.new) {
-      const zone = await getZones([req.body.data.zone.origin]);
-      // todo
-      /*
-        Does dappyNetwork[0].publicKey has the right to create+update ?
-      */
-      if (zone[0]) {
-        // todo
-        /*
-          The following if is never true
-          Need some sort of serialization, fields are not in the same
-          order, they are probably reordered by postgre or knex
-        */
-        if (JSON.stringify(zone[0]) === JSON.stringify(req.body.data.zone)) {
-          res.send("Zone already exists and unchanged").status(200);
-          return;
-        }
-      }
-
       try {
         checkZoneTransaction(
           // todo replace by dappyNetwork[0].publicKey
@@ -62,7 +66,7 @@ export const createHandleGossip =
           req.body
         );
         await saveZone(
-          req.body.data.zone
+          req.body.data.zone,
         );
         res.send("Zone created").status(200);
         gossipToDappyNetwork = true;
@@ -148,13 +152,19 @@ export const createHandleGossip =
             )
           })
         }
-      ).then(results => {
-        log(`result of gossip `);
-        console.log(JSON.stringify(results));
+      ).then((results: (String | true)[]) => {
+        const errors = results.filter((a) => a !== true);
+        if (errors.length) {
+          log(`${results.length - errors.length} gossips successful`);
+          log(`${errors.length} gossip errors :`, 'error');
+          log(JSON.stringify(errors), 'error');
+        } else {
+          log(`all gossips successful`);
+        }
       })
       .catch(err => {
-        console.log('critical error gossip should never fail');
-        console.log(err);
+        log('critical error gossip should never fail', 'error');
+        log(err, 'error');
       })
     }
   };
