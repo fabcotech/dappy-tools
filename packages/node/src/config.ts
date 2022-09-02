@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs';
 // import { ReadFile } from 'fs';
 
 import {
@@ -93,19 +94,22 @@ export function initConfig() {
   };
 
   if (cfg.dappyNetworkId === 'unknown') {
-    // try {
-    //   cfg.dappyNetwork = require(path.resolve(
-    //     process.cwd(),
-    //     'dappyNetwork.js'
-    //   ));
-    //   console.log('Dappy network loaded from ./dappyNetwork.js');
-    // } catch (err) {
-    //   console.log(
-    //     'Dappy network is unknown and ./dappyNetwork.js does not exist,
-    // maybe you want to set DAPPY_NETWORK_ID=none ?'
-    //   );
-    process.exit(1);
-    // }
+    try {
+      cfg.dappyNetwork = JSON.parse(fs.readFileSync(
+        path.resolve(
+          process.cwd(),
+          'dappyNetwork.json'
+        ),
+        'utf8'
+      )).network;
+      console.log('Dappy network loaded from ./dappyNetwork.js');
+    } catch (err) {
+      console.log(
+      `Dappy network is unknown and ./dappyNetwork.js does not exist,
+maybe you want to set DAPPY_NETWORK_ID=none ?`
+      );
+      process.exit(1);
+    }
   } else if (dappyNetworks[cfg.dappyNetworkId as DappyNetworkId]) {
     cfg.dappyNetwork = dappyNetworks[cfg.dappyNetworkId as DappyNetworkId];
     console.log(
