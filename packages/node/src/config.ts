@@ -94,7 +94,7 @@ export function initConfig() {
       console.log('Dappy network loaded from ./dappyNetwork.js')
     } catch (err) {
       console.log('Dappy network is unknown and ./dappyNetwork.js does not exist, maybe you want to set DAPPY_NETWORK_ID=none ?');
-      process.exit();
+      process.exit(1);
     }
   } else {
     if (dappyNetworks[cfg.dappyNetworkId as DappyNetworkId]) {
@@ -102,7 +102,7 @@ export function initConfig() {
       console.log(`Will use dappy network ${cfg.dappyNetworkId} with ${Object.keys(cfg.dappyNetwork).length} members for gossip !`)
     } else {
       console.log(`Dappy network ${cfg.dappyNetwork} not found`);
-      process.exit();
+      process.exit(1);
     }
   }
 
@@ -112,7 +112,7 @@ export function initConfig() {
     console.log('Identified self in dappy network !')
   } else {
     console.log(`hostname ${cfg.dappyNetworkSelfHostname} was not found in dappy network`);
-    process.exit();
+    process.exit(1);
   }
 
   config = cfg;
