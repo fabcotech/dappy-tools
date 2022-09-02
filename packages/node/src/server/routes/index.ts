@@ -9,7 +9,7 @@ import { createUpdateZone } from './update-zone';
 import { getCurrentZoneProvider } from '../../ZoneProviders';
 import { getStore } from '../../store';
 import { createGetZones } from './get-zones';
-import { createHandleGossip } from './handle-gossip'
+import { createHandleGossip } from './handle-gossip';
 import { getConfig } from '../../config';
 
 export function getRouter() {

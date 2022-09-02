@@ -76,7 +76,7 @@ export const isRRCSP = (data: JSONObject): data is RRCSP =>
     ttl: isOptional(isNumber),
     data: isStringNotEmpty,
     type: match(/^CSP$/),
-})(data);
+  })(data);
 
 export type RRTXT = ResourceRecord & {
   data: string;

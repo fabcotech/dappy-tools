@@ -23,7 +23,7 @@ export const getZones = async (names: string[]): Promise<NameZone[]> => {
     throw new Error('Failed to get zones from rchain');
   }
 
-  return result.records?.map((r) =>
-    (typeof r.data === 'string' ? (JSON.parse(r.data)) : r.data
-  )) as NameZone[];
+  return result.records?.map((r) => {
+    return typeof r.data === 'string' ? JSON.parse(r.data) : r.data;
+  }) as NameZone[];
 };

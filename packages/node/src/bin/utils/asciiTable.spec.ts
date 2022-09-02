@@ -17,7 +17,7 @@ describe('ascii tables', () => {
     expect(r).to.equal(
       dedent`a    b    c
              e    f    g
-             h    i    j`,
+             h    i    j`
     );
   });
 
@@ -31,7 +31,7 @@ describe('ascii tables', () => {
     expect(r).to.equal(
       dedent`a               b              cccccccc
              e               fffffffffff    g       
-             hhhhhhhhhhhh    i              j       `,
+             hhhhhhhhhhhh    i              j       `
     );
   });
 });

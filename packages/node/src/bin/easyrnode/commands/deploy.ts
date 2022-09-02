@@ -23,7 +23,8 @@ async function easyDeploy(
   wait: number | undefined,
   api: Api
 ) {
-  let term = 'new deployId(`rho:rchain:deployId`) in { deployId!("hello world !") }';
+  let term =
+    'new deployId(`rho:rchain:deployId`) in { deployId!("hello world !") }';
   try {
     term = await api.readFile(filePath);
   } catch (err) {
@@ -31,34 +32,28 @@ async function easyDeploy(
   }
 
   if (wait) {
-    const dataAtNameResponse = await rc.http.easyDeploy(
-      host,
-      {
-        term,
-        privateKey,
-        shardId,
-        phloPrice,
-        phloLimit,
-        timeout: wait,
-      }
-    );
+    const dataAtNameResponse = await rc.http.easyDeploy(host, {
+      term,
+      privateKey,
+      shardId,
+      phloPrice,
+      phloLimit,
+      timeout: wait,
+    });
     const data = rc.utils.rhoValToJs(
       JSON.parse(dataAtNameResponse).exprs[0].expr
     );
     api.print('Rholang result:');
     api.print(data);
   } else {
-    const deployResponse = await rc.http.easyDeploy(
-      host,
-      {
-        term,
-        privateKey,
-        phloPrice,
-        phloLimit,
-        shardId,
-        timeout: undefined,
-      }
-    );
+    const deployResponse = await rc.http.easyDeploy(host, {
+      term,
+      privateKey,
+      phloPrice,
+      phloLimit,
+      shardId,
+      timeout: undefined,
+    });
     const prettyResponse = deployResponse
       .replace(/\\n/, '\n')
       .replace(/(^")|("$)/, '');

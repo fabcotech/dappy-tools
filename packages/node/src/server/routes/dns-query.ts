@@ -23,9 +23,7 @@ export const getZoneRecords = (
   questions
     .map(({ type, name }) => {
       const records = zones
-        .map((zone) =>
-          normalizeRecords(zone, zone.records, /\.d$/.test(name))
-        )
+        .map((zone) => normalizeRecords(zone, zone.records, /\.d$/.test(name)))
         .flat();
       return records.filter(
         (record) => record.type === type && record.name === name

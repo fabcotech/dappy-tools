@@ -27,7 +27,7 @@ export function asciiTable(lines: string[][]) {
     for (let rIndex = 0; rIndex < lines[lIndex].length; rIndex += 1) {
       outputLine += suffixIfNecessary(
         lines[lIndex][rIndex],
-        rowLengths[rIndex],
+        rowLengths[rIndex]
       );
       if (rIndex < lines[lIndex].length - 1) {
         outputLine += SEPARATOR;

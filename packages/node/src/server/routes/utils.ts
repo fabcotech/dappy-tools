@@ -33,7 +33,6 @@ export const normalizeRecords = (
   records.map((record) => ({
     ...record,
     name:
-      getRecordName(record.name, zone.origin) +
-      (appendSuffixDappy ? '.d' : ''),
+      getRecordName(record.name, zone.origin) + (appendSuffixDappy ? '.d' : ''),
     ttl: record.ttl || zone.ttl,
   }));

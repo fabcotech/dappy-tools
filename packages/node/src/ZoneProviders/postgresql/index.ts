@@ -37,9 +37,9 @@ export const zoneProvider: ZoneProvider = {
     return Router();
   },
   saveZone: async (zone: NameZone) => {
-
-    const ownerTxt = (zone.records || [])
-      .find((r: any) => r.type === 'TXT' && r.data.startsWith("OWNER="))
+    const ownerTxt = (zone.records || []).find(
+      (r: any) => r.type === 'TXT' && r.data.startsWith('OWNER=')
+    );
     let publicKey = '';
     if (!ownerTxt) {
       throw new Error('Invalid zone no owner');
@@ -56,13 +56,13 @@ export const zoneProvider: ZoneProvider = {
         .where('domain', zone.origin)
         .update({
           zone,
-          public_key: publicKey
+          public_key: publicKey,
         });
     } else {
       await connection<NameZoneTable>('zones').insert({
         domain: zone.origin,
         zone,
-        public_key: publicKey
+        public_key: publicKey,
       });
     }
   },
