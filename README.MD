@@ -20,3 +20,7 @@ Check each workspace to know the license. Everything should be mainly MIT licens
 Any developer or company that is interested to either contribute or use the products can contact the FABCO team (parent company), or join the discord:
 - Email : hello [aat] dappy.tech
 - Public Discord (chat) : https://discord.gg/8Cu5UFV
+
+Format your commit messages using conventional commit [specification](https://www.conventionalcommits.org/en/v1.0.0-beta.2/#specification)
+
+Use `npm run cm` to commit your changes. Behind the scenen it uses [commitizen](https://github.com/commitizen/cz-cli) to format git messages.

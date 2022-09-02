@@ -1,0 +1,54 @@
+module.exports = {
+    types: [
+      { value: 'feat', name: 'feat: A new feature' },
+      { value: 'fix', name: 'fix: A bug fix' },
+      { value: 'docs', name: 'docs: Documentation only changes' },
+      {
+        value: 'style',
+        name: 'style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)',
+      },
+      {
+        value: 'refactor',
+        name: 'refactor: A code change that neither fixes a bug nor adds a feature',
+      },
+      { value: 'test', name: 'test: Adding missing tests' },
+      {
+        value: 'chore',
+        name: 'chore: Changes to the build process or auxiliary tools and libraries such as documentation generation',
+      },
+      { value: 'revert', name: 'revert: Revert to a commit' },
+    ],
+  
+    scopes: [{ name: 'root' }, { name: 'node' }, { name: 'bees'}, { name: 'gossip'}, { name: 'lookup'}],
+  
+    allowTicketNumber: true,
+    isTicketNumberRequired: false,
+    ticketNumberPrefix: '#',
+    ticketNumberRegExp: '\\d{1,5}',
+    /*
+    scopeOverrides: {
+      fix: [
+        {name: 'merge'},
+        {name: 'style'},
+        {name: 'e2eTest'},
+        {name: 'unitTest'}
+      ]
+    },
+    */
+    // override the messages, defaults are as follows
+    messages: {
+      type: "Select the type of change that you're committing:",
+      scope: '\nDenote the SCOPE of this change:',
+      // used if allowCustomScopes is true
+      customScope: 'Denote the SCOPE of this change:',
+      subject: 'Write a SHORT, IMPERATIVE tense description of the change:',
+      body: 'Provide a LONGER description of the change (optional). Use "|" to break new line:',
+      breaking: 'List any BREAKING CHANGES (optional):',
+      footer: 'List any ISSUES CLOSED by this change (optional). E.g.: #31, #34:',
+      confirmCommit: 'Are you sure you want to proceed with the commit above?',
+    },
+  
+    allowCustomScopes: false,
+    allowBreakingChanges: ['feat', 'fix'],
+    subjectLimit: 80,
+  };

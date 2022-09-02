@@ -3,8 +3,22 @@
   "description": "Dappy is a open source no-DNS no-certificate renewal name system. This it the parent repository for dappy-related tools, command line interfaces and libraries",
   "author": "FABCO",
   "version": "1.0.0",
-  "type": "module",
   "workspaces": [
     "packages/*"
-   ]
+  ],
+  "scripts": {
+    "cm": "cz"
+  },
+  "devDependencies": {
+    "cz-conventional-changelog": "^3.3.0",
+    "cz-customizable": "^7.0.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-customizable"
+    },
+    "cz-customizable": {
+      "config": "./internals/.cz-config.js"
+    }
+  }
 }
