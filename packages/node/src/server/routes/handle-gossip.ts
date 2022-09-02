@@ -76,18 +76,7 @@ export const createHandleGossip =
       }
     } else {
       const zone = await getZones([req.body.data.zone.origin]);
-      if (zone[0]) {
-        // todo
-        /*
-          The following if is never true
-          Need some sort of serialization, fields are not in the same
-          order, they are probably reordered by postgre or knex
-        */
-        if (JSON.stringify(zone[0]) === JSON.stringify(req.body.data.zone)) {
-          res.send("Zone already exists and unchanged").status(200);
-          return;
-        }
-      } else {
+      if (!zone[0]) {
         res.send('Zone does not exist').status(403);
         return;
       }
