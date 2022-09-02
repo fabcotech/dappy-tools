@@ -1,5 +1,5 @@
-import { getConfig } from '../../config';
-import { getStore } from '../../store';
+const { getConfig } = require('../../config');
+const { getStore } = require('../../store');
 
 const { Router } = require('express');
 const bodyParser = require('body-parser');
@@ -154,7 +154,7 @@ const getContractLogs = (store) => (req, res) => {
   getContractLogsHandler(store.redisClient.zRange.bind(store.redisClient), log)(req.body, res);
 };
 
-export function getRoutes() {
+module.exports.getRoutes = () => {
   const router = Router();
   const store = getStore();
 
