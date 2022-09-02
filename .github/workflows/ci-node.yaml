@@ -35,7 +35,8 @@ jobs:
         run: >
           git config --global url."https://github.com/".insteadOf
           ssh://git@github.com/
-      - run: rm -rf ../../package.json && npm ci
+      - run: npm ci
+        working-directory: packages/node
       - run: npm run build --if-present
       - run: npm run lint
       - run: npm test
