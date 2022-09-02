@@ -11,11 +11,16 @@
 		},
 		{
 			"path": "packages/lookup"
-		},				
+		},
 		{
 			"path": "."
 		},
 
 	],
-	"settings": {}
+	"settings": {},
+	"extensions": {
+		"recommendations": [
+			"EditorConfig.EditorConfig"
+		]
+	}
 }
