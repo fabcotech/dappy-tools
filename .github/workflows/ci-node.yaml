@@ -7,7 +7,7 @@ on:
   push:
     paths:
       - 'packages/node/**'
-      - .github/workflows/ci-node.yml
+      - .github/workflows/ci-node.yaml
 
 jobs:
   build:

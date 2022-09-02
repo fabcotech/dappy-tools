@@ -5,7 +5,7 @@ on:
     types: [published]
     paths:
       - 'packages/node/**'
-      - .github/workflows/publish-node.yml
+      - .github/workflows/publish-node.yaml
 
 jobs:
   docker:
