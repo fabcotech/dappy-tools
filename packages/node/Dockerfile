@@ -1,23 +1,21 @@
-# copied from https://www.digitalocean.com/community/tutorials/how-to-build-a-node-js-application-with-docker
+FROM node:18-alpine AS build-env
 
-FROM node:17.5.0-alpine3.14
+WORKDIR /app
 
-# needed for the package.json dependencies (rchain-token) that are on github and not on npm
-RUN apk --no-cache add git less openssh && \
-    rm -rf /var/lib/apt/lists/*
+COPY package*.json ./
+COPY tsconfig.build.json ./
+COPY packages ./packages/
 
-RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
+RUN npm install && cd packages/node && npm run build && npm prune --production
 
-WORKDIR /home/node/app
+FROM node:18-alpine
+WORKDIR /app
+
+RUN chown -R node:node /app
 
 USER node
 
-RUN mkdir ./logs
-RUN mkdir ./www
-COPY --chown=node:node package*.json ./
-COPY --chown=node:node tsconfig.json ./
-COPY --chown=node:node src ./src/
+COPY --from=build-env /app/packages /app/packages
+COPY --from=build-env /app/node_modules /app/node_modules
 
-RUN npm install && npm run build 
-
-CMD ["node", "--max-old-space-size=8192", "dist/index.js"]
+CMD ["node", "--max-old-space-size=8192", "/app/packages/node/dist/src/index.js"]
