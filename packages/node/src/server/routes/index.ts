@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Response, Router } from 'express';
 import bodyParser from 'body-parser';
 
 import { getNodes } from './get-nodes';
@@ -54,7 +54,10 @@ export function getRouter() {
       getZones,
       saveZone,
       config.dappyNetwork,
-      config.dappyNetworkSelfHostname
+      config.dappyNetworkSelfHostname,
+      (res: Response, text: string, httpStatus: number) => {
+        res.send(text).status(httpStatus)
+      }
     )
   );
 

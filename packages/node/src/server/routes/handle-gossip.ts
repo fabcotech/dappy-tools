@@ -14,14 +14,15 @@ export const createHandleGossip =
     getZones: (names: string[]) => Promise<NameZone[]>,
     saveZone: (zone: NameZone) => Promise<void>,
     dappyNetwork: DappyNetworkMember[],
-    dappyNetworkSelfHostname: string
+    dappyNetworkSelfHostname: string,
+    resSend: (res: Response, text: string, httpStatus: number) => void
   ) =>
   async (req: Request, res: Response) => {
     let gossipToDappyNetwork = false;
     log(`/gossip ${req.body.data.zone.origin}`);
 
     if (!req.body || !req.body.data || !req.body.signature) {
-      res.send('Need data and signature').status(400);
+      resSend(res, 'Need data and signature', 400);
       return;
     }
 
@@ -30,7 +31,7 @@ export const createHandleGossip =
       !req.body.data.zone.origin ||
       typeof req.body.data.zone.origin !== 'string'
     ) {
-      res.send('Need an origin').status(400);
+      resSend(res, 'Need an origin', 400);
       return;
     }
 
@@ -39,12 +40,12 @@ export const createHandleGossip =
     );
     let publicKey = '';
     if (!ownerTxt) {
-      res.send('Need an owner as TXT record').status(400);
+      resSend(res, 'Need an owner as TXT record', 400);
       return;
     }
     publicKey = ownerTxt.data.slice(6);
     if (publicKey.length !== 130) {
-      res.send('Public key must be of length 130').status(400);
+      resSend(res, 'Public key must be of length 130', 400);
       return;
     }
 
@@ -57,7 +58,7 @@ export const createHandleGossip =
 
     if (zones[0]) {
       if (isEqual(zones[0], req.body.data.zone)) {
-        res.send('Zone already exists and unchanged').status(200);
+        resSend(res, 'Zone already exists and unchanged', 200);
         return;
       }
     }
@@ -70,16 +71,16 @@ export const createHandleGossip =
           req.body
         );
         await saveZone(req.body.data.zone);
-        res.send('Zone created').status(200);
+        resSend(res, 'Zone created', 200);
         gossipToDappyNetwork = true;
       } catch (err) {
-        res.send(err).status(403);
+        resSend(res, err, 403);
         return;
       }
     } else {
       const zone = await getZones([req.body.data.zone.origin]);
       if (!zone[0]) {
-        res.send('Zone does not exist').status(403);
+        resSend(res, 'Zone does not exist', 403);
         return;
       }
 
@@ -87,17 +88,17 @@ export const createHandleGossip =
         (r: any) => r.type === 'TXT' && r.data.startsWith('OWNER=')
       );
       if (!currentOwnerTxt) {
-        res.send('Zone has no owner, cannot update').status(400);
+        resSend(res, 'Zone has no owner, cannot update', 400);
         return;
       }
       const publicKeyOfCurrentOwner = currentOwnerTxt.data.slice(6);
       try {
         checkZoneTransaction(publicKeyOfCurrentOwner, req.body);
         await saveZone(req.body.data.zone);
-        res.send('Zone updated').status(200);
+        resSend(res, 'Zone updated', 200);
         gossipToDappyNetwork = true;
       } catch (err) {
-        res.send((err as unknown as any).message || 'Unauthorized').status(403);
+        resSend(res, (err as unknown as any).message || 'Unauthorized', 403);
         return;
       }
     }
