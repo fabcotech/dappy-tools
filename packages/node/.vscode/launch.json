@@ -24,8 +24,7 @@
       ],
       "env": {
         "DAPPY_NODE_ENABLE_REQUEST_METRICS": "true",
-        "DAPPY_NODE_HTTPS_PORT": "3002",
-        "DAPPY_NODE_DNS_PORT": "53"
+        "DAPPY_NODE_HTTPS_PORT": "3002"
       }
     },
     {
@@ -50,8 +49,7 @@
         "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json",
         "DAPPY_NODE_ZONE_PROVIDER": "memory",
         "DAPPY_NODE_ENABLE_REQUEST_METRICS": "true",
-        "DAPPY_NODE_CACHING": "0",
-        "DAPPY_NODE_DNS_PORT": "53"
+        "DAPPY_NODE_CACHING": "0"
       }
     },
     {
@@ -77,7 +75,6 @@
         "DAPPY_NODE_ZONE_PROVIDER": "postgresql",
         "DAPPY_NODE_ENABLE_REQUEST_METRICS": "true",
         "DAPPY_NODE_CACHING": "0",
-        "DAPPY_NODE_DNS_PORT": "53"
       }
     },
     {
