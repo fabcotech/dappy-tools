@@ -55,6 +55,32 @@
       }
     },
     {
+      "name": "dappy-node (postgresql)",
+      "type": "node",
+      "request": "launch",
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "ts-node/register",
+      ],
+      "args": [
+        "./src/index.ts",
+      ],
+      "cwd": "${workspaceFolder}",
+      "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": [
+        "<node_internals>/**",
+        "node_modules/**"
+      ],
+      "env": {
+        "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json",
+        "DAPPY_NODE_ZONE_PROVIDER": "postgresql",
+        "DAPPY_NODE_ENABLE_REQUEST_METRICS": "true",
+        "DAPPY_NODE_CACHING": "0",
+        "DAPPY_NODE_DNS_PORT": "53"
+      }
+    },
+    {
       "type": "node",
       "request": "launch",
       "name": "Mocha Tests",
@@ -69,7 +95,7 @@
       ],
       "skipFiles": [
         "<node_internals>/**"
-      ]      
+      ]
     },
     {
       "type": "node",
@@ -121,7 +147,7 @@
         "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json",
         "TS_NODE_COMPILER_OPTIONS": "{\"module\": \"commonjs\" }"
       }
-    },    
+    },
     {
       "type": "node",
       "request": "launch",
