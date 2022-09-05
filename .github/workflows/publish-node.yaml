@@ -1,18 +1,9 @@
 name: publish node
 
-on:
-  release:
-    types: [published]
-    paths:
-      - 'packages/node/**'
-      - .github/workflows/publish-node.yaml
+on: [workflow_dispatch]
 
 jobs:
   docker:
-    defaults:
-      run:
-        working-directory: packages/node
-
     runs-on: ubuntu-latest
 
     steps:
@@ -29,14 +20,10 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./Dockerfile
+          file: ./packages/node/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/dappy-node:${{ github.event.release.tag_name }}
   npm:
-    defaults:
-      run:
-        working-directory: packages/node
-
     runs-on: ubuntu-latest
 
     steps:
@@ -48,19 +35,9 @@ jobs:
         with:
           node-version: 18
           registry-url: 'https://registry.npmjs.org'
-      - name: Reconfigure git to use HTTP authentication
-        run: >
-          git config --global url."https://github.com/".insteadOf
-          ssh://git@github.com/
-      - run: npm ci
-        working-directory: packages/node
-      - run: git config --global user.name "GitHub CD bot"
-      - run: git config --global user.email "contact@fabco.tech"
-      - run: npm version ${{ github.event.release.tag_name }}
-      - run: npm run build
-      - run: npm run lint
-      - run: npm test
-      - run: npm publish
+      - run: npm ci -w packages/node
+      - run: npm run build -w packages/node
+      - run: npm publish -w packages/node
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: git push

@@ -56,7 +56,7 @@ export function getRouter() {
       config.dappyNetwork,
       config.dappyNetworkSelfHostname,
       (res: Response, text: string, httpStatus: number) => {
-        res.send(text).status(httpStatus)
+        res.send(text).status(httpStatus);
       }
     )
   );
