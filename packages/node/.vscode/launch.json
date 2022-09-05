@@ -74,14 +74,14 @@
         "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json",
         "DAPPY_NODE_ZONE_PROVIDER": "postgresql",
         "DAPPY_NODE_ENABLE_REQUEST_METRICS": "true",
-        "DAPPY_NODE_CACHING": "0",
+        "DAPPY_NODE_CACHING": "0"
       }
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Mocha Tests",
-      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+      "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
       "stopOnEntry": false,
       "cwd": "${workspaceRoot}",
       "args": [

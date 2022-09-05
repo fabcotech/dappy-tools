@@ -1,5 +1,5 @@
 import path from 'path';
-import fs from 'fs';
+import { readFileSync } from 'node:fs';
 // import { ReadFile } from 'fs';
 
 import {
@@ -26,6 +26,43 @@ const createMustBeDefined =
     }
     return envValue;
   };
+
+function isDappyNetwork(value: string): value is DappyNetworkId {
+  return ['gamma', 'd'].includes(value);
+}
+
+function parseDappyNetworkId(value: string) {
+  if (!isDappyNetwork(value)) {
+    return undefined;
+  }
+  return value;
+}
+
+export const tryReadJSONFile = (filePath: string) => {
+  try {
+    const content = readFileSync(filePath).toString();
+    return JSON.parse(content);
+  } catch {
+    return undefined;
+  }
+};
+
+export const loadDappyNetwork = (
+  networkId: DappyNetworkId | undefined,
+  customNetwork: DappyNetworkMember[],
+  knownNetworks: Record<string, DappyNetworkMember[]>,
+  networkSelfHostname: string
+) => {
+  const network = customNetwork || knownNetworks[networkId];
+
+  if (network && !network.some((a) => a.hostname === networkSelfHostname)) {
+    throw new Error(
+      `hostname ${networkSelfHostname} was not found in dappy network ${networkId}`
+    );
+  }
+
+  return network;
+};
 
 let config: ReturnType<typeof initConfig> = {} as any;
 
@@ -82,58 +119,20 @@ export function initConfig() {
       parseInt(process.env.DAPPY_NODE_LAST_BLOCK_JOB_INTERVAL || '', 10) ||
       40000,
     dappyNodeStartJobs: process.env.DAPPY_NODE_START_JOBS === 'true',
-    dappyNetworkId: process.env.DAPPY_NETWORK_ID || 'none',
     dappyNetworkSelfHostname:
       process.env.DAPPY_NETWORK_SELF_HOSTNAME || 'localhost',
-    dappyNetwork: [] as DappyNetworkMember[],
+    dappyNetwork: loadDappyNetwork(
+      parseDappyNetworkId(process.env.DAPPY_NETWORK_ID),
+      tryReadJSONFile(process.env.DAPPY_NETWORK_FILE),
+      dappyNetworks,
+      process.env.DAPPY_NETWORK_SELF_HOSTNAME || 'localhost'
+    ),
     dappyLogPath: process.env.DAPPY_LOG_PATH || './logs',
 
     redisDb: process.env.DAPPY_NODE_REDIS_DB || 1,
     redisHost: process.env.DAPPY_NODE_REDIS_HOST || 'localhost',
     redisPort: parseInt(process.env.DAPPY_NODE_REDIS_PORT || '', 10) || 6379,
   };
-
-  if (cfg.dappyNetworkId === 'unknown') {
-    try {
-      cfg.dappyNetwork = JSON.parse(fs.readFileSync(
-        path.resolve(
-          process.cwd(),
-          'dappyNetwork.json'
-        ),
-        'utf8'
-      )).network;
-      console.log('Dappy network loaded from ./dappyNetwork.js');
-    } catch (err) {
-      console.log(
-      `Dappy network is unknown and ./dappyNetwork.js does not exist,
-maybe you want to set DAPPY_NETWORK_ID=none ?`
-      );
-      process.exit(1);
-    }
-  } else if (dappyNetworks[cfg.dappyNetworkId as DappyNetworkId]) {
-    cfg.dappyNetwork = dappyNetworks[cfg.dappyNetworkId as DappyNetworkId];
-    console.log(
-      `Will use dappy network ${cfg.dappyNetworkId} with ${
-        Object.keys(cfg.dappyNetwork).length
-      } members for gossip !`
-    );
-  } else {
-    console.log(`Dappy network ${cfg.dappyNetwork} not found`);
-    process.exit(1);
-  }
-
-  if (
-    cfg.dappyNetwork.find((a: any) => {
-      return a.hostname === cfg.dappyNetworkSelfHostname;
-    })
-  ) {
-    console.log('Identified self in dappy network !');
-  } else {
-    console.log(
-      `hostname ${cfg.dappyNetworkSelfHostname} was not found in dappy network`
-    );
-    process.exit(1);
-  }
 
   config = cfg;
 

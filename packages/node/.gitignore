@@ -86,3 +86,5 @@ dappyrc
 .rnode
 
 .pgdata
+
+.network.json
