@@ -123,7 +123,7 @@ export function initConfig() {
       process.env.DAPPY_NETWORK_SELF_HOSTNAME || 'localhost',
     dappyNetwork: loadDappyNetwork(
       parseDappyNetworkId(process.env.DAPPY_NETWORK_ID),
-      tryReadJSONFile(process.env.DAPPY_NETWORK_FILE),
+      tryReadJSONFile(process.env.DAPPY_NETWORK_FILE || './dappynetwork.json'),
       dappyNetworks,
       process.env.DAPPY_NETWORK_SELF_HOSTNAME || 'localhost'
     ),
