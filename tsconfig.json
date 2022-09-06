@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": "./packages",
     "paths": {
-      "@fabcotech/*": ["*/src"],
+      "@fabcotech/*": ["*/src"]
     }
   },
   "noEmit": true

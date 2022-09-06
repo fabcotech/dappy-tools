@@ -9,7 +9,7 @@
   ],
   "references": [
     {
-      "path": "../lookup/tsconfig.build.json"
+      "path": "../dappy-lookup/tsconfig.build.json"
     }
   ]
 }

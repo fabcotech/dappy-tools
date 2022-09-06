@@ -10,10 +10,10 @@
   ],
   "references": [
     {
-      "path": ["../gossip/tsconfig.build.json"],
+      "path": "../gossip/tsconfig.build.json",
     },
     {
-      "path": ["../lookup/tsconfig.build.json"],
+      "path": "../dappy-lookup/tsconfig.build.json",
     }
   ]
 }

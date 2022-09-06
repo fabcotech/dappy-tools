@@ -1,2 +1,12 @@
-node_modules
-dist
+*
+
+!package.json
+!package-lock.json
+!lerna.json
+!nx.json
+!tsconfig.build.json
+
+!/packages
+
+**/node_modules
+**/dist
