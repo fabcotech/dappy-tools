@@ -6,9 +6,9 @@
   "main": "dist/src/index",
   "types": "dist/src/index",
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean:dist": "rm -rf dist",
     "clean:node_modules": "rm -rf node_modules",
-    "build": "npm run clean && tsc -b ./tsconfig.build.json",
+    "build": "npm run clean:dist && tsc -b ./tsconfig.build.json",
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'src/*.spec.ts'"
   },
   "jest": {

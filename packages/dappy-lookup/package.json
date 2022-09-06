@@ -31,9 +31,9 @@
   "scripts": {
     "test": "TS_NODE_PROJECT=./tsconfig.build.json mocha -r ts-node/register 'src/**/*.spec.ts'",
     "test:watch": "TS_NODE_PROJECT=./tsconfig.build.json mocha -r ts-node/register 'src/**/*.spec.ts' --watch --watch-files *.ts",
-    "clean": "rm -rf dist",
+    "clean:dist": "rm -rf dist",
     "clean:node_modules": "rm -rf node_modules",
-    "build": "npm run clean && tsc -b ./tsconfig.build.json",
+    "build": "npm run clean:dist && tsc -b ./tsconfig.build.json",
     "lint": "eslint src --ext .ts",
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier --write 'src/**/*.ts'"

@@ -4,9 +4,9 @@
   "description": "JS library that does co-resolution / retrieves arbitrary resources on arbitrary DLTs, blockchains or networks in a trustless manner.",
   "author": "FABCO <contact@fabco.tech>",
   "scripts": {
-    "clean": "rm -rf dist",
-    "build": "npm run clean && tsc -p tsconfig.build.json",
+    "clean:dist": "rm -rf dist",
     "clean:node_modules": "rm -rf node_modules",
+    "build": "npm run clean:dist && tsc -p tsconfig.build.json",
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'src/**/*.spec.ts'"
   },
   "main": "dist/src/index.js",

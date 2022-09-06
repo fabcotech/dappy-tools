@@ -6,5 +6,12 @@
         "cacheableOperations": []
       }
     }
+  },
+  "targetDefaults": {
+    "test": {
+      "dependsOn": [
+        "^build"
+      ]
+    }
   }
 }
