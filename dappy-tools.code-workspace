@@ -1,7 +1,7 @@
 {
 	"folders": [
 		{
-			"path": "packages/node"
+			"path": "packages/dappy-node"
 		},
 		{
 			"path": "packages/bees"
@@ -10,7 +10,7 @@
 			"path": "packages/gossip"
 		},
 		{
-			"path": "packages/lookup"
+			"path": "packages/dappy-lookup"
 		},
 		{
 			"path": "."
