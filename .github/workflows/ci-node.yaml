@@ -6,7 +6,7 @@ name: CI node
 on:
   push:
     paths:
-      - 'packages/node/**'
+      - 'packages/dappy-node/**'
       - .github/workflows/ci-node.yaml
 
 jobs:
