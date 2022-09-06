@@ -11,6 +11,17 @@ spec:
       labels:
         app: dappy-node
     spec:
+      initContainers:
+        - name: pg-migrations
+          image: fabcotech/dappy-node:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DAPPY_PG_CONNECTION_STRING
+              value: postgresql://postgres:postgres@pg:5432/dappy
+          command:
+            - sh
+            - '-c'
+            - cd packages/dappy-node && npm run pg:migrate
       containers:
         - image: fabcotech/dappy-node:latest
           imagePullPolicy: IfNotPresent
