@@ -22,8 +22,8 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
-      - run: npm ci -w packages/dappy-node
-      - run: npm run build -w packages/dappy-node
+      - run: npm ci && npx lerna bootstrap
+      - run: npx lerna run --scope=@fabcotech/dappy-node build
 
   test:
     runs-on: ubuntu-latest
@@ -41,9 +41,9 @@ jobs:
         run: >
           git config --global url."https://github.com/".insteadOf
           ssh://git@github.com/
-      - run: npm ci -w packages/dappy-node
-      - run: npm run lint -w packages/dappy-node
-      - run: npm test -w packages/dappy-node
+      - run: npm ci && npx lerna bootstrap
+      - run: npx lerna run --scope=@fabcotech/dappy-node lint
+      - run: npx lerna run --scope=@fabcotech/dappy-node test
 
   docker:
     runs-on: ubuntu-latest

@@ -37,8 +37,9 @@ jobs:
         with:
           node-version: 18
           registry-url: 'https://registry.npmjs.org'
-      - run: npm ci -w packages/dappy-node
-      - run: npm run build -w packages/dappy-node
-      - run: npm publish -w packages/dappy-node
+      - run: npm ci && npx lerna bootstrap
+      - run: npx lerna run --scope=@fabcotech/dappy-node build
+      - run: npm publish
+        working-directory: packages/dappy-node
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
