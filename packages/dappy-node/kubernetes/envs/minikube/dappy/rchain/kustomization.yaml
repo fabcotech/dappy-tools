@@ -1,5 +1,5 @@
 bases:
-- ../../../base/dappy
+- ../../../../base/dappy/rchain
 
 resources:
 - dappy-node-ingress.yaml

@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adminer
+spec:
+  selector:
+    matchLabels:
+      app: adminer
+  template:
+    metadata:
+      labels:
+        app: adminer
+    spec:
+      containers:
+        - image: amd64/adminer:4.8.1
+          name: adminer
+          ports:
+            - containerPort: 8080
+      restartPolicy: Always

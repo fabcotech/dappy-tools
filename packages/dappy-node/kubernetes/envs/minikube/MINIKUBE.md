@@ -17,33 +17,93 @@ minikube start
 minikube addons enable ingress
 ```
 
-## Deploy a rchain validator node in local kubernetes cluster
+## Use postgresql as zone provider
+
+```sh
+cd <DAPPY_NODE_GIT_ROOT_FOLDER>/packages/dappy-node/kubernetes/envs/minikube
+
+# Create namespace for dappy using rchain zone provider
+kubectl create ns dappy-node-pg
+
+# generate certificate for dappy-node HTTPS endpoint
+mkcert pg.dappy.dev
+
+# Create secret sslsecret from certificate and key file
+kubectl create secret tls dappy-node-tls --key="pg.dappy.dev-key.pem" --cert="pg.dappy.dev.pem" -n=dappy-node-pg
+
+# For MacOs+Docker only, add local entries to HOST file
+sudo -s
+echo "127.0.0.1    pg.dappy.dev" >> /etc/hosts
+exit
+
+# For Linux only, add local entries to HOST file
+sudo -s
+echo "`minikube ip`    pg.dappy.dev" >> /etc/hosts
+exit
+```
+
+### Deploy postgresql
+
+```sh
+# Deploy pg
+kubectl apply -k pg -n=dappy-node-pg
+
+# Wait until deployment is done
+kubectl wait --for=condition=available --timeout=600s deployment/pg -n=dappy-node-pg
+```
+
+### Deploy dappy-node
+
+Inside folder `<DAPPY_NODE_GIT_ROOT_FOLDER>/packages/dappy-node/kubernetes/envs/minikube`
+
+```sh
+# Use minikube docker runtime
+eval $(minikube docker-env)
+
+# Build dappy-node image and push it into minikube docker runtime
+docker build -t fabcotech/dappy-node -f ../../../Dockerfile ../../../../../
+
+# start or update config
+kubectl apply -k dappy/pg -n=dappy-node-pg
+
+# Wait until deployment is done
+kubectl wait --for=condition=available --timeout=600s deployment/dappy-node -n=dappy-node-pg
+```
+
+## Use rchain as zone provider
+
+```sh
+# Create namespace for dappy using rchain zone provider
+kubectl create ns dappy-node-rchain
+```
+
+### Deploy a rchain validator node in local kubernetes cluster
 
 Install [mkcert](https://github.com/FiloSottile/mkcert): It enables locally-trusted development certificates. mkcert root CA must be installed with this command `mkcert -install` (chrome/firefox must be restarted)
 
 ```sh
-# On macOS only, run following command in a dedicated terminal 
+# On macOS only, run following command in a dedicated terminal
 sudo minikube tunnel
 
-cd <DAPPY_NODE_GIT_ROOT_FOLDER>/kubernetes/envs/minikube
+cd <DAPPY_NODE_GIT_ROOT_FOLDER>/packages/dappy-node/kubernetes/envs/minikube
 # generate certificate for rnode HTTPS endpoint
 mkcert rnode.dev
 
 # Create secret sslsecret from certificate and key file
-kubectl create secret tls sslsecret --key="rnode.dev-key.pem" --cert="rnode.dev.pem"
+kubectl create secret tls sslsecret --key="rnode.dev-key.pem" --cert="rnode.dev.pem" -n=dappy-node-rchain
 
 # Deploy rnode in devMode on minikube
-kubectl apply -k rnode
+kubectl apply -k rnode -n=dappy-node-rchain
 
 # Wait until deployment is done
-kubectl wait --for=condition=available --timeout=600s deployment/rnode
+kubectl wait --for=condition=available --timeout=600s deployment/rnode -n=dappy-node-rchain
 
-# For MacOs only, add local entries to HOST file 
+# For MacOs only, add local entries to HOST file
 sudo -s
 echo "127.0.0.1    rnode.dev" >> /etc/hosts
 exit
 
-# For Linux only, add local entries to HOST file  
+# For Linux only, add local entries to HOST file
 sudo -s
 echo "`minikube ip`    rnode.dev" >> /etc/hosts
 exit
@@ -53,7 +113,7 @@ curl http://rnode.dev/status
 curl https://rnode.dev/status
 ```
 
-## Deploy dappy-node 
+### Deploy dappy-node
 
 Prerequisites to run dappy-node:
 - Dappy name system master uri is needed and set to `DAPPY_NAMES_MASTER_REGISTRY_URI` env variable.
@@ -67,7 +127,7 @@ dappy-deploy-name-system --validator=http://rnode.dev
 
 Contract is now deployed on your local rnode network, you can get `DAPPY_NAMES_MASTER_REGISTRY_URI` and `DAPPY_NAMES_CONTRACT_ID` values from `dappyrc` file.
 
-Inside folder `<DAPPY_NODE_GIT_ROOT_FOLDER>/kubernetes/envs/minikube`
+Inside folder `<DAPPY_NODE_GIT_ROOT_FOLDER>/packages/dappy-node/kubernetes/envs/minikube`
 
 ```sh
 # Create configmap that contains master uri
@@ -77,36 +137,36 @@ kubectl create configmap dappy-config --from-env-file dappyrc
 eval $(minikube docker-env)
 
 # Build dappy-node image and push it into minikube docker runtime
-docker build -t fabcotech/dappy-node -f ../../../ ../../../
+docker build -t fabcotech/dappy-node -f ../../../Dockerfile ../../../../../
 
 # generate certificate for dappy-node HTTPS endpoint
-mkcert dappy.dev
+mkcert dappy.rchain.dev
 
 # Create secret sslsecret from certificate and key file
-kubectl create secret tls dappy-node-tls --key="dappy.dev-key.pem" --cert="dappy.dev.pem"
+kubectl create secret tls dappy-node-tls --key="dappy.rchain.dev-key.pem" --cert="dappy.rchain.dev.pem" -n=dappy-node-rchain
 
 # start or update config
-kubectl apply -k dappy
+kubectl apply -k dappy/rchain -n=dappy-node-rchain
 
 # Wait until deployment is done
-kubectl wait --for=condition=available --timeout=600s deployment/dappy-node
+kubectl wait --for=condition=available --timeout=600s deployment/dappy-node -n=dappy-node-rchain
 
-# For MacOs only, add local entries to HOST file 
+# For MacOs only, add local entries to HOST file
 sudo -s
-echo "127.0.0.1    dappy.dev" >> /etc/hosts
+echo "127.0.0.1    dappy.rchain.dev" >> /etc/hosts
 exit
 
-# For Linux only, add local entries to HOST file  
+# For Linux only, add local entries to HOST file
 sudo -s
-echo "`minikube ip`    dappy.dev" >> /etc/hosts
+echo "`minikube ip`    dappy.rchain.dev" >> /etc/hosts
 exit
 ```
 
-## Redeploy Dappy name system
+### Redeploy Dappy name system
 
 ```sh
 
-# Create deploy_name_contract 
+# Create deploy_name_contract
 npm i -g @fabcotech/dappy-node
 dappy-deploy-name-system --validator=http://rnode.dev
 
@@ -134,16 +194,10 @@ docker push fabcotech/dappy-node:{DAPPY_NODE_VERSION}
 ## Other commands
 
 ```sh
-# stop
-kubectl delete -f dappy.local.yml
-
-kubectl get pods
-kubectl logs [pod name]
-
 # Update dappy-node image and run it on kubernetes
-cd <DAPPY_NODE_GIT_ROOT_FOLDER> 
+cd <DAPPY_NODE_GIT_ROOT_FOLDER>/packages/dappy-node
 eval $(minikube docker-env)
-docker build -t fabcotech/dappy-node .
+docker build -t fabcotech/dappy-node -f . ../../
 kubectl rollout restart deployment dappy-jobs dappy-node
 
 # update values in file stresstest/ping-pong.js
