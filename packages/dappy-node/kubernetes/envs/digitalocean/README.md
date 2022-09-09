@@ -46,6 +46,15 @@ kubectl -n=<NAMESPACE> create configmap pg-dappy-ca --from-file=./ca.pem
 kubectl -n=<NAMESPACE> apply -k <NAMESPACE>/pg
 ```
 
+Adminer should be available here: `https://adminer.<NAMESPACE>.dappy.tech/`
+
+Following connection info are available on Digital Ocean PosgreSQL page:
+- system: `PostgreSQL`
+- Server
+- username
+- password
+- database: `dappy`
+
 ### Deploy dappy-node
 
 Create a key and certificate for <NODE_NAME>.<NAMESPACE>.dappy TLS endpoint
@@ -78,9 +87,6 @@ Deploy dappy node instance
 ```sh
 kubectl -n=<NAMESPACE> apply -k <NAMESPACE>/dappy/pg
 ```
-
-### Test
-
 Test Web PKI endpoint
 ```sh
 curl -IX POST https://<NODE_NAME>.<NAMESPACE>.dappy.tech/ping
