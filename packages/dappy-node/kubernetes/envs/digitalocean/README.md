@@ -88,5 +88,5 @@ curl -IX POST https://<NODE_NAME>.<NAMESPACE>.dappy.tech/ping
 
 Test .dappy endpoint
 ```sh
-curl -IX POST https://<NODE_NAME>.<NAMESPACE>.dappy/ping
+curl -k -IX POST -H 'Host: <NODE_NAME>.<NAMESPACE>.dappy' 'https://<NODE_PUBLIC_IP>/ping'
 ```
