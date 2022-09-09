@@ -3,13 +3,14 @@ kind: Ingress
 metadata:
   name: adminer
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
     kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/issuer: "letsencrypt-prod"
 spec:
   tls:
     - hosts:
       - adminer.gamma.dappy.tech
-      secretName: dappy-node-tls
+      secretName: adminer-gamma-dappy-tech
   rules:
     - host: adminer.gamma.dappy.tech
       http:
