@@ -1,4 +1,3 @@
-const { parse } = require('pg-connection-string');
 const { readFileSync } = require('fs');
 
 /**
@@ -10,15 +9,14 @@ const config = {
     directory: './migrations',
   },
   connection: {
-    ...parse(
+    connectionString:
       process.env.DAPPY_PG_CONNECTION_STRING ||
-        'postgresql://postgres:postgres@localhost:5432/dappy'
-    ),
+      'postgresql://postgres:postgres@localhost:5432/dappy',
   },
 };
 
 if (process.env.DAPPY_PG_CA_PATH) {
-  config.ssl = {
+  config.connection.ssl = {
     ca: readFileSync(process.env.DAPPY_PG_CA_PATH, { encoding: 'utf8' }),
   };
 }
