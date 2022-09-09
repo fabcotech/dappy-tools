@@ -1,0 +1,3 @@
+resources:
+  - adminer-deployment.yaml
+  - adminer-service.yaml
