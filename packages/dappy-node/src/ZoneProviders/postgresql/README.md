@@ -5,6 +5,7 @@
 | **Keys** | **Required** | **Default value (dev)** | **Description** |
 |---|---|---|---|
 | DAPPY_PG_CONNECTION_STRING | No | `postgresql://postgres:postgres@localhost:5432/dappy` | postgresql connection string |
+| DAPPY_PG_CA_PATH | No | `` | optional custom CA certificate for postgres |
 
 ## Use it locally
 
