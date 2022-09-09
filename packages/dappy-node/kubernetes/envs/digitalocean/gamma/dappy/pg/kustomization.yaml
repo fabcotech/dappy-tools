@@ -1,0 +1,14 @@
+bases:
+- ../../../../../base/dappy/pg
+
+resources:
+- dappy-node-ingress.yaml
+- dappy-node-service.yaml
+
+patchesStrategicMerge:
+- dappy-node-deployment.yaml
+
+images:
+  - name: fabcotech/dappy-node
+    newName: fabcotech/dappy-node
+    newTag: '3.31.2'

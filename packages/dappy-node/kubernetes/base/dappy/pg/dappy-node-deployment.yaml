@@ -15,9 +15,6 @@ spec:
         - name: pg-migrations
           image: fabcotech/dappy-node:latest
           imagePullPolicy: IfNotPresent
-          env:
-            - name: DAPPY_PG_CONNECTION_STRING
-              value: postgresql://postgres:postgres@pg:5432/dappy
           command:
             - sh
             - '-c'

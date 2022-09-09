@@ -15,19 +15,39 @@ All commands above assume that current directory of your terminal is set to:
 
 ## Initialization
 
-Create gamma namespace
+Create namespace
 
 ```sh
-kubectl create ns gamma
+kubectl create ns <NAMESPACE>
 ```
 
 Create certificate issuer
 ```sh
-kubectl apply -k gamma/cert-manager
+kubectl -n=<NAMESPACE> apply -k <NAMESPACE>/cert-manager
 ```
 
-## Deploy adminer to administrate PostgreSQL database
+## Use PostgreSQL as zone provider
+
+### Initialization
+
+Create secret with postgreSQL connection string
+```sh
+kubectl -n=<NAMESPACE> create secret generic pg --from-literal=connection-string='<POSTGRESQL_CONNECTION_STRING>'
+```
+
+Upload postgreSQL CA certificate as configmap. Rename certifiate file to `ca.pem` to match k8s configuration:
+```sh
+kubectl -n=<NAMESPACE> create configmap pg-dappy-ca --from-file=./ca.pem
+```
+
+### Deploy adminer to administrate PostgreSQL database
 
 ```sh
-kubectl apply -k <NAMESPACE>/pg
+kubectl -n=<NAMESPACE> apply -k <NAMESPACE>/pg
+```
+
+### Deploy dappy-node
+
+```sh
+kubectl -n=<NAMESPACE> apply -k <NAMeSPACE>/dappy/pg
 ```

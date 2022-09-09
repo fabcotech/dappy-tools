@@ -5,5 +5,13 @@ metadata:
 spec:
   template:
     spec:
+      initContainers:
+        - name: pg-migrations
+          env:
+            - name: DAPPY_PG_CONNECTION_STRING
+              value: postgresql://postgres:postgres@pg:5432/dappy
       containers:
         - name: dappy-node
+          env:
+            - name: DAPPY_PG_CONNECTION_STRING
+              value: postgresql://postgres:postgres@pg:5432/dappy
