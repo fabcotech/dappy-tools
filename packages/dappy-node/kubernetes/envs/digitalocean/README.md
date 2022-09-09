@@ -48,6 +48,45 @@ kubectl -n=<NAMESPACE> apply -k <NAMESPACE>/pg
 
 ### Deploy dappy-node
 
+Create a key and certificate for <NODE_NAME>.<NAMESPACE>.dappy TLS endpoint
 ```sh
-kubectl -n=<NAMESPACE> apply -k <NAMeSPACE>/dappy/pg
+openssl req \
+  -x509 \
+  -newkey rsa:2048 \
+  -sha256 \
+  -days 3000 \
+  -nodes \
+  -keyout dappy-node.key \
+  -out dappy-node.crt \
+  -outform PEM \
+  -subj '/CN=node1.gamma.dappy'\
+  -extensions san \
+  -config <( \
+    echo '[req]'; \
+    echo 'distinguished_name=req'; \
+    echo '[san]'; \
+    echo 'basicConstraints = critical, CA:TRUE'; \
+    echo 'subjectAltName=DNS.1:localhost,DNS.2:node1.gamma.dappy,DNS.3:node1.gamma.dappy.tech')
+```
+
+Push key and certificate in k8s as secret:
+```sh
+kubectl -n=<NAMESPACE> create secret tls <NODE_NAME>.<NAMESPACE>.dappy --key="dappy-node.key" --cert="dappy-node.crt"
+```
+
+Deploy dappy node instance
+```sh
+kubectl -n=<NAMESPACE> apply -k <NAMESPACE>/dappy/pg
+```
+
+### Test
+
+Test Web PKI endpoint
+```sh
+curl -IX POST https://<NODE_NAME>.<NAMESPACE>.dappy.tech/ping
+```
+
+Test .dappy endpoint
+```sh
+curl -IX POST https://<NODE_NAME>.<NAMESPACE>.dappy/ping
 ```

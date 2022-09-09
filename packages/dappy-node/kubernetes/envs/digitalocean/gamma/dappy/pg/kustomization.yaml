@@ -2,6 +2,7 @@ bases:
 - ../../../../../base/dappy/pg
 
 resources:
+- dappy-node-webpki-ingress.yaml
 - dappy-node-ingress.yaml
 - dappy-node-service.yaml
 

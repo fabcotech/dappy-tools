@@ -79,13 +79,13 @@ openssl req \
   -keyout dappy-node.key \
   -out dappy-node.crt \
   -outform PEM \
-  -subj '/CN=<DAPPY_NETWORK>'\
+  -subj '/CN=node1.gamma.dappy'\
   -extensions san \
   -config <( \
     echo '[req]'; \
     echo 'distinguished_name=req'; \
     echo '[san]'; \
-    echo 'subjectAltName=DNS.1:localhost,DNS.2:dappynode,DNS.3:<DAPPY_NODE_PUBLIC_DOMAIN_NAME>')
+    echo 'subjectAltName=DNS.1:localhost,DNS.2:node1.gamma.dappy,DNS.3:node1.gamma.dappy.tech')
 
 # save as a secret
 kubectl create secret tls dappy-node-tls --key="dappy-node.key" --cert="dappy-node.crt" -n=<NAMESPACE>
