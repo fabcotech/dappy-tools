@@ -96,3 +96,11 @@ Test .dappy endpoint
 ```sh
 curl -k -IX POST -H 'Host: <NODE_NAME>.<NAMESPACE>.dappy' 'https://<NODE_PUBLIC_IP>/ping'
 ```
+
+## Monitoring
+
+Install prometheus and grafana
+
+```sh
+kubectl -n=<NAMESPACE> apply -k <NAMESPACE>/monitoring
+```
