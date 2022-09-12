@@ -1,8 +1,7 @@
-namespace: gamma
-
 bases:
 - ../../../../base/monitoring
 
 patchesStrategicMerge:
 - prometheus-pvc.yaml
+- prometheus-clusterrolebinding.yaml
 - grafana-pvc.yaml
