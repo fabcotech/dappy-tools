@@ -104,3 +104,10 @@ Install prometheus and grafana
 ```sh
 kubectl -n=<NAMESPACE> apply -k <NAMESPACE>/monitoring
 ```
+
+Configuration is looking for pods following these criterias:
+- pod label matches this regex `dappy-node`
+- pod port matches this regex `3001`
+- corresponding service contains this annotation `prometheus.io/scrape: "true"`
+
+Be sure to implement all of these criterias.

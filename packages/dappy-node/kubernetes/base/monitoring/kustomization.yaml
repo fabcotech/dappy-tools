@@ -5,7 +5,7 @@ resources:
 - prometheus-clusterrole.yaml
 - prometheus-clusterrolebinding.yaml
 - prometheus-serviceaccount.yaml
-- grafana-configmap.yaml
+- prometheus-configmap.yaml
 - grafana-dashboards-configmap.yaml
 - grafana-datasources-configmap.yaml
 - grafana-deployment.yaml

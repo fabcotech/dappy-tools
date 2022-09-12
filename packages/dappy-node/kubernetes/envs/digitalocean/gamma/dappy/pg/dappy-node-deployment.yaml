@@ -37,6 +37,8 @@ spec:
                   key: connection-string
             - name: DAPPY_PG_CA_PATH
               value: /etc/dappy/tls/ca.pem
+            - name: DAPPY_NODE_ENABLE_REQUEST_METRICS
+              value: 'true'
           volumeMounts:
             - name: pg-dappy-ca
               mountPath: /etc/dappy/tls
