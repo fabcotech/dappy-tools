@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: grafana 
+  name: grafana
 spec:
   selector:
     matchLabels:
@@ -9,7 +9,7 @@ spec:
   template:
     metadata:
       labels:
-        app: grafana 
+        app: grafana
     spec:
       initContainers:
         - name: give-disk-permissions
@@ -26,11 +26,7 @@ spec:
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
-          name: grafana 
-          resources:
-            limits:
-              memory: 384Mi
-              cpu: 500m
+          name: grafana
           volumeMounts:
           - name: grafana-data
             mountPath: /var/lib/grafana
