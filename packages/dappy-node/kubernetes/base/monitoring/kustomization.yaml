@@ -1,5 +1,4 @@
 resources:
-- prometheus-configmap.yaml
 - prometheus-deployment.yaml
 - prometheus-pvc.yaml
 - prometheus-service.yaml

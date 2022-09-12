@@ -1,6 +1,9 @@
 bases:
 - ../../../../base/monitoring
 
+resources:
+- grafana-configmap.yaml
+
 patchesStrategicMerge:
 - prometheus-pvc.yaml
 - prometheus-clusterrolebinding.yaml

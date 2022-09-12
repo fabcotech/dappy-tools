@@ -1,6 +1,10 @@
 bases:
 - ../../../../base/monitoring
 
+resources:
+- grafana-ingress.yaml
+- grafana-configmap.yaml
+
 patchesStrategicMerge:
 - prometheus-pvc.yaml
 - grafana-pvc.yaml
