@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-const cli = require('../dist/dappy-lookup-cli.js');
+const cli = require('../dist/src/cli/cli.js');
 
 cli.runCli();
