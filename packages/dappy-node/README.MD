@@ -106,6 +106,7 @@ Below, here are all environments variables read by dappy-node.
 | DAPPY_NODE_ENABLE_REQUEST_METRICS | Yes | `false` | Activate metrics |
 | DAPPY_NODE_SENTRY_URL | No | `false` | Send logs to sentry |
 | DAPPY_NETWORK_ID | Yes | `unknown`, `gamma`, `beta` or `d` |
+| DAPPY_NETWORK_FILE | No | `File path of a dappy network .json file` |
 | DAPPY_NETWORK_SELF_HOSTNAME | Yes | `localhost1`, `fabco`, `anothermember` |
 | DAPPY_LOG_PATH | Yes | `./logs` | path to log warning and errors |
 | NODES_FILE | No |  |  |
