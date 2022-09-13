@@ -23,7 +23,7 @@ kubectl create ns <NAMESPACE>
 
 Create certificate issuer
 ```sh
-kubectl -n=<NAMESPACE> apply -k <NAMESPACE>/cert-manager
+kubectl apply -k cert-manager
 ```
 
 ## Use PostgreSQL as zone provider
@@ -32,18 +32,18 @@ kubectl -n=<NAMESPACE> apply -k <NAMESPACE>/cert-manager
 
 Create secret with postgreSQL connection string
 ```sh
-kubectl -n=<NAMESPACE> create secret generic pg --from-literal=connection-string='<POSTGRESQL_CONNECTION_STRING>'
+kubectl create secret generic pg --from-literal=connection-string='postgresql://doadmin:AVNS_eXo1rfZWrERr6AawUSU@private-db-postgresql-fra1-50809-do-user-2260496-0.b.db.ondigitalocean.com:25060/gamma-node2'
 ```
 
 Upload postgreSQL CA certificate as configmap. Rename certifiate file to `ca.pem` to match k8s configuration:
 ```sh
-kubectl -n=<NAMESPACE> create configmap pg-dappy-ca --from-file=./ca.pem
+kubectl create configmap pg-dappy-ca --from-file=./ca.pem
 ```
 
 ### Deploy adminer to administrate PostgreSQL database
 
 ```sh
-kubectl -n=<NAMESPACE> apply -k <NAMESPACE>/pg
+kubectl apply -k pg
 ```
 
 Adminer should be available here: `https://adminer.<NAMESPACE>.dappy.tech/`
@@ -68,14 +68,14 @@ openssl req \
   -keyout dappy-node.key \
   -out dappy-node.crt \
   -outform PEM \
-  -subj '/CN=node1.gamma.dappy'\
+  -subj /CN=<DAPPY_NODE_DOMAIN> \
   -extensions san \
   -config <( \
     echo '[req]'; \
     echo 'distinguished_name=req'; \
     echo '[san]'; \
     echo 'basicConstraints = critical, CA:TRUE'; \
-    echo 'subjectAltName=DNS.1:localhost,DNS.2:node1.gamma.dappy,DNS.3:node1.gamma.dappy.tech')
+    echo 'subjectAltName=DNS.1:<DAPPY_NODE_DOMAIN>';)
 ```
 
 Push key and certificate in k8s as secret:
