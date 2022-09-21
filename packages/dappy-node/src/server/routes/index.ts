@@ -6,6 +6,7 @@ import { ping } from './ping';
 import { createDnsQuery, createExtendedDnsQuery } from './dns-query';
 import { createMintZone } from './mint-zone';
 import { createUpdateZone } from './update-zone';
+import { createGetHash } from './get-hash';
 import { getCurrentZoneProvider } from '../../ZoneProviders';
 import { getStore } from '../../store';
 import { createGetZones } from './get-zones';
@@ -17,7 +18,7 @@ export function getRouter() {
   const store = getStore();
   const config = getConfig();
 
-  const { getZones, saveZone } = getCurrentZoneProvider();
+  const { getZones, saveZone, getHash } = getCurrentZoneProvider();
 
   router.post('/ping', ping);
   router.post('/get-nodes', getNodes(store));
@@ -47,6 +48,31 @@ export function getRouter() {
   );
 
   router.post('/get-zones', bodyParser.json(), createGetZones(getZones));
+
+  router.post(
+    '/hashes',
+    bodyParser.json(),
+    createGetHash(
+      true,
+      getHash,
+      (res: Response, text: string, httpStatus: number) => {
+        res.send(text).status(httpStatus);
+      }
+    )
+  );
+
+  router.post(
+    '/hash',
+    bodyParser.json(),
+    createGetHash(
+      false,
+      getHash,
+      (res: Response, text: string, httpStatus: number) => {
+        res.send(text).status(httpStatus);
+      }
+    )
+  );
+
   router.post(
     '/gossip',
     bodyParser.json(),

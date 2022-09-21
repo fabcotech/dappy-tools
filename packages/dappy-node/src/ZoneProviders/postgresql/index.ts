@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import knex from 'knex';
+import md5 from 'md5';
 import type { Knex } from 'knex';
 import { log } from '../../log';
 import { NameZone } from '../../model/NameZone';
@@ -24,6 +25,18 @@ interface NameZoneTable {
 }
 
 export const zoneProvider: ZoneProvider = {
+  getHash: async (each: boolean): Promise<string> => {
+    const result = await connection
+    .raw(
+      'select domain, md5(CAST((array_agg(z.zone order by "domain")) AS text)) from zones z group by "domain" order by "domain"'
+    );
+
+    if (each) {
+      return result.rows;
+    }
+
+    return md5(JSON.stringify({ rows: result.rows }))
+  },
   getZones: async (names: string[]): Promise<NameZone[]> => {
     const result = await connection<NameZoneTable>('zones')
       .select({
