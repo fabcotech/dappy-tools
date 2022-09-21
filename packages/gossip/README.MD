@@ -7,7 +7,7 @@ Utils use to sign, verify and air messages sent between and to nodes of the dapp
 Signs a message (`data` in our case) with a private key
 
 ```typescript
-import { publicKeyFromPrivateKey, signZoneTransaction } from "dummychain";
+import { publicKeyFromPrivateKey, signZoneTransaction } from "@fabcotech/gossip";
 
 const privateKey = "aaa";
 
@@ -54,7 +54,7 @@ Send a message to a dappy network, will retry 3 times (hardcoded) with a delay o
 
 ```typescript
 import https from "https";
-import { gossip } from "dummychain";
+import { gossip } from "@fabcotech/gossip";
 import { dappyNetworks } from "@fabcotech/dappy-lookup";
 
 gossip(
