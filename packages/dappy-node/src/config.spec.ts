@@ -9,34 +9,10 @@ chai.use(spies);
 describe('config', () => {
   describe('loadDappyNetwork', () => {
     it('should return undefined if no network is defined', () => {
-      const network = loadDappyNetwork(
-        undefined,
-        undefined,
-        dappyNetworks,
-        undefined
-      );
+      const network = loadDappyNetwork(undefined, undefined, dappyNetworks);
       expect(network).to.equal(undefined);
     });
-    it('should throw an error if custom network is defined and not self hostname', () => {
-      const customNetwork = [
-        {
-          hostname: 'node1',
-          ip: '127.0.0.1',
-          port: '3001',
-          scheme: 'http',
-        },
-      ] as DappyNetworkMember[];
-
-      expect(() =>
-        loadDappyNetwork(undefined, customNetwork, dappyNetworks, undefined)
-      ).throw();
-    });
-    it('should throw an error if network id is defined and not self hostname', () => {
-      expect(() =>
-        loadDappyNetwork('gamma', undefined, dappyNetworks, undefined)
-      ).throw();
-    });
-    it('should return custom network if self hostname defined', () => {
+    it('should return custom network', () => {
       const customNetwork = [
         {
           hostname: 'node1',
@@ -47,10 +23,10 @@ describe('config', () => {
       ] as DappyNetworkMember[];
 
       expect(
-        loadDappyNetwork(undefined, customNetwork, dappyNetworks, 'node1')
+        loadDappyNetwork(undefined, customNetwork, dappyNetworks)
       ).to.equal(customNetwork);
     });
-    it('should return dappy network if self hostname defined', () => {
+    it('should return dappy network', () => {
       const networks = {
         gamma: [
           {
@@ -61,7 +37,7 @@ describe('config', () => {
           },
         ] as DappyNetworkMember[],
       };
-      expect(loadDappyNetwork('gamma', undefined, networks, 'node1')).to.equal(
+      expect(loadDappyNetwork('gamma', undefined, networks)).to.equal(
         networks.gamma
       );
     });
