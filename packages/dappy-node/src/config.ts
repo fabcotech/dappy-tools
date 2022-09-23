@@ -119,8 +119,6 @@ export function initConfig() {
       parseInt(process.env.DAPPY_NODE_LAST_BLOCK_JOB_INTERVAL || '', 10) ||
       40000,
     dappyNodeStartJobs: process.env.DAPPY_NODE_START_JOBS === 'true',
-    dappyNetworkSelfHostname:
-      process.env.DAPPY_NETWORK_SELF_HOSTNAME || 'localhost',
     dappyNetwork: loadDappyNetwork(
       parseDappyNetworkId(process.env.DAPPY_NETWORK_ID),
       tryReadJSONFile(process.env.DAPPY_NETWORK_FILE || './dappynetwork.json'),

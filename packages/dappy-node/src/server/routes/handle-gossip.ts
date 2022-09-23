@@ -14,10 +14,10 @@ export const createHandleGossip =
     getZones: (names: string[]) => Promise<NameZone[]>,
     saveZone: (zone: NameZone) => Promise<void>,
     dappyNetwork: DappyNetworkMember[],
-    dappyNetworkSelfHostname: string,
     resSend: (res: Response, text: string, httpStatus: number) => void
   ) =>
   async (req: Request, res: Response) => {
+    const dappyNetworkSelfHostname = req.hostname;
     let gossipToDappyNetwork = false;
     log(`/gossip ${req.body.data.zone.origin}`);
 
