@@ -13,9 +13,9 @@ export const initCommand: Command = {
 
     Examples:
       # Run local rnode
-      easyrnode init 
+      easyrnode init
   `,
-  action: async ([...rest], api) => {
+  action: async (_, api) => {
     await api.command(path.join(__dirname, './assets/rnode-init.sh'));
 
     return 0;

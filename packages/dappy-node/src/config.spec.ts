@@ -1,9 +1,4 @@
-import {
-  DappyNetwork,
-  DappyNetworkId,
-  DappyNetworkMember,
-  dappyNetworks,
-} from '@fabcotech/dappy-lookup';
+import { DappyNetworkMember, dappyNetworks } from '@fabcotech/dappy-lookup';
 import chai from 'chai';
 import spies from 'chai-spies';
 import { loadDappyNetwork } from './config';

@@ -64,7 +64,7 @@ async function easyDeploy(
 export const deployCommand: Command = {
   description: dedent`
     Deploy rholang file on a rchain node and is able to wait for result.
-    
+
     Positioned arguments:
       1. rholang file path to deploy (example: ./example.rho)
 
@@ -77,7 +77,7 @@ export const deployCommand: Command = {
       --wait: if defined, wait for the transaction to be mined before printing the result (default: 40000)
 
     Examples:
-      # deploy a rholang file locally and wait for the transaction to be mined before printing the result 
+      # deploy a rholang file locally and wait for the transaction to be mined before printing the result
       easyrnode deploy ./example.rho --wait
 
       # deploy a rholang file locally and do not wait for the transaction to be mined
@@ -86,7 +86,7 @@ export const deployCommand: Command = {
     If you need a rholang file example, create a file with this rholang content:
       new x in { x!("hello world !") }
   `,
-  action: async ([...rest], api) => {
+  action: async (_, api) => {
     const filepath = process.argv[3];
 
     if (!filepath) {

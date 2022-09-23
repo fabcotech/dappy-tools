@@ -3,8 +3,8 @@ import { start } from './start';
 import { getRoutes } from './routes';
 
 export const zoneProvider = {
-  getHash: async (each: boolean) => {
-    return Promise.resolve('not implemented')
+  getHash: async () => {
+    return Promise.resolve('not implemented');
   },
   getZones,
   start,

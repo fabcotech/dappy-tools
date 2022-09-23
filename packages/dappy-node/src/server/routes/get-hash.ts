@@ -9,6 +9,6 @@ export const createGetHash =
     resSend: (res: Response, text: string, httpStatus: number) => void
   ) =>
   async (req: Request, res: Response) => {
-    log(each ? `/hashes` : `/hash`);
-    resSend(res, (await getHash(each)), 200);
+    log(each ? '/hashes' : '/hash');
+    resSend(res, await getHash(each), 200);
   };

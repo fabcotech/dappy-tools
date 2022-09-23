@@ -26,8 +26,7 @@ interface NameZoneTable {
 
 export const zoneProvider: ZoneProvider = {
   getHash: async (each: boolean): Promise<string> => {
-    const result = await connection
-    .raw(
+    const result = await connection.raw(
       'select domain, md5(CAST((array_agg(z.zone order by "domain")) AS text)) from zones z group by "domain" order by "domain"'
     );
 
@@ -35,7 +34,7 @@ export const zoneProvider: ZoneProvider = {
       return result.rows;
     }
 
-    return md5(JSON.stringify({ rows: result.rows }))
+    return md5(JSON.stringify({ rows: result.rows }));
   },
   getZones: async (names: string[]): Promise<NameZone[]> => {
     const result = await connection<NameZoneTable>('zones')
