@@ -9,7 +9,6 @@ const gossipToOne = (
   func: (dnm: DappyNetworkMember) => Promise<true>,
   timeout: number
 ): Promise<true> => {
-
   return new Promise((resolve, reject) => {    
     let i = 0;
     const go = () => {
