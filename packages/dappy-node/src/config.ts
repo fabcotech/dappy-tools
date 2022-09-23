@@ -51,15 +51,8 @@ export const loadDappyNetwork = (
   networkId: DappyNetworkId | undefined,
   customNetwork: DappyNetworkMember[],
   knownNetworks: Record<string, DappyNetworkMember[]>,
-  networkSelfHostname: string
 ) => {
   const network = customNetwork || knownNetworks[networkId];
-
-  if (network && !network.some((a) => a.hostname === networkSelfHostname)) {
-    throw new Error(
-      `hostname ${networkSelfHostname} was not found in dappy network ${networkId}`
-    );
-  }
 
   return network;
 };
@@ -122,8 +115,7 @@ export function initConfig() {
     dappyNetwork: loadDappyNetwork(
       parseDappyNetworkId(process.env.DAPPY_NETWORK_ID),
       tryReadJSONFile(process.env.DAPPY_NETWORK_FILE || './dappynetwork.json'),
-      dappyNetworks,
-      process.env.DAPPY_NETWORK_SELF_HOSTNAME || 'localhost'
+      dappyNetworks
     ),
     dappyLogPath: process.env.DAPPY_LOG_PATH || './logs',
 
