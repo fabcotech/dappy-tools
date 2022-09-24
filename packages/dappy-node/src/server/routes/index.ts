@@ -56,7 +56,7 @@ export function getRouter() {
       true,
       getHash,
       (res: Response, text: string, httpStatus: number) => {
-        res.send(text).status(httpStatus);
+        res.status(httpStatus).send(text);
       }
     )
   );
@@ -68,7 +68,7 @@ export function getRouter() {
       false,
       getHash,
       (res: Response, text: string, httpStatus: number) => {
-        res.send(text).status(httpStatus);
+        res.status(httpStatus).send(text);
       }
     )
   );
@@ -81,7 +81,7 @@ export function getRouter() {
       saveZone,
       config.dappyNetwork,
       (res: Response, text: string, httpStatus: number) => {
-        res.send(text).status(httpStatus);
+        res.status(httpStatus).send(text);
       }
     )
   );

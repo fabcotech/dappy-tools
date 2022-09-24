@@ -70,6 +70,7 @@ export const createHandleGossip =
 
     if (req.body.data.new) {
       log('/gossip 6');
+      log(req.body);
       try {
         checkZoneTransaction(
           // todo replace by dappyNetwork[0].publicKey
@@ -81,6 +82,7 @@ export const createHandleGossip =
         gossipToDappyNetwork = true;
         log('/gossip 7');
       } catch (err) {
+        log(err);
         log('/gossip 8');
         resSend(res, err, 403);
         return;
