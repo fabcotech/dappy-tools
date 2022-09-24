@@ -50,7 +50,7 @@ export const tryReadJSONFile = (filePath: string) => {
 export const loadDappyNetwork = (
   networkId: DappyNetworkId | undefined,
   customNetwork: DappyNetworkMember[],
-  knownNetworks: Record<string, DappyNetworkMember[]>,
+  knownNetworks: Record<string, DappyNetworkMember[]>
 ) => {
   const network = customNetwork || knownNetworks[networkId];
 
