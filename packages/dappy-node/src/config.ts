@@ -57,7 +57,7 @@ export const loadDappyNetwork = (
   // .caCert are base64 in dappy-lookup
   (network || []).forEach((dnm) => {
     if (dnm.caCert.endsWith('==')) {
-      dnm.caCert = Buffer.from(dnm.caCert, 'base64').toString('utf8')
+      dnm.caCert = Buffer.from(dnm.caCert, 'base64').toString('utf8');
     }
   });
 
