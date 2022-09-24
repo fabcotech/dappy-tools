@@ -2,7 +2,7 @@
 
 Dappy node is a [DoH](https://datatracker.ietf.org/doc/html/rfc8484) and an authoritative name server, written in [NodeJS](https://nodejs.org/).
 
-Dappy zones and records are independant from [ICANN](https://www.icann.org/).
+Dappy zones and records are independent from [ICANN](https://www.icann.org/).
 To avoid conflicts with existing TLDs, dappy zones are optionnaly suffixed with `.d`.
 
 What makes dappy-node really unique is that zones are stored on a blockchain, therefore the state is automatically shared between the nodes of a given dappy network.
@@ -144,3 +144,53 @@ DAPPY_NETWORK_SELF_HOSTNAME is your username in the dappy network, this is used 
 ### API Reference
 
 Please read [API Reference](API.md) for more details.
+
+### Kubernetes
+
+#### Selection of namespace
+
+You will probably have one namespace per dappy-node. Be careful to select the right one.
+
+```
+# Create a namespace (only at setup)
+kubectl create ns node1-gamma
+
+# See namespaces
+kubectl get namespaces
+> node1-gamma
+> node2-gamma
+> ...
+
+# Pick namespace for the following operations
+kubectl config set-context --current --namespace=node2-gamma
+```
+
+#### Secrets and certificates
+
+To be written / todo
+
+#### Checking of the pods
+
+At the time this is written, a dappy-node should have 4 pods :
+- `cp-acme-xxx` is the auto-cert pod that exposes dappy-node to DNS+HTTPS
+- `dappy-node-xxx` is the nodeJS / DoH endpoint
+- `grafana-xxx` logs
+- `prometheus-xxx` metrics
+
+```
+kubectl get pods
+```
+
+#### Updating pods / deploying
+
+**Be careful** : as of today there for each namespace there are manual updates to do in some yml files before deploying pods - `kubectl apply` command.
+
+**(1)** Update 3 lines in `kubernetes/envs/digitalocean/gamma/dappy/pg/dappy-node-ingress.yaml` so that the hostname matches with the hostname of your node in dappy-lookup codebase [src/dappyNetworks.ts](https://github.com/fabcotech/dappy-tools/blob/master/packages/dappy-lookup/src/dappyNetworks.ts). Example value : `node2.gamma.fabco.dappy`.
+
+**(2)** Update 3 lines in `kubernetes/envs/digitalocean/gamma/dappy/pg/dappy-node-webpki-ingress.yaml` so that the public DNS subdomain you want to use to expose rnode. Example value : `node2.gamma.dappy.tech`.
+
+```
+# Deploying or updating all pods
+# and services within a namespace
+kubectl apply -k kubernetes/envs/digitalocean/gamma/dappy/pg/
+```
