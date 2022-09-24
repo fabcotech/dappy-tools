@@ -16,6 +16,7 @@ describe('config', () => {
       const customNetwork = [
         {
           hostname: 'node1',
+          caCert: '',
           ip: '127.0.0.1',
           port: '3001',
           scheme: 'http',
@@ -31,6 +32,7 @@ describe('config', () => {
         gamma: [
           {
             hostname: 'node1',
+            caCert: '',
             ip: '127.0.0.1',
             port: '3001',
             scheme: 'http',
