@@ -17,7 +17,6 @@ export const createHandleGossip =
     resSend: (res: Response, text: string, httpStatus: number) => void
   ) =>
   async (req: Request, res: Response) => {
-    const dappyNetworkSelfHostname = req.hostname;
     let gossipToDappyNetwork = false;
     log(`/gossip ${req.body.data.zone.origin}`);
 
@@ -122,7 +121,7 @@ export const createHandleGossip =
     ) {
       log(`will gossip to ${dappyNetwork.length - 1} members`);
       gossip(
-        dappyNetwork.filter((dnm) => dnm.hostname !== dappyNetworkSelfHostname),
+        dappyNetwork.filter((dnm) => dnm.hostname !== req.hostname),
         (dnm: any) => {
           return new Promise((reso, reje) => {
             const options = {
