@@ -49,7 +49,7 @@ export function getRouter() {
 
   router.post('/get-zones', bodyParser.json(), createGetZones(getZones));
 
-  router.post(
+  router.get(
     '/hashes',
     bodyParser.json(),
     createGetHash(
@@ -61,7 +61,7 @@ export function getRouter() {
     )
   );
 
-  router.post(
+  router.get(
     '/hash',
     bodyParser.json(),
     createGetHash(
