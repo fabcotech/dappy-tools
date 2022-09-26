@@ -1,3 +1,2 @@
-resources:
-- letsencrypt-staging-issuer.yaml
-- letsencrypt-prod-issuer.yaml
+bases:
+- ../../base/cert-manager
