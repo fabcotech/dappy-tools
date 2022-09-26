@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dappy-node
+spec:
+  template:
+    spec:
+      volumes:
+        - name:  pg-dappy-ca
+          configMap:
+            name: pg-dappy-ca
+
+      initContainers:
+        - name: pg-migrations
+          imagePullPolicy: Always
+          env:
+            - name: DAPPY_PG_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: pg
+                  key: connection-string
+            - name: DAPPY_PG_CA_PATH
+              value: /etc/dappy/tls/ca.pem
+          volumeMounts:
+            - name: pg-dappy-ca
+              mountPath: /etc/dappy/tls
+              readOnly: true
+
+      containers:
+        - name: dappy-node
+          imagePullPolicy: Always
+          env:
+            - name: DAPPY_PG_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: pg
+                  key: connection-string
+            - name: DAPPY_PG_CA_PATH
+              value: /etc/dappy/tls/ca.pem
+            - name: DAPPY_NODE_ENABLE_REQUEST_METRICS
+              value: 'true'
+            - name: DAPPY_NETWORK_ID
+              value: d
+          volumeMounts:
+            - name: pg-dappy-ca
+              mountPath: /etc/dappy/tls
+              readOnly: true

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dappy-node
+  annotations:
+    prometheus.io/scrape: "true"
+spec:
+  type: ClusterIP
+  selector:
+    app: dappy-node
+  ports:
+    - name: 'http'
+      port: 3001
+      targetPort: 3001
