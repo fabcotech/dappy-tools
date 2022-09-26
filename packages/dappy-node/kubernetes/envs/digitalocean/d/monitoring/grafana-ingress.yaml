@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    kubernetes.io/ingress.class: nginx-fabco
+    cert-manager.io/issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/server-snippet: |
+      location ~* /metrics {
+        deny all;
+        return 404;
+      }
+spec:
+  tls:
+    - hosts:
+        - grafana.d.fabco.tech
+      secretName: grafana.d.fabco.tech
+  rules:
+    - host: grafana.d.fabco.tech
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 3000

@@ -1,0 +1,6 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: prometheus-data
+spec:
+  storageClassName: do-block-storage
