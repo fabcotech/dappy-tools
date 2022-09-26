@@ -9,10 +9,10 @@ metadata:
 spec:
   tls:
     - hosts:
-      - adminer.gamma.dappy.tech
-      secretName: adminer-gamma-dappy-tech
+      - adminer.gamma.fabco.tech
+      secretName: adminer-gamma-fabco-tech
   rules:
-    - host: adminer.gamma.dappy.tech
+    - host: adminer.gamma.fabco.tech
       http:
         paths:
         - path: /
