@@ -1,0 +1,5 @@
+bases:
+- ../../../../base/pg
+
+resources:
+- adminer-ingress.yaml
