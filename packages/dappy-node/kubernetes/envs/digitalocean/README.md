@@ -5,6 +5,7 @@
 Be sure to have these tools installed locally:
 - [Git](https://git-scm.com/):  Open source distributed version control system
 - [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl): CLI to manage kubernetes ressources
+- [helm](https://helm.sh/docs/intro/install/): CLI for kubernetes package manager
 
 Be sure to these services installed on your kubernetes cluster:
 - [Cert-manager](https://cert-manager.io/docs/installation/)
@@ -23,7 +24,15 @@ kubectl create ns <NAMESPACE>
 
 Create certificate issuer
 ```sh
-kubectl -n=<NAMESPACE> apply -k <NAMESPACE>/cert-manager
+kubectl apply -k cert-manager
+```
+
+Install custom nginx ingress controller
+```sh
+helm upgrade --install ingress-nginx-fabco ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace <NAMESPACE> \
+  --set controller.ingressClass=nginx-fabco
 ```
 
 ## Use PostgreSQL as zone provider
