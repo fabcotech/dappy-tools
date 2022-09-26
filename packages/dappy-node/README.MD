@@ -7,7 +7,7 @@ To avoid conflicts with existing TLDs, dappy zones are optionnaly suffixed with 
 
 What makes dappy-node really unique is that zones are stored on a blockchain, therefore the state is automatically shared between the nodes of a given dappy network.
 
-Persist name zone directly on the blockchains garantees: 
+Persist name zone directly on the blockchains garantees:
 - Records can't be falsified
 - Data is highly available throught the network
 - Very thin access control can be defined, (ex: a third party company can manage the zone for  *api.microsoft.com*)
@@ -47,7 +47,7 @@ There are 3 zone providers availables:
 
 Each of these zone providers have their own jobs and routes.
 
-Use `DAPPY_NODE_ZONE_PROVIDER` environment variable to define zone_provider.  
+Use `DAPPY_NODE_ZONE_PROVIDER` environment variable to define zone_provider.
 
 ### DNS over HTTPS
 
@@ -172,7 +172,6 @@ To be written / todo
 #### Checking of the pods
 
 At the time this is written, a dappy-node should have 4 pods :
-- `cp-acme-xxx` is the auto-cert pod that exposes dappy-node to DNS+HTTPS
 - `dappy-node-xxx` is the nodeJS / DoH endpoint
 - `grafana-xxx` logs
 - `prometheus-xxx` metrics
