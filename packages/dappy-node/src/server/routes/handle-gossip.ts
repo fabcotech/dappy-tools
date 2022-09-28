@@ -14,6 +14,7 @@ export const createHandleGossip =
     getZones: (names: string[]) => Promise<NameZone[]>,
     saveZone: (zone: NameZone) => Promise<void>,
     dappyNetwork: DappyNetworkMember[],
+    dappyNetworkMasterPublicKey: string,
     resSend: (res: Response, text: string, httpStatus: number) => void
   ) =>
   async (req: Request, res: Response) => {
@@ -69,11 +70,9 @@ export const createHandleGossip =
 
     if (req.body.data.new) {
       log('/gossip 6');
-      log(req.body);
       try {
         checkZoneTransaction(
-          // todo replace by dappyNetwork[0].publicKey
-          '04ea33c48dff95cdff4f4211780a5b151570a9a2fac5e62e5fa545c1aa5be3539c34d426b046f985204815964e10fcd1d87ef88d9bcf43816ad1fa00934cfe4652',
+          dappyNetworkMasterPublicKey,
           req.body
         );
         await saveZone(req.body.data.zone);

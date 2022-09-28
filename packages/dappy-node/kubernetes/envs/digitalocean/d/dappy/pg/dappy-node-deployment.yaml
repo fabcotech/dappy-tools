@@ -41,6 +41,8 @@ spec:
               value: 'true'
             - name: DAPPY_NETWORK_ID
               value: d
+            - name: DAPPY_NETWORK_MASTER_PUBLIC_KEY
+              value: 04fdaade71e0593c1420b4dd4f1360219d20c2b2796311e0ee513cc644e986945749db902f4447cf4174a09a6038f0eab78dbd8c78f3d139f543f3b951a1507b42
           volumeMounts:
             - name: pg-dappy-ca
               mountPath: /etc/dappy/tls

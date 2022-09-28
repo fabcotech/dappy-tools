@@ -80,6 +80,7 @@ export function getRouter() {
       getZones,
       saveZone,
       config.dappyNetwork,
+      config.dappyNetworkMasterPublicKey,
       (res: Response, text: string, httpStatus: number) => {
         res.status(httpStatus).send(text);
       }
