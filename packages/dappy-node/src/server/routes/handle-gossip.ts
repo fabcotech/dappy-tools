@@ -71,10 +71,7 @@ export const createHandleGossip =
     if (req.body.data.new) {
       log('/gossip 6');
       try {
-        checkZoneTransaction(
-          dappyNetworkMasterPublicKey,
-          req.body
-        );
+        checkZoneTransaction(dappyNetworkMasterPublicKey, req.body);
         await saveZone(req.body.data.zone);
         resSend(res, 'Zone created', 200);
         gossipToDappyNetwork = true;

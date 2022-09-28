@@ -163,7 +163,7 @@ kubectl get namespaces
 > ...
 
 # Pick namespace for the following operations
-kubectl config set-context --current --namespace=node2-gamma
+kubectl config set-context --current --namespace=node1-gamma
 ```
 
 #### Secrets and certificates
