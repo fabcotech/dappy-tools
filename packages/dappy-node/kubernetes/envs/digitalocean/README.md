@@ -32,7 +32,8 @@ Install custom nginx ingress controller
 helm upgrade --install ingress-nginx-fabco ingress-nginx \
   --repo https://kubernetes.github.io/ingress-nginx \
   --namespace <NAMESPACE> \
-  --set controller.ingressClass=nginx-fabco
+  --set controller.ingressClass=nginx-fabco \
+  --set controller.ingressClassResource.name=nginx-fabco
 ```
 
 ## Use PostgreSQL as zone provider
