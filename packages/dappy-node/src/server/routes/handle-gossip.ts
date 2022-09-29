@@ -101,6 +101,7 @@ export const createHandleGossip =
     }
 
     if (
+      dappyNetwork.length &&
       gossipToDappyNetwork &&
       (!req.body.gossip || req.body.gossip < ROUNDS_OF_GOSSIP)
     ) {

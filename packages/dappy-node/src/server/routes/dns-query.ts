@@ -29,7 +29,7 @@ export const getZoneRecords = (
             zone,
             zone.records,
             dappyNetworkId,
-            new RegExp(`.${dappyNetworkId}`).test(name),
+            new RegExp(`.${dappyNetworkId}`).test(name)
           )
         )
         .flat();
@@ -79,7 +79,11 @@ export const createFetchNameAnswers =
     let tldZones: NameZone[];
     try {
       tldZones = await getZonesApi(
-        getTLDs(packet.questions.map((q) => q.name))
+        getTLDs(
+          packet.questions.map((q) =>
+            q.name.replace(new RegExp(`.${dappyNetworkId}$`), '')
+          )
+        )
       );
     } catch (e) {
       return {
