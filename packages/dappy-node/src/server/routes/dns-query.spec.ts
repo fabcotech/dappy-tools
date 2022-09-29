@@ -27,7 +27,7 @@ describe('dns-query', () => {
     ]);
   });
 
-  it('fetchNameAnswers() query 1 record with .d returns 1 answer with suffix', async () => {
+  it('fetchNameAnswers() query 1 record with with suffix returns 1 answer with suffix', async () => {
     const nsQuery = createNamePacketQuery({
       questions: [
         {
@@ -55,7 +55,7 @@ describe('dns-query', () => {
     ]);
   });
 
-  it('fetchNameAnswers() query 1 record without .d returns answers without suffix', async () => {
+  it('fetchNameAnswers() query 1 record without suffix returns answers without suffix', async () => {
     const nsQuery = createNamePacketQuery({
       questions: [
         {
