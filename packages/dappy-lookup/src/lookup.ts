@@ -15,6 +15,7 @@ export const lookup = (
   switch (recordType) {
     case 'A':
     case 'AAAA':
+    case 'CNAME':
     case 'TXT':
       return createCoResolveQuery(createDohQuery(nodeRequest))(
         {
@@ -25,7 +26,7 @@ export const lookup = (
       ) as Promise<NamePacket>;
 
     // Don't execute a DNS overs HTTPS query for CERT or CSP records.
-    // Rather execute a POST query to /dns-query-extendes instead.
+    // Rather execute a POST query to /dns-query-extended instead.
     case 'CERT':
       return getCertificates(name, options);
     case 'CSP':

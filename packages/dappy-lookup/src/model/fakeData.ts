@@ -3,7 +3,7 @@ import { NameZone } from './NameZone';
 import { NamePacket, ReturnCode, PacketType } from './NamePacket';
 
 import { mergeDeep } from '../testUtils/mergeDeep';
-import { RRA, RRAAAA, RRCERT, RRTXT } from './ResourceRecords';
+import { RRA, RRAAAA, RRCERT, RRCNAME, RRTXT } from './ResourceRecords';
 
 export const fakeCertificate = Buffer.from(
   `-----BEGIN CERTIFICATE-----
@@ -65,6 +65,17 @@ export const createRRTXT = (rrtxt: Partial<RRTXT> = {}): RRTXT => {
       data: 'label=value',
     },
     rrtxt,
+  );
+};
+
+export const createRRCNAME = (rrcname: Partial<RRCNAME> = {}): RRCNAME => {
+  return mergeDeep(
+    {
+      name: '@',
+      type: 'CNAME',
+      data: 'label=value',
+    },
+    rrcname,
   );
 };
 

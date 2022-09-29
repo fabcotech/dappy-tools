@@ -29,7 +29,7 @@ export const lookupCommand: Command = {
     
     Positioned arguments:
       1. name: <name to lookup>
-      2. record type: A, AAAA, CERT, TXT, CSP
+      2. record type: A, AAAA, CERT, CNAME, TXT, CSP
     Optional arguments:
       --network=<network_id>
       --endpoint=<http_url>
@@ -72,7 +72,7 @@ export const lookupCommand: Command = {
 
     if (
       !recordType ||
-      !['A', 'AAAA', 'CERT', 'TXT', 'CSP'].includes(recordType)
+      !['A', 'AAAA', 'CERT', 'CNAME', 'TXT', 'CSP'].includes(recordType)
     ) {
       api.print('missing record type');
       return 1;
