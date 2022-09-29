@@ -135,9 +135,10 @@ export const startDnsServer = async () => {
       );
       return;
     }
-    const response = (await createFetchNameAnswers(getZones)(
-      queryPacket
-    )) as Packet;
+    const response = (await createFetchNameAnswers(
+      getZones,
+      config.dappyNetworkId
+    )(queryPacket)) as Packet;
     server.send(dnsPacket.encode(response), info.port, 'localhost', () => {});
   });
 
