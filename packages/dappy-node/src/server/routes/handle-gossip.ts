@@ -19,20 +19,17 @@ export const createHandleGossip =
   ) =>
   async (req: Request, res: Response) => {
     let gossipToDappyNetwork = false;
-    log(`/gossip ${req.body.data.zone.origin}`);
 
     if (!req.body || !req.body.data || !req.body.signature) {
       resSend(res, 'Need data and signature', 400);
       return;
     }
-    log('/gossip 1');
 
     if (
       !req.body.data.zone ||
       !req.body.data.zone.origin ||
       typeof req.body.data.zone.origin !== 'string'
     ) {
-      log('/gossip 2');
       resSend(res, 'Need an origin', 400);
       return;
     }
@@ -42,13 +39,11 @@ export const createHandleGossip =
     );
     let publicKey = '';
     if (!ownerTxt) {
-      log('/gossip 3');
       resSend(res, 'Need an owner as TXT record', 400);
       return;
     }
     publicKey = ownerTxt.data.slice(6);
     if (publicKey.length !== 130) {
-      log('/gossip 4');
       resSend(res, 'Public key must be of length 130', 400);
       return;
     }
@@ -61,7 +56,6 @@ export const createHandleGossip =
     */
 
     if (zones[0]) {
-      log('/gossip 5');
       if (isEqual(zones[0], req.body.data.zone)) {
         resSend(res, 'Zone already exists and unchanged', 200);
         return;
@@ -69,27 +63,22 @@ export const createHandleGossip =
     }
 
     if (req.body.data.new) {
-      log('/gossip 6');
       try {
         checkZoneTransaction(dappyNetworkMasterPublicKey, req.body);
         await saveZone(req.body.data.zone);
         resSend(res, 'Zone created', 200);
         gossipToDappyNetwork = true;
-        log('/gossip 7');
       } catch (err) {
         log(err);
-        log('/gossip 8');
         resSend(res, err, 403);
         return;
       }
     } else {
-      log('/gossip 9');
       const zone = await getZones([req.body.data.zone.origin]);
       if (!zone[0]) {
         resSend(res, 'Zone does not exist', 403);
         return;
       }
-      log('/gossip 10');
       const currentOwnerTxt = (zone[0].records || []).find(
         (r: any) => r.type === 'TXT' && r.data.startsWith('OWNER=')
       );
@@ -104,10 +93,8 @@ export const createHandleGossip =
         await saveZone(req.body.data.zone);
         resSend(res, 'Zone updated', 200);
         gossipToDappyNetwork = true;
-        log('/gossip 11');
       } catch (err) {
         log(err);
-        log('/gossip 12');
         resSend(res, (err as unknown as any).message || 'Unauthorized', 403);
         return;
       }
