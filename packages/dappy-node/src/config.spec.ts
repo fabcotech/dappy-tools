@@ -8,9 +8,9 @@ chai.use(spies);
 
 describe('config', () => {
   describe('loadDappyNetwork', () => {
-    it('should return undefined if no network is defined', () => {
+    it('should return [] if no network is defined', () => {
       const network = loadDappyNetwork(undefined, undefined, dappyNetworks);
-      expect(network).to.equal(undefined);
+      expect(network).to.eql([]);
     });
     it('should return custom network', () => {
       const customNetwork = [
