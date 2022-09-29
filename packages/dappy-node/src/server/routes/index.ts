@@ -27,12 +27,12 @@ export function getRouter() {
     bodyParser.raw({
       type: 'application/dns-message',
     }),
-    createDnsQuery(getZones)
+    createDnsQuery(getZones, config.dappyNetworkId)
   );
   router.post(
     '/dns-query-extended',
     bodyParser.json(),
-    createExtendedDnsQuery(getZones)
+    createExtendedDnsQuery(getZones, config.dappyNetworkId)
   );
 
   router.post(

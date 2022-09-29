@@ -123,6 +123,7 @@ export function initConfig() {
     dappyNetworkMasterPublicKey:
       process.env.DAPPY_NETWORK_MASTER_PUBLIC_KEY ||
       '04ea33c48dff95cdff4f4211780a5b151570a9a2fac5e62e5fa545c1aa5be3539c34d426b046f985204815964e10fcd1d87ef88d9bcf43816ad1fa00934cfe4652',
+    dappyNetworkId: process.env.DAPPY_NETWORK_ID,
     dappyNetwork: loadDappyNetwork(
       parseDappyNetworkId(process.env.DAPPY_NETWORK_ID),
       tryReadJSONFile(process.env.DAPPY_NETWORK_FILE || './dappynetwork.json'),

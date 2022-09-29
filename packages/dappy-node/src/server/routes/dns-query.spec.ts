@@ -14,24 +14,24 @@ describe('dns-query', () => {
     const nsQuery = createNamePacketQuery();
     const zone = createNameZone();
 
-    const answers = getZoneRecords(nsQuery.questions, [zone]);
+    const answers = getZoneRecords(nsQuery.questions, [zone], 'fakeNetwork');
 
     expect(answers).to.eql([
       {
         type: 'A',
         class: 'IN',
-        name: 'example.d',
+        name: 'example.fakeNetwork',
         ttl: 3600,
         data: '127.0.0.1',
       },
     ]);
   });
 
-  it('fetchNameAnswers() query 1 record with .d returns 1 answer with .d', async () => {
+  it('fetchNameAnswers() query 1 record with .d returns 1 answer with suffix', async () => {
     const nsQuery = createNamePacketQuery({
       questions: [
         {
-          name: 'example.d',
+          name: 'example.fakeNetwork',
           type: RecordType.A,
           class: 'IN',
         },
@@ -39,22 +39,23 @@ describe('dns-query', () => {
     });
     const zone = createNameZone();
 
-    const nsAnwser = await createFetchNameAnswers(() =>
-      Promise.resolve([zone])
+    const nsAnwser = await createFetchNameAnswers(
+      () => Promise.resolve([zone]),
+      'fakeNetwork'
     )(nsQuery);
 
     expect(nsAnwser.answers).to.eql([
       {
         type: 'A',
         class: 'IN',
-        name: 'example.d',
+        name: 'example.fakeNetwork',
         ttl: 3600,
         data: '127.0.0.1',
       },
     ]);
   });
 
-  it('fetchNameAnswers() query 1 record without .d returns answers without .d', async () => {
+  it('fetchNameAnswers() query 1 record without .d returns answers without suffix', async () => {
     const nsQuery = createNamePacketQuery({
       questions: [
         {
@@ -66,8 +67,9 @@ describe('dns-query', () => {
     });
     const zone = createNameZone();
 
-    const nsAnwser = await createFetchNameAnswers(() =>
-      Promise.resolve([zone])
+    const nsAnwser = await createFetchNameAnswers(
+      () => Promise.resolve([zone]),
+      'fakeNetwork'
     )(nsQuery);
 
     expect(nsAnwser.answers).to.eql([
@@ -81,7 +83,7 @@ describe('dns-query', () => {
     ]);
   });
 
-  it('fetchNameAnswers() query 2 records on 2 different zones with and without .d', async () => {
+  it('fetchNameAnswers() query 2 records on 2 different zones with and without suffix', async () => {
     const nsQuery = createNamePacketQuery({
       questions: [
         {
@@ -90,7 +92,7 @@ describe('dns-query', () => {
           class: 'IN',
         },
         {
-          name: 'bar.foo.d',
+          name: 'bar.foo.fakeNetwork',
           type: RecordType.A,
           class: 'IN',
         },
@@ -117,8 +119,9 @@ describe('dns-query', () => {
       ],
     });
 
-    const nsAnwser = await createFetchNameAnswers(() =>
-      Promise.resolve([exampleZone, fooZone])
+    const nsAnwser = await createFetchNameAnswers(
+      () => Promise.resolve([exampleZone, fooZone]),
+      'fakeNetwork'
     )(nsQuery);
 
     expect(nsAnwser.answers).to.eql([
@@ -132,7 +135,7 @@ describe('dns-query', () => {
       {
         type: 'A',
         class: 'IN',
-        name: 'bar.foo.d',
+        name: 'bar.foo.fakeNetwork',
         ttl: 3600,
         data: '192.168.1.1',
       },
@@ -150,8 +153,9 @@ describe('dns-query', () => {
         },
       ],
     });
-    const nsAnwser = await createFetchNameAnswers(() =>
-      Promise.resolve([fooZone])
+    const nsAnwser = await createFetchNameAnswers(
+      () => Promise.resolve([fooZone]),
+      'fakeNetwork'
     )(nsQuery);
 
     expect(nsAnwser.rcode).to.eql(ReturnCode.NXDOMAIN);
@@ -159,8 +163,9 @@ describe('dns-query', () => {
   });
   it('fetchNameAnswers() return SERVFAIL when unable to fetch zones', async () => {
     const nsQuery = createNamePacketQuery();
-    const nsAnwser = await createFetchNameAnswers(() =>
-      Promise.reject(new Error('Unable to fetch zones'))
+    const nsAnwser = await createFetchNameAnswers(
+      () => Promise.reject(new Error('Unable to fetch zones')),
+      'fakeNetwork'
     )(nsQuery);
 
     expect(nsAnwser.rcode).to.eql(ReturnCode.SERVFAIL);
@@ -169,10 +174,12 @@ describe('dns-query', () => {
 
   it('fetchNameAnswers() return NOTZONE when record is not in NameZone format', async () => {
     const nsQuery = createNamePacketQuery();
-    const nsAnwser = await createFetchNameAnswers(() =>
-      Promise.resolve({
-        fo: 'bar',
-      } as any)
+    const nsAnwser = await createFetchNameAnswers(
+      () =>
+        Promise.resolve({
+          fo: 'bar',
+        } as any),
+      'fakeNetwork'
     )(nsQuery);
 
     expect(nsAnwser.rcode).to.eql(ReturnCode.NOTZONE);

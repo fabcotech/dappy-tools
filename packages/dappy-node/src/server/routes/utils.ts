@@ -28,11 +28,12 @@ export const getRecordName = (
 export const normalizeRecords = (
   zone: NameZone,
   records: RR[],
-  appendSuffixDappy = false
+  suffix: string,
+  appendSuffixDappy = false,
 ): RR[] =>
   records.map((record) => ({
     ...record,
     name:
-      getRecordName(record.name, zone.origin) + (appendSuffixDappy ? '.d' : ''),
+      getRecordName(record.name, zone.origin) + (appendSuffixDappy ? `.${suffix}` : ''),
     ttl: record.ttl || zone.ttl,
   }));

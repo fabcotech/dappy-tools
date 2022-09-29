@@ -21,7 +21,7 @@ describe('dns-query', () => {
         },
       ],
     });
-    expect(normalizeRecords(zone, zone.records)).to.eql([
+    expect(normalizeRecords(zone, zone.records, 'fakeNetwork')).to.eql([
       {
         name: zone.origin,
         type: 'A',

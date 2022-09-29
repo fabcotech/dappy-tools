@@ -124,7 +124,7 @@ export const createNamePacketQuery = (
       flags: 0,
       questions: [
         {
-          name: 'example.d',
+          name: 'example.fakeNetwork',
           type: 'A',
           class: 'IN',
         },

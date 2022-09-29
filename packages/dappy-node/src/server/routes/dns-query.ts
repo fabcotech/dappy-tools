@@ -18,12 +18,20 @@ const isCompliantDNSRecordType = (type: string) =>
 
 export const getZoneRecords = (
   questions: NameQuestion[],
-  zones: NameZone[]
+  zones: NameZone[],
+  dappyNetworkId: string
 ): NameAnswer[] =>
   questions
     .map(({ type, name }) => {
       const records = zones
-        .map((zone) => normalizeRecords(zone, zone.records, /\.d$/.test(name)))
+        .map((zone) =>
+          normalizeRecords(
+            zone,
+            zone.records,
+            dappyNetworkId,
+            new RegExp(`.${dappyNetworkId}`).test(name),
+          )
+        )
         .flat();
       return records.filter(
         (record) => record.type === type && record.name === name
@@ -49,7 +57,10 @@ const isNameZones = (zones: any[]): zones is NameZone[] => {
 };
 
 export const createFetchNameAnswers =
-  (getZonesApi: (names: string[]) => Promise<NameZone[]>) =>
+  (
+    getZonesApi: (names: string[]) => Promise<NameZone[]>,
+    dappyNetworkId: string
+  ) =>
   async (packet: NamePacket): Promise<NamePacket> => {
     if (!packet.questions || packet.questions.length === 0) {
       return {
@@ -97,7 +108,7 @@ export const createFetchNameAnswers =
         authorities: [],
       };
     }
-    const answers = getZoneRecords(packet.questions, tldZones);
+    const answers = getZoneRecords(packet.questions, tldZones, dappyNetworkId);
 
     return {
       version: '1.0.0',
@@ -113,7 +124,10 @@ export const createFetchNameAnswers =
   };
 
 export const createDnsQuery =
-  (getZones: (names: string[]) => Promise<NameZone[]>) =>
+  (
+    getZones: (names: string[]) => Promise<NameZone[]>,
+    dappyNetworkId: string
+  ) =>
   async (req: Request, res: Response) => {
     res.set({
       'content-type': 'application/dns-message',
@@ -127,15 +141,19 @@ export const createDnsQuery =
         isCompliantDNSRecordType(q.type)
       ),
     };
-    const response = await createFetchNameAnswers(getZones)(
-      withoutNonCompliantDNSRecordTypes as NamePacket
-    );
+    const response = await createFetchNameAnswers(
+      getZones,
+      dappyNetworkId
+    )(withoutNonCompliantDNSRecordTypes as NamePacket);
 
     res.send(dnsPacket.encode(response as Packet));
   };
 
 export const createExtendedDnsQuery =
-  (getZones: (names: string[]) => Promise<NameZone[]>) =>
+  (
+    getZones: (names: string[]) => Promise<NameZone[]>,
+    dappyNetworkId: string
+  ) =>
   async (req: Request, res: Response) => {
     res.set({
       'content-type': 'application/json',
@@ -143,9 +161,10 @@ export const createExtendedDnsQuery =
     });
 
     const queryPacket = req.body;
-    const response = await createFetchNameAnswers(getZones)(
-      queryPacket as NamePacket
-    );
+    const response = await createFetchNameAnswers(
+      getZones,
+      dappyNetworkId
+    )(queryPacket as NamePacket);
 
     res.send(response);
   };
