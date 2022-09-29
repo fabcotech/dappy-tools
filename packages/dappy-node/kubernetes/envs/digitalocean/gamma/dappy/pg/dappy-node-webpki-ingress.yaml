@@ -9,10 +9,10 @@ metadata:
 spec:
   tls:
     - hosts:
-      - node1.gamma.dappy.tech
-      secretName: node1.gamma.dappy.tech
+      - node1.gamma.fabco.tech
+      secretName: node1.gamma.fabco.tech
   rules:
-    - host: node1.gamma.dappy.tech
+    - host: node1.gamma.fabco.tech
       http:
         paths:
         - path: /
