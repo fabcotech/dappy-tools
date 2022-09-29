@@ -98,14 +98,16 @@ export const createHandleGossip =
         return;
       }
       const publicKeyOfCurrentOwner = currentOwnerTxt.data.slice(6);
+      log(`/gossip pubkey : ${publicKeyOfCurrentOwner}`);
       try {
         checkZoneTransaction(publicKeyOfCurrentOwner, req.body);
         await saveZone(req.body.data.zone);
         resSend(res, 'Zone updated', 200);
         gossipToDappyNetwork = true;
-        log('/gossip 10');
-      } catch (err) {
         log('/gossip 11');
+      } catch (err) {
+        log(err);
+        log('/gossip 12');
         resSend(res, (err as unknown as any).message || 'Unauthorized', 403);
         return;
       }

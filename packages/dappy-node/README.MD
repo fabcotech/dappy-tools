@@ -190,7 +190,9 @@ kubectl get pods
 **(2)** Update 3 lines in `kubernetes/envs/digitalocean/gamma/dappy/pg/dappy-node-webpki-ingress.yaml` so that the public DNS subdomain you want to use to expose rnode. Example value : `node2.gamma.dappy.tech`.
 
 ```
-# Deploying or updating all pods
-# and services within a namespace
+# test / gamma network
 kubectl apply -k kubernetes/envs/digitalocean/gamma/dappy/pg/
+
+# production / d network
+kubectl apply -k kubernetes/envs/digitalocean/d/dappy/pg/
 ```
