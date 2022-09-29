@@ -240,12 +240,12 @@ export type NamePacket = {
   id?: number;
   flags: number;
   questions: {
-    type: 'A' | 'AAAA' | 'TXT' | 'CERT' | 'CSP';
+    type: 'A' | 'AAAA' | 'TXT' | 'CERT' | 'CNAME' | 'CSP';
     class: 'IN';
     name: string;
   }[];
   answers: {
-    type: 'A' | 'AAAA' | 'TXT' | 'CERT' | 'CSP';
+    type: 'A' | 'AAAA' | 'TXT' | 'CERT' | 'CNAME' | 'CSP';
     class: 'IN';
     name: string;
     ttl: number;
