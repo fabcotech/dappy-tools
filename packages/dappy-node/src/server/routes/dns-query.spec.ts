@@ -11,18 +11,26 @@ chai.use(spies);
 
 describe('dns-query', () => {
   it('getZoneRecords() should returns records according to query questions', () => {
-    const nsQuery = createNamePacketQuery();
+    const nsQuery = createNamePacketQuery({
+      questions: [
+        {
+          name: 'example.fakeNetwork',
+          type: RecordType.CNAME,
+          class: 'IN',
+        },
+      ],
+    });
     const zone = createNameZone();
 
     const answers = getZoneRecords(nsQuery.questions, [zone], 'fakeNetwork');
 
     expect(answers).to.eql([
       {
-        type: 'A',
+        type: 'CNAME',
         class: 'IN',
         name: 'example.fakeNetwork',
         ttl: 3600,
-        data: '127.0.0.1',
+        data: 'foo.bar',
       },
     ]);
   });

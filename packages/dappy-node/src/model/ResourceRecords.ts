@@ -12,12 +12,13 @@ import { JSONObject } from '../utils/json';
 export enum RecordType {
   A = 'A',
   AAAA = 'AAAA',
+  CNAME = 'CNAME',
   CERT = 'CERT',
   TXT = 'TXT',
   CSP = 'CSP',
 }
 
-export const recordTypeRegExp = /^(A|AAAA|CERT|TXT|CSP)$/;
+export const recordTypeRegExp = /^(A|AAAA|CNAME|CERT|TXT|CSP)$/;
 
 export type ResourceRecord = {
   name: string;
@@ -50,6 +51,19 @@ export const isRRAAAA = (data: JSONObject): data is RRAAAA =>
     ttl: isOptional(isNumber),
     data: isStringNotEmpty,
     type: match(/^AAAA$/),
+  })(data);
+
+export type RRCNAME = ResourceRecord & {
+  data: string;
+  type: 'CNAME';
+};
+
+export const isRRCNAME = (data: JSONObject): data is RRCNAME =>
+  isObjectWith({
+    name: isString,
+    ttl: isOptional(isNumber),
+    data: isStringNotEmpty,
+    type: match(/^CNAME$/),
   })(data);
 
 export type RRCERT = ResourceRecord & {
@@ -91,12 +105,19 @@ export const isRRTXT = (data: JSONObject): data is RRTXT =>
     type: match(/^TXT$/),
   })(data);
 
-export type RR = RRA | RRAAAA | RRCERT | RRTXT | RRCSP;
+export type RR = RRA | RRAAAA | RRCNAME | RRCERT | RRTXT | RRCSP;
 
 export type RRAData = string;
 export type RRAAAAData = string;
+export type RRCNAMEData = string;
 export type RRCERTData = string;
 export type RRTXTData = string;
 export type RRCSPData = string;
 
-export type RRData = RRAData | RRAAAAData | RRCERTData | RRTXTData | RRCSPData;
+export type RRData =
+  | RRAData
+  | RRAAAAData
+  | RRCNAMEData
+  | RRCERTData
+  | RRTXTData
+  | RRCSPData;

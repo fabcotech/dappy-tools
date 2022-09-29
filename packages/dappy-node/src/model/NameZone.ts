@@ -9,6 +9,7 @@ import {
 import {
   isRRA,
   isRRAAAA,
+  isRRCNAME,
   isRRCERT,
   isRRCSP,
   isRRTXT,
@@ -27,7 +28,7 @@ export const isNameZone = (data: JSONObject): data is NameZone => {
     origin: isStringNotEmpty,
     ttl: isNumber,
     records: isArrayNotEmptyOf(
-      isOneOf([isRRA, isRRAAAA, isRRCERT, isRRTXT, isRRCSP])
+      isOneOf([isRRA, isRRAAAA, isRRCNAME, isRRCERT, isRRTXT, isRRCSP])
     ),
   })(data);
 };
