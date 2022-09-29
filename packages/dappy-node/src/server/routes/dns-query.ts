@@ -11,7 +11,7 @@ import {
 } from '../../model/NamePacket';
 import { getTLDs, normalizeRecords } from './utils';
 
-const compliantDNSRecordTypes = ['A', 'AAAA', 'TXT'];
+const compliantDNSRecordTypes = ['A', 'AAAA', 'TXT', 'CNAME'];
 
 const isCompliantDNSRecordType = (type: string) =>
   compliantDNSRecordTypes.includes(type);
