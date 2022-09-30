@@ -24,3 +24,9 @@ Any developer or company that is interested to either contribute or use the prod
 Format your commit messages using conventional commit [specification](https://www.conventionalcommits.org/en/v1.0.0-beta.2/#specification)
 
 Use `npm run cm` to commit your changes. Behind the scenen it uses [commitizen](https://github.com/commitizen/cz-cli) to format git messages.
+
+#### Install dependencies
+
+```sh
+npm i & npx lerna bootstrap
+```
