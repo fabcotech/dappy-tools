@@ -1,15 +1,18 @@
 import { NameZone } from '../../model/NameZone';
 import { RR } from '../../model/ResourceRecords';
 
-export const getTLDs = (names: string[]): string[] =>
-  names.map(
-    (name) =>
-      name
-        .replace(/\.dappy$/, '')
-        .replace(/\.d$/, '')
-        .split('.')
-        .slice(-1)[0]
-  );
+export const getTLDs = (names: string[], dappyNetworkId: string): string[] => {
+  // hello.d -> hello
+  const nn = names.map((name) => {
+    if (name.endsWith(`.${dappyNetworkId}`)) {
+      return name.slice(0, name.length - `.${dappyNetworkId}`.length);
+    }
+    return name;
+  });
+
+  // bar.foo.hello -> hello
+  return nn.map((name) => name.split('.').slice(-1)[0]);
+};
 
 export const getRecordName = (
   recordName: string,

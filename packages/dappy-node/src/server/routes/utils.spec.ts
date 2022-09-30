@@ -43,9 +43,17 @@ describe('dns-query', () => {
     ]);
   });
   it('getTLDs()', () => {
-    expect(getTLDs(['foo.bar.baz'])).to.eql(['baz']);
-    expect(getTLDs(['foo'])).to.eql(['foo']);
-    expect(getTLDs(['foo.d'])).to.eql(['foo']);
-    expect(getTLDs(['foo.bar.d'])).to.eql(['bar']);
+    expect(getTLDs(['foo.bar.baz'], 'baz')).to.eql(['bar']);
+    expect(getTLDs(['hello.world.foo.bar.baz'], 'd')).to.eql(['baz']);
+    expect(getTLDs(['hello.world.foo.bar.baz'], 'bar')).to.eql(['baz']);
+    expect(getTLDs(['hello.world.foo.bar.baz'], 'baz')).to.eql(['bar']);
+    expect(getTLDs(['foo'], 'd')).to.eql(['foo']);
+    expect(getTLDs(['foo.d'], 'd')).to.eql(['foo']);
+    expect(getTLDs(['foo.bar.d'], 'd')).to.eql(['bar']);
+    expect(getTLDs(['foo.bar.gamma'], 'd')).to.eql(['gamma']);
+    expect(getTLDs(['foo.bar.gamma'], 'gamma')).to.eql(['bar']);
+    expect(getTLDs(['default.dappy.gamma'], 'gamma')).to.eql(['dappy']);
+    expect(getTLDs(['default.dappy.d'], 'gamma')).to.eql(['d']);
+    expect(getTLDs(['default.dappy.d'], 'd')).to.eql(['dappy']);
   });
 });

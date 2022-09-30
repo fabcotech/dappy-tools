@@ -76,14 +76,12 @@ export const createFetchNameAnswers =
       };
     }
 
-    console.log(1);
     let tldZones: NameZone[];
     try {
       tldZones = await getZonesApi(
         getTLDs(
-          packet.questions.map((q) =>
-            q.name.replace(new RegExp(`.${dappyNetworkId}$`), '')
-          )
+          packet.questions.map((q) => q.name),
+          dappyNetworkId
         )
       );
     } catch (e) {
@@ -100,11 +98,6 @@ export const createFetchNameAnswers =
       };
     }
 
-    console.log(2);
-    console.log('tldZones');
-    console.log(tldZones);
-    console.log(`isNameZones ${isNameZones(tldZones)}`);
-
     if (!isNameZones(tldZones)) {
       return {
         version: '1.0.0',
@@ -119,7 +112,6 @@ export const createFetchNameAnswers =
       };
     }
 
-    console.log(3);
     const answers = getZoneRecords(packet.questions, tldZones, dappyNetworkId);
 
     return {
@@ -157,8 +149,6 @@ export const createDnsQuery =
       getZones,
       dappyNetworkId
     )(withoutNonCompliantDNSRecordTypes as NamePacket);
-    console.log('response.answers');
-    console.log(response.answers);
 
     res.send(dnsPacket.encode(response as Packet));
   };
