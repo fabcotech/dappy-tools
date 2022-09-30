@@ -1,8 +1,20 @@
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
-import { isRRA, isRRAAAA, isRRCERT, isRRCNAME, isRRTXT } from './ResourceRecords';
-import { createRRA, createRRAAAA, createRRCERT, createRRCNAME, createRRTXT } from './fakeData';
+import {
+  isRRA,
+  isRRAAAA,
+  isRRCERT,
+  isRRCNAME,
+  isRRTXT,
+} from './ResourceRecords';
+import {
+  createRRA,
+  createRRAAAA,
+  createRRCERT,
+  createRRCNAME,
+  createRRTXT,
+} from './fakeData';
 
 chai.use(spies);
 
@@ -43,7 +55,6 @@ describe('ResourceRecords', () => {
 
   it('isRRCNAME()', () => {
     const recordCNAME = createRRCNAME();
-    console.log(recordCNAME)
     expect(isRRCNAME(recordCNAME)).to.eql(true);
     const notRecordCNAME = {
       foo: 'bar',
