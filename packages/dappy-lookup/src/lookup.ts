@@ -10,7 +10,7 @@ import { createPostJSONQuery } from './queries/postJSONQuery';
 export const lookup = (
   name: string,
   recordType: string,
-  options?: DappyLookupOptions & any,
+  options?: DappyLookupOptions,
 ) => {
   switch (recordType) {
     case 'A':
