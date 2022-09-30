@@ -87,7 +87,6 @@ export const createHandleGossip =
         return;
       }
       const publicKeyOfCurrentOwner = currentOwnerTxt.data.slice(6);
-      log(`/gossip pubkey : ${publicKeyOfCurrentOwner}`);
       try {
         checkZoneTransaction(publicKeyOfCurrentOwner, req.body);
         await saveZone(req.body.data.zone);
