@@ -65,7 +65,7 @@ describe('index.ts', () => {
     ).to.throw("Invalid date")
   });
 
-  it('should check signature (checkZoneTransaction)', () => {
+  it('should check signature', () => {
     const zoneTransactionWithSignature = {
       data: {
         zone: zone,
@@ -75,5 +75,66 @@ describe('index.ts', () => {
     }
 
     expect(checkZoneTransaction(publicKey, zoneTransactionWithSignature, true)).to.equal(true);
+  });
+
+  it('should check signature with valid date', () => {
+    const data = {
+      zone: zone,
+      date: new Date().toISOString()
+    };
+    const s = signZoneTransaction(
+      data,
+      privateKey,
+      'hex'
+    );
+    const zoneTransactionWithSignature = {
+      data: data,
+      signature: s as string
+    }
+    expect(checkZoneTransaction(publicKey, zoneTransactionWithSignature)).to.equal(true);
+  });
+
+  it('should fail to check signature (too old payload)', () => {
+    const data = {
+      zone: zone,
+      // now minus 11 minutes, too old
+      date: new Date(new Date().getTime() - (1000 * 60 * 11)).toISOString()
+    };
+    const s = signZoneTransaction(
+      data,
+      privateKey,
+      'hex'
+    );
+    const zoneTransactionWithSignature = {
+      data: data,
+      signature: s as string
+    }
+    expect(
+      function() {
+        checkZoneTransaction(publicKey, zoneTransactionWithSignature)
+      }
+    ).to.throw("Invalid date");
+  });
+
+  it('should fail to check signature (future date)', () => {
+    const data = {
+      zone: zone,
+      // now plus 2 minutes
+      date: new Date(new Date().getTime() + (1000 * 60 * 2)).toISOString()
+    };
+    const s = signZoneTransaction(
+      data,
+      privateKey,
+      'hex'
+    );
+    const zoneTransactionWithSignature = {
+      data: data,
+      signature: s as string
+    }
+    expect(
+      function() {
+        checkZoneTransaction(publicKey, zoneTransactionWithSignature)
+      }
+    ).to.throw("Invalid date");
   });
 });

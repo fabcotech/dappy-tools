@@ -1,6 +1,6 @@
 {
   "name": "@fabcotech/gossip",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "FABCO",
   "description": "Utils use to sign, verify and air messages sent between and to nodes of the dappy network for zone management.",
   "main": "dist/src/index",

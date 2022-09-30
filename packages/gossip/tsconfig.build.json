@@ -1,6 +1,9 @@
 {
   "extends": "../../tsconfig.build.json",
   "compilerOptions": {
+    "types": [
+      "mocha"
+    ],
     "outDir": "./dist",
     "composite": true,
   },

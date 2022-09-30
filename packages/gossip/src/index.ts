@@ -64,7 +64,7 @@ export const checkZoneTransaction = (
   zoneTransactionWithSignature: {
     data: {
       zone: {},
-      date: number
+      date: number | string
     },
     signature: string
   },
@@ -75,12 +75,25 @@ export const checkZoneTransaction = (
   }
   if (ignoreDate === false) {
     const date = zoneTransactionWithSignature.data.date;
-    if (
-      // not in future
-      date > new Date().getTime() ||
-      // not older than 10minutes
-      date < (new Date().getTime() - (1000 * 60 * 10))
-    ) {
+    if (typeof date === 'number') {
+      if (
+        // not in future
+        date > new Date().getTime() ||
+        // not older than 10minutes
+        date < (new Date().getTime() - (1000 * 60 * 10))
+      ) {
+        throw new Error('Invalid date')
+      }
+    } else if (typeof date === 'string') {
+      if (
+        // not in future
+        new Date(date).toISOString() > new Date().toISOString() ||
+        // not older than 10minutes
+        new Date(date).toISOString() < new Date(new Date().getTime() - (1000 * 60 * 10)).toISOString()
+      ) {
+        throw new Error('Invalid date')
+      }
+    } else {
       throw new Error('Invalid date')
     }
   }
