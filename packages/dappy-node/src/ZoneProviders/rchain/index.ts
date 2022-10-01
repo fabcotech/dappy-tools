@@ -4,7 +4,10 @@ import { getRoutes } from './routes';
 
 export const zoneProvider = {
   getHash: async () => {
-    return Promise.resolve('not implemented');
+    return Promise.reject(new Error('not implemented'));
+  },
+  getZonesPaginated: async () => {
+    return Promise.reject(new Error('not implemented'));
   },
   getZones,
   start,

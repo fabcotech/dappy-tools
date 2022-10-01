@@ -9,6 +9,9 @@ export const zoneProvider = {
   getHash: async () => {
     return Promise.resolve('not implemented');
   },
+  getZonesPaginated: async () => {
+    return Promise.reject(new Error('not implemented'));
+  },
   getZones: async (names: string[]): Promise<NameZone[]> => {
     return Object.entries(zones)
       .filter(([k]) => names.includes(k))

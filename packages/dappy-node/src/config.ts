@@ -131,6 +131,12 @@ export function initConfig() {
     ),
     dappyLogPath: process.env.DAPPY_LOG_PATH || './logs',
 
+    downloadZonesIfEmpty: [true, 'true'].includes(
+      process.env.DOWNLOAD_ZONES_IF_EMPTY
+    ),
+    dappyNetworkMemberToDownloadNodesFrom:
+      process.env.DAPPY_NETWORK_MEMBER_TO_DOWNLOAD_ZONES_FROM,
+
     redisDb: process.env.DAPPY_NODE_REDIS_DB || 1,
     redisHost: process.env.DAPPY_NODE_REDIS_HOST || 'localhost',
     redisPort: parseInt(process.env.DAPPY_NODE_REDIS_PORT || '', 10) || 6379,

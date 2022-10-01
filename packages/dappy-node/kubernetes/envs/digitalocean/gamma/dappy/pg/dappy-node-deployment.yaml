@@ -41,6 +41,10 @@ spec:
               value: 'true'
             - name: DAPPY_NETWORK_ID
               value: gamma
+            - name: DOWNLOAD_ZONES_IF_EMPTY
+              value: false
+            - name: DAPPY_NETWORK_MEMBER_TO_DOWNLOAD_ZONES_FROM
+              value: node1.gamma.fabco.dappy
           volumeMounts:
             - name: pg-dappy-ca
               mountPath: /etc/dappy/tls

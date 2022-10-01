@@ -10,6 +10,7 @@ import { createGetHash } from './get-hash';
 import { getCurrentZoneProvider } from '../../ZoneProviders';
 import { getStore } from '../../store';
 import { createGetZones } from './get-zones';
+import { createGetZonesPaginated } from './get-zones-paginated';
 import { createHandleGossip } from './handle-gossip';
 import { getConfig } from '../../config';
 
@@ -18,7 +19,8 @@ export function getRouter() {
   const store = getStore();
   const config = getConfig();
 
-  const { getZones, saveZone, getHash } = getCurrentZoneProvider();
+  const { getZones, saveZone, getHash, getZonesPaginated } =
+    getCurrentZoneProvider();
 
   router.post('/ping', ping);
   router.post('/get-nodes', getNodes(store));
@@ -48,6 +50,11 @@ export function getRouter() {
   );
 
   router.post('/get-zones', bodyParser.json(), createGetZones(getZones));
+  router.post(
+    '/get-zones-paginated',
+    bodyParser.json(),
+    createGetZonesPaginated(getZonesPaginated)
+  );
 
   router.get(
     '/hashes',
