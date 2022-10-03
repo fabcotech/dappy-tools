@@ -1,42 +1,42 @@
-# dappy-lookup
+### dappy-lookup
 
-A library written in Typescript that resolves names from Dappy name system (DappyNS).
+A library written in Typescript that resolves any type of record (A, AAAA, CERT) on a dappy name system with co-resolution over HTTPS (DoH).
 
-DappyNS is a next generation name system which:
+[dappy website](https://dappy.tech)
 
-- Is compliant with [DNS RFC 1035](https://datatracker.ietf.org/doc/html/rfc1035)
-- Security-first designed by implementing DNS over HTTPS ([RFC 8484](https://datatracker.ietf.org/doc/html/rfc8484))
-- Persisted and distributed by blockchain [RChain](https://rchain.coop/)
-- Enable clients to query in a trustless manner name records on the blockchain using:
-  - A network of dappy name servers highly secured
-  - A [co-resolution mecanism](https://fabco.gitbook.io/dappy-spec/glossary/multi-request) to distribute the trust over the network
+[docs for domain purchase and management](http://docs.dappy.tech/)
 
-DappyNS is a trustless and secure way to distribute your public data with your partners, clients or devices (IOT). PKI certificates are good candidates.
-DappyNS can also help to organize and publish your DAO data due to to its hierarchical nature.
+[dappy-tools repository](https://github.com/fabcotech/dappy-tools)
 
-## Try it with the CLI
+#### Try it with the CLI
 
 ```sh
 npx @fabcotech/dappy-lookup fabcotech A --network=gamma
 ```
 
-## DappyNS documentation
+#### Building and testing
 
-You can find documentation [here](https://fabco.gitbook.io/dappy-spec/specs-and-web-standards/name-system).
+```sh
+# In dappy-tools root
+npm i & npx lerna bootstrap
 
-## Installing
+# In dappy-tools/packages/gossip
+npm i
 
-### Node.js
+# test
+npm run test
+
+# build
+npm run build
+```
+
+#### Using in any web nodeJS repository
 
 ```sh
 npm i -S @fabcotech/dappy-lookup
 ```
 
-## You don't have a dappy name ? Mint in one.
-
-Using dappy-cli ...
-
-## Examples
+### Examples
 
 ### Stand-alone dappy lookup
 
