@@ -36,11 +36,7 @@ npm run build
 npm run test
 ```
 
-### Other installation procedures
-
-Please refer to [INSTALLATION.md](INSTALLATION.MD) if you want to install a standalone dappy-node or to join an existing Dappy network.
-
-## Understanding Dappy-node
+## Understanding dappy-node
 
 ### Zone providers
 
@@ -114,13 +110,9 @@ Below, here are all environments variables read by dappy-node.
 | DAPPY_NETWORK_ID | Yes | `unknown`, `gamma`, `beta` or `d` |
 | DAPPY_NETWORK_MASTER_PUBLIC_KEY | No | `04ea33c...` | Public key to check messages for zone creation (dappy network master) |
 | DAPPY_NETWORK_FILE | No | `File path of a dappy network .json file` |
-| DAPPY_NETWORK_SELF_HOSTNAME | Yes | `localhost1`, `fabco`, `anothermember` |
 | DAPPY_LOG_PATH | Yes | `./logs` | path to log warning and errors |
-| NODES_FILE | No |  |  |
 
 if DAPPY_NETWORK_ID is `unknown`, the program will try to load a dappy network from the file `./dappyNetwork.js`.
-
-DAPPY_NETWORK_SELF_HOSTNAME is your username in the dappy network, this is used to avoid gossiping messages to self. You can find it in any dappy network reference.
 
 #### Environment variables read when rchain is used as zone provider
 
@@ -206,3 +198,5 @@ kubectl apply -k kubernetes/envs/digitalocean/gamma/dappy/pg/
 # production / d network
 kubectl apply -k kubernetes/envs/digitalocean/d/dappy/pg/
 ```
+
+### Docker
