@@ -141,6 +141,10 @@ DAPPY_NETWORK_SELF_HOSTNAME is your username in the dappy network, this is used 
 | **Keys** | **Required** | **Default value (dev)** | **Description** |
 |---|---|---|---|
 | DAPPY_PG_CONNECTION_STRING | No | `postgresql://postgres:postgres@localhost:5432/dappy` | postgresql connection string |
+| DAPPY_NETWORK_MEMBER_TO_DOWNLOAD_ZONES_FROM | No | `` | the network member hostname you want to download zones from |
+| DOWNLOAD_ZONES_IF_EMPTY | No | `false` | do you want to download the zones if there are zero zones in pg (setup) |
+| DAPPY_NETWORK_ID | No | `local` | ID of the dappy network you want to connect to |
+| DAPPY_NETWORK_MASTER_PUBLIC_KEY | No | `04ea33c4...` | The public key of the entity able to send new zones |
 
 ### API Reference
 
