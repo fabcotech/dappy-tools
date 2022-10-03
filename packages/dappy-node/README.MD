@@ -1,24 +1,16 @@
 # Dappy-node
 
-Dappy node is a [DoH](https://datatracker.ietf.org/doc/html/rfc8484) and an authoritative name server, written in [NodeJS](https://nodejs.org/).
+Dappy node is a [DoH](https://datatracker.ietf.org/doc/html/rfc8484) and an authoritative name server, written in [NodeJS](https://nodejs.org/). It is a core component of the [dappy](https://dappy.tech) protocol and ecosystem.
 
-Dappy zones and records are independent from [ICANN](https://www.icann.org/).
-To avoid conflicts with existing TLDs, dappy zones are optionnaly suffixed with `.d`.
+Dappy node is currently available with three connectors for storing the zones : memory (dev), postreSQL (production) and RChain (blockchain, experimental).
 
-What makes dappy-node really unique is that zones are stored on a blockchain, therefore the state is automatically shared between the nodes of a given dappy network.
+[dappy website](https://dappy.tech)
 
-Persist name zone directly on the blockchains garantees:
-- Records can't be falsified
-- Data is highly available throught the network
-- Very thin access control can be defined, (ex: a third party company can manage the zone for  *api.microsoft.com*)
+[docs for domain purchase and management](http://docs.dappy.tech/)
 
-Records are fetched with **co-resolution**, in a **trustless manner** by requesting network members in parallel. Distributing trust over network is an alternative solution to [DNSSEC](https://datatracker.ietf.org/doc/html/rfc4033).
+[dappy-tools repository](https://github.com/fabcotech/dappy-tools)
 
-[Read the dappy propositions](https://github.com/fabcotech/dappy-propositions)
-
-## Get dappy-node
-
-### Quick start-up
+### Quick start
 
 Run a dappy-node with memory zone provider using npx
 
@@ -30,11 +22,21 @@ DAPPY_NODE_ZONE_PROVIDER=memory DAPPY_NODE_CACHING=0 npx @fabcotech/dappy-node
 dappy-lookup example.d A --endpoint=http://127.0.0.1:3001
 ```
 
-### Other installation procedures
+### Build and test
 
-Please refer to [INSTALLATION.md](INSTALLATION.MD) if you want to install a standalone dappy-node or to join an existing Dappy network.
+```sh
+# In dappy-tools root
+npm i & npx lerna bootstrap
 
-## Understanding Dappy-node
+# In dappy-tools/packages/dappy-node
+npm i
+npm run build
+
+# test
+npm run test
+```
+
+## Understanding dappy-node
 
 ### Zone providers
 
@@ -42,8 +44,8 @@ Dappy-node abstracts how zones and records are persisted.
 
 There are 3 zone providers availables:
 - memory: for demo and development purpose. It contains a built-in zone `example` with some records. It is the easiest way to start and experiment dappy-node.
-- rchain: for production purposes. Zones and records are persisted on blockchain [Rchain](https://rchain-community.github.io/)
 - postgresql: for production purposes when confidentiality is needed. Zones and records are persisted on a pg instance.
+- rchain: experimental provider that connects with a RChain (L1) deployment.
 
 Each of these zone providers have their own jobs and routes.
 
@@ -55,7 +57,7 @@ Dappy-node is queryable over HTTPS. It implements [DoH](https://datatracker.ietf
 
 Under the hood, dappy-node use [dns-packet](https://github.com/mafintosh/dns-packet) to decode and encode DNS packets.
 
-Every DoH clients can query dappy-node, it includes browsers like Chrome. Dappy provide a command line [dappy-lookup](https://github.com/fabcotech/dappy-lookup) that makes DoH queries. You can try it like this:
+Every DoH clients can query dappy-node, it includes browsers like Chrome. Dappy provide a command line [dappy-lookup](https://github.com/fabcotech/dappy-tools/tree/master/packages/dappy-lookup) that makes DoH queries. You can try it like this:
 
 ```sh
 npx @fabcotech/dappy-lookup example.d A --endpoint=http://127.0.0.1:3001
@@ -108,13 +110,9 @@ Below, here are all environments variables read by dappy-node.
 | DAPPY_NETWORK_ID | Yes | `unknown`, `gamma`, `beta` or `d` |
 | DAPPY_NETWORK_MASTER_PUBLIC_KEY | No | `04ea33c...` | Public key to check messages for zone creation (dappy network master) |
 | DAPPY_NETWORK_FILE | No | `File path of a dappy network .json file` |
-| DAPPY_NETWORK_SELF_HOSTNAME | Yes | `localhost1`, `fabco`, `anothermember` |
 | DAPPY_LOG_PATH | Yes | `./logs` | path to log warning and errors |
-| NODES_FILE | No |  |  |
 
 if DAPPY_NETWORK_ID is `unknown`, the program will try to load a dappy network from the file `./dappyNetwork.js`.
-
-DAPPY_NETWORK_SELF_HOSTNAME is your username in the dappy network, this is used to avoid gossiping messages to self. You can find it in any dappy network reference.
 
 #### Environment variables read when rchain is used as zone provider
 
@@ -141,6 +139,10 @@ DAPPY_NETWORK_SELF_HOSTNAME is your username in the dappy network, this is used 
 | **Keys** | **Required** | **Default value (dev)** | **Description** |
 |---|---|---|---|
 | DAPPY_PG_CONNECTION_STRING | No | `postgresql://postgres:postgres@localhost:5432/dappy` | postgresql connection string |
+| DAPPY_NETWORK_MEMBER_TO_DOWNLOAD_ZONES_FROM | No | `` | the network member hostname you want to download zones from |
+| DOWNLOAD_ZONES_IF_EMPTY | No | `false` | do you want to download the zones if there are zero zones in pg (setup) |
+| DAPPY_NETWORK_ID | No | `local` | ID of the dappy network you want to connect to |
+| DAPPY_NETWORK_MASTER_PUBLIC_KEY | No | `04ea33c4...` | The public key of the entity able to send new zones |
 
 ### API Reference
 
@@ -196,3 +198,5 @@ kubectl apply -k kubernetes/envs/digitalocean/gamma/dappy/pg/
 # production / d network
 kubectl apply -k kubernetes/envs/digitalocean/d/dappy/pg/
 ```
+
+### Docker

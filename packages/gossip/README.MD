@@ -2,6 +2,26 @@
 
 Utils use to sign, verify and air messages sent between and to nodes of the dappy network for zone management.
 
+[dappy website](https://dappy.tech)
+
+[dappy-tools repository](https://github.com/fabcotech/dappy-tools)
+
+#### Build and test
+
+```sh
+# In dappy-tools root
+npm i & npx lerna bootstrap
+
+# In dappy-tools/packages/gossip
+npm i
+
+# build
+npm run build
+
+# test
+npm run test
+```
+
 #### Sign a message
 
 Signs a message (`data` in our case) with a private key

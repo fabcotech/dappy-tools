@@ -4,8 +4,28 @@ JS library that does co-resolution / retrieves arbitrary resources on arbitrary 
 
 Beesjs has been initiated in the dappy project [dappy.tech](https://dappy.tech), to address the problem of unique trustful API endpoints in name systems like the DNS, and more broadly the problem of reading the blockchain state without trusting a node.
 
+[dappy website](https://dappy.tech)
+
+[dappy-tools repository](https://github.com/fabcotech/dappy-tools)
+
 ```bash
-npm install beesjs
+npm install @fabcotech/bees
+```
+
+#### Build and test
+
+```sh
+# In dappy-tools root
+npm i & npx lerna bootstrap
+
+# In dappy-tools/packages/bees
+npm i
+
+# test
+npm run test
+
+# build
+npm run build
 ```
 
 ### Use
@@ -13,7 +33,7 @@ npm install beesjs
 Beesjs does not know how to query the network, the first argument of `resolve` is a function that performs the request and returns a string. Each string will then be compared by Bees, until the multi-request either fails or completes.
 
 ```javascript
-import { resolver } from 'beesjs';
+import { resolver } from '@fabcotech/bees';
 
 resolve(
   (id) => {
@@ -91,14 +111,4 @@ resolve(
     console.log('something went wrong');
     throw err;
   })
-```
-
-### Test and build
-
-```bash
-# test
-npm run test
-
-# build
-npm run build && npm run build:declaration
 ```

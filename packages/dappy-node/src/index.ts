@@ -1,6 +1,5 @@
 import 'dotenv/config';
 
-import { initNodes } from './nodes';
 import { startZoneProvider } from './ZoneProviders';
 import { initCache } from './cache';
 import { startHttpServers, startDnsServer } from './server';
@@ -14,8 +13,6 @@ async function start() {
   if (config.dappyNodeCaching) {
     initCache();
   }
-
-  initNodes();
 
   await startZoneProvider();
   startHttpServers();
