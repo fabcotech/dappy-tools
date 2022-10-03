@@ -1,24 +1,16 @@
 # Dappy-node
 
-Dappy node is a [DoH](https://datatracker.ietf.org/doc/html/rfc8484) and an authoritative name server, written in [NodeJS](https://nodejs.org/).
+Dappy node is a [DoH](https://datatracker.ietf.org/doc/html/rfc8484) and an authoritative name server, written in [NodeJS](https://nodejs.org/). It is a core component of the [dappy](https://dappy.tech) protocol and ecosystem.
 
-Dappy zones and records are independent from [ICANN](https://www.icann.org/).
-To avoid conflicts with existing TLDs, dappy zones are optionnaly suffixed with `.d`.
+Dappy node is currently available with three connectors for storing the zones : memory (dev), postreSQL (production) and RChain (blockchain, experimental).
 
-What makes dappy-node really unique is that zones are stored on a blockchain, therefore the state is automatically shared between the nodes of a given dappy network.
+[dappy website](https://dappy.tech)
 
-Persist name zone directly on the blockchains garantees:
-- Records can't be falsified
-- Data is highly available throught the network
-- Very thin access control can be defined, (ex: a third party company can manage the zone for  *api.microsoft.com*)
+[docs for domain purchase and management](http://docs.dappy.tech/)
 
-Records are fetched with **co-resolution**, in a **trustless manner** by requesting network members in parallel. Distributing trust over network is an alternative solution to [DNSSEC](https://datatracker.ietf.org/doc/html/rfc4033).
+[dappy-tools repository](https://github.com/fabcotech/dappy-tools)
 
-[Read the dappy propositions](https://github.com/fabcotech/dappy-propositions)
-
-## Get dappy-node
-
-### Quick start-up
+### Quick start
 
 Run a dappy-node with memory zone provider using npx
 
@@ -28,6 +20,20 @@ DAPPY_NODE_ZONE_PROVIDER=memory DAPPY_NODE_CACHING=0 npx @fabcotech/dappy-node
 
 # Resolve example.d A record
 dappy-lookup example.d A --endpoint=http://127.0.0.1:3001
+```
+
+### Build and test
+
+```sh
+# In dappy-tools root
+npm i & npx lerna bootstrap
+
+# In dappy-tools/packages/dappy-node
+npm i
+npm run build
+
+# test
+npm run test
 ```
 
 ### Other installation procedures
@@ -42,8 +48,8 @@ Dappy-node abstracts how zones and records are persisted.
 
 There are 3 zone providers availables:
 - memory: for demo and development purpose. It contains a built-in zone `example` with some records. It is the easiest way to start and experiment dappy-node.
-- rchain: for production purposes. Zones and records are persisted on blockchain [Rchain](https://rchain-community.github.io/)
 - postgresql: for production purposes when confidentiality is needed. Zones and records are persisted on a pg instance.
+- rchain: experimental provider that connects with a RChain (L1) deployment.
 
 Each of these zone providers have their own jobs and routes.
 
@@ -55,7 +61,7 @@ Dappy-node is queryable over HTTPS. It implements [DoH](https://datatracker.ietf
 
 Under the hood, dappy-node use [dns-packet](https://github.com/mafintosh/dns-packet) to decode and encode DNS packets.
 
-Every DoH clients can query dappy-node, it includes browsers like Chrome. Dappy provide a command line [dappy-lookup](https://github.com/fabcotech/dappy-lookup) that makes DoH queries. You can try it like this:
+Every DoH clients can query dappy-node, it includes browsers like Chrome. Dappy provide a command line [dappy-lookup](https://github.com/fabcotech/dappy-tools/tree/master/packages/dappy-lookup) that makes DoH queries. You can try it like this:
 
 ```sh
 npx @fabcotech/dappy-lookup example.d A --endpoint=http://127.0.0.1:3001
