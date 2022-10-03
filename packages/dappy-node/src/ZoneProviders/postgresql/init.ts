@@ -99,7 +99,7 @@ export const init = async (
       if (j % 5 === 0) log(`inserting batch ${j} (displaying % 5 only)`);
       connection('zones')
         .insert(batch)
-        .then((a) => {
+        .then(() => {
           j += 1;
           if (j === batches.length) {
             log('over');
