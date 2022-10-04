@@ -4,6 +4,9 @@
   "description": "",
   "main": "src/index.ts",
   "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "test": "TS_NODE_PROJECT=./tsconfig.build.json mocha -r ts-node/register 'src/**/*.spec.ts'",
     "test:watch": "TS_NODE_PROJECT=./tsconfig.build.json mocha -r ts-node/register 'src/**/*.spec.ts' --watch --watch-files *.ts",
