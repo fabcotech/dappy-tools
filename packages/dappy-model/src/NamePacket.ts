@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { JSONObject } from './json';
 import { hostname } from './regexp';
-import {  RecordTypeSchema, RRDataSchema } from './ResourceRecords';
+import { RecordTypeSchema, RRDataSchema } from './ResourceRecords';
 
 const NameQuestionSchema = z.object({
   type: RecordTypeSchema,

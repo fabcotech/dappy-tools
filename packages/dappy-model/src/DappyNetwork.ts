@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { JSONArray, JSONObject, JSONValue } from './json';
+import { JSONValue } from './json';
 import { base64, hostname, port } from './regexp';
 
 const DappyNetworkMemberHTTPschema = z.object({
