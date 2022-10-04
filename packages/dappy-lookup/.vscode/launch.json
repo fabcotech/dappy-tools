@@ -64,6 +64,7 @@
         "${input:dappy-name}",
         "${input:record-type}",
         "--endpoint=${input:dappy-node-http-endpoint}",
+        "--hostname=${input:dappy-node-hostname}"
       ],
       "cwd": "${workspaceFolder}",
       "internalConsoleOptions": "openOnSessionStart",
