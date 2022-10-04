@@ -18,9 +18,9 @@ module.exports = {
       },
       { value: 'revert', name: 'revert: Revert to a commit' },
     ],
-  
-    scopes: [{ name: 'root' }, { name: 'node' }, { name: 'bees'}, { name: 'gossip'}, { name: 'lookup'}],
-  
+
+    scopes: [{ name: 'root' }, { name: 'node' }, { name: 'bees'}, { name: 'gossip'}, { name: 'lookup'}, { name: 'model' }],
+
     allowTicketNumber: true,
     isTicketNumberRequired: false,
     ticketNumberPrefix: '#',
@@ -47,7 +47,7 @@ module.exports = {
       footer: 'List any ISSUES CLOSED by this change (optional). E.g.: #31, #34:',
       confirmCommit: 'Are you sure you want to proceed with the commit above?',
     },
-  
+
     allowCustomScopes: false,
     allowBreakingChanges: ['feat', 'fix'],
     subjectLimit: 80,
