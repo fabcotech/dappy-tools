@@ -1,4 +1,4 @@
-import { DappyNetworkMember } from '@fabcotech/dappy-lookup';
+import { DappyNetworkMember } from "@fabcotech/dappy-model";
 
 const formatDappyNetworkMember = (dnm: DappyNetworkMember) => {
   return `${dnm.ip}:${dnm.port}@${dnm.hostname}`
@@ -9,7 +9,7 @@ const gossipToOne = (
   func: (dnm: DappyNetworkMember) => Promise<true>,
   timeout: number
 ): Promise<true> => {
-  return new Promise((resolve, reject) => {    
+  return new Promise((resolve, reject) => {
     let i = 0;
     const go = () => {
       let over = false;

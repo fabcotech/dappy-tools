@@ -13,6 +13,9 @@
   "references": [
     {
       "path": "../dappy-lookup/tsconfig.build.json"
+    },
+    {
+      "path": "../dappy-model/tsconfig.build.json"
     }
   ]
 }
