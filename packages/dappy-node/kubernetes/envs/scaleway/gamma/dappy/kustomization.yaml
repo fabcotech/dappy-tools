@@ -1,9 +1,0 @@
-namespace: gamma
-
-bases:
-- ../../base/dappy
-
-patchesStrategicMerge:
-- dappy-jobs-deployment.yaml
-- dappy-node-deployment.yaml
-- dappy-node-clusterip-service.yaml

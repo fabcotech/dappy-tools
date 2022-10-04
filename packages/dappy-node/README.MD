@@ -114,26 +114,6 @@ Below, here are all environments variables read by dappy-node.
 
 if DAPPY_NETWORK_ID is `unknown`, the program will try to load a dappy network from the file `./dappyNetwork.js`.
 
-#### Environment variables read when rchain is used as zone provider
-
-| **Keys** | **Required** | **Default value** | **Description** |
-|---|---|---|---|
-| DAPPY_NAMES_MASTER_REGISTRY_URI | Yes |  | rchain token master deployment |
-| DAPPY_NAMES_CONTRACT_ID | Yes |  | rchain contract used for dappy name system |
-| DAPPY_RCHAIN_VALIDATOR | Yes | `http://localhost:40403` | Rnode used to send transactions |
-| DAPPY_RCHAIN_READ_ONLY | Yes | `http://localhost:40403` | Rnode used to query rchain data |
-| DAPPY_RCHAIN_NETWORK | Yes | `unknown` | RChain network |
-| DAPPY_RCHAIN_SHARD_NAME | Yes | `unknown` | RChain shard ID |
-| DAPPY_JOBS_LOGS_CONTRACTS | Yes | | Ccomma-separated list of contracts you want to keep the logs |
-| DAPPY_JOBS_REDIS_URL |  Yes | | Redis url format: `redis://HOST:PORT/DB` |
-| DAPPY_RCHAIN_READ_ONLY_CERTIFICATE_FILENAME | Yes |  | Rnode certificate  |
-| DAPPY_NODE_LAST_BLOCK_JOB_INTERVAL | Yes | `40000` | Interval in ms to fetch rchain data |
-| DAPPY_NODE_START_JOBS | Yes | `false` |  |
-| DAPPY_NODE_REDIS_DB | Yes | `1` | Redis database number |
-| DAPPY_NODE_REDIS_HOST | Yes | `localhost` | Redis host |
-| DAPPY_NODE_REDIS_PORT | Yes | `6379` | Redis port |
-| DAPPY_NODE_CACHING_ZONE | Yes | `false` | Cache zones |
-
 #### Environment variables read when postgresql is used as zone provider
 
 | **Keys** | **Required** | **Default value (dev)** | **Description** |
@@ -148,55 +128,7 @@ if DAPPY_NETWORK_ID is `unknown`, the program will try to load a dappy network f
 
 Please read [API Reference](API.md) for more details.
 
+
 ### Kubernetes
 
-#### Selection of namespace
-
-You will probably have one namespace per dappy-node. Be careful to select the right one.
-
-```
-# Create a namespace (only at setup)
-kubectl create ns node1-gamma
-
-# See namespaces
-kubectl get namespaces
-> node1-gamma
-> node2-gamma
-> ...
-
-# Pick namespace for the following operations
-kubectl config set-context --current --namespace=node1-gamma
-```
-
-#### Secrets and certificates
-
-To be written / todo
-
-#### Checking of the pods
-
-At the time this is written, a dappy-node should have 4 pods :
-- `dappy-node-xxx` is the nodeJS / DoH endpoint
-- `grafana-xxx` logs
-- `prometheus-xxx` metrics
-
-```
-kubectl get pods
-```
-
-#### Updating pods / deploying
-
-**Be careful** : as of today there for each namespace there are manual updates to do in some yml files before deploying pods - `kubectl apply` command.
-
-**(1)** Update 3 lines in `kubernetes/envs/digitalocean/gamma/dappy/pg/dappy-node-ingress.yaml` so that the hostname matches with the hostname of your node in dappy-lookup codebase [src/dappyNetworks.ts](https://github.com/fabcotech/dappy-tools/blob/master/packages/dappy-lookup/src/dappyNetworks.ts). Example value : `node2.gamma.fabco.dappy`.
-
-**(2)** Update 3 lines in `kubernetes/envs/digitalocean/gamma/dappy/pg/dappy-node-webpki-ingress.yaml` so that the public DNS subdomain you want to use to expose rnode. Example value : `node2.gamma.dappy.tech`.
-
-```
-# test / gamma network
-kubectl apply -k kubernetes/envs/digitalocean/gamma/dappy/pg/
-
-# production / d network
-kubectl apply -k kubernetes/envs/digitalocean/d/dappy/pg/
-```
-
-### Docker
+[Kubernetes guide](./kubernetes/KUBERNETES.MD)
