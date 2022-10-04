@@ -1,6 +1,10 @@
+import {
+  DappyNetworkMember,
+  isDappyNetworkMemberHTTPS,
+} from '@fabcotech/dappy-model';
+
 import { tryParseJSON } from '../utils/parse';
 import { nodeRequest } from '../utils/nodeRequest';
-import { DappyNetworkMember } from '../model/DappyNetwork';
 import { JSONObject } from '../types';
 
 type PostJSONQueryOptions = {
@@ -10,7 +14,7 @@ type PostJSONQueryOptions = {
 export const createPostJSONQuery =
   (request: typeof nodeRequest, queryOptions: PostJSONQueryOptions) =>
   async (body: JSONObject, options: DappyNetworkMember) => {
-    const { hostname, port, scheme, ip, caCert } = options;
+    const { hostname, port, scheme, ip } = options;
     const { path } = queryOptions;
 
     const reqOptions: Parameters<typeof request>[0] = {
@@ -25,8 +29,8 @@ export const createPostJSONQuery =
       },
       body: JSON.stringify(body),
     };
-    if (caCert) {
-      reqOptions.ca = Buffer.from(caCert, 'base64').toString();
+    if (isDappyNetworkMemberHTTPS(options)) {
+      reqOptions.ca = Buffer.from(options.caCert, 'base64').toString();
     }
     const rawResponse = await request(reqOptions);
 

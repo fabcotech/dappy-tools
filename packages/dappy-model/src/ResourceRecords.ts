@@ -2,7 +2,8 @@ import { z } from 'zod';
 
 import { JSONObject } from './json';
 
-export const RecordType = ['A', 'AAAA', 'CERT', 'TXT', 'CNAME'] as const;
+export const RecordTypeSchema = z.enum(['A', 'AAAA', 'CERT', 'TXT', 'CNAME']);
+export type RecordType = z.infer<typeof RecordTypeSchema>;
 
 export const recordTypeRegExp = /^(A|AAAA|CNAME|CERT|TXT)$/;
 

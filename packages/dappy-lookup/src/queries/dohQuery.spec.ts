@@ -1,17 +1,14 @@
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
+import {
+  createNamePacketSuccessResponse,
+  DappyNetworkMember,
+  getFakeDappyNetworkMember,
+} from '@fabcotech/dappy-model';
 
 import dnsPacket, { Packet } from 'dns-packet';
 
-import { DappyNetworkMember } from '..';
-
 import { createDohQuery } from './dohQuery';
-
-import {
-  createNamePacketSuccessResponse,
-  getFakeDappyNetworkMember,
-} from '../model/fakeData';
-import { RecordType } from '../model/ResourceRecords';
 
 chai.use(spies);
 
@@ -27,7 +24,7 @@ describe('dohQuery', () => {
     await createDohQuery(fakeRequest)(
       {
         name: 'example.dappy',
-        recordType: RecordType.A,
+        recordType: 'A',
       },
       fakeMember,
     );
@@ -69,7 +66,7 @@ describe('dohQuery', () => {
     const r = await createDohQuery(fakeRequest)(
       {
         name: 'example.dappy',
-        recordType: RecordType.A,
+        recordType: 'A',
       },
       getFakeDappyNetworkMember(),
     );
@@ -86,7 +83,7 @@ describe('dohQuery', () => {
       await createDohQuery(fakeRequest)(
         {
           name: 'example.dappy',
-          recordType: RecordType.A,
+          recordType: 'A',
         },
         getFakeDappyNetworkMember({
           ip: '127.0.0.1',
@@ -110,7 +107,7 @@ describe('dohQuery', () => {
       await createDohQuery(fakeRequest)(
         {
           name: 'example.dappy',
-          recordType: RecordType.A,
+          recordType: 'A',
         },
         getFakeDappyNetworkMember(),
       );

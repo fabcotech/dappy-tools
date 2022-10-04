@@ -1,4 +1,4 @@
-import { DappyLookupOptions, ReturnCode } from '../../types';
+import { DappyLookupOptions } from '../../types';
 import { isObjectWith, isStringNotEmpty } from '../../utils/validation';
 import { dedent } from '../utils/dedent';
 import { Command } from './command';
@@ -47,7 +47,7 @@ export const saveCertificateCommand: Command = {
 
     Examples:
       # Download example.dappy certificate(s) using dappy network (mainnet)
-      dappy-lookup savecertificate example.dappy 
+      dappy-lookup savecertificate example.dappy
       # Download example.dappy certificate(s) using gamma network, save it/them to custom path
       dappy-lookup savecertificate example.dappy --out=customname.pem --network=gamma
       # Download example.dappy certificate(s) using a custom dappy-node network defined in a JSON config file
@@ -70,8 +70,8 @@ export const saveCertificateCommand: Command = {
     const packet = await api.lookup(name, 'CERT', options);
 
     if (
-      packet.rcode === ReturnCode.NXDOMAIN ||
-      packet.rcode === ReturnCode.NOTZONE ||
+      packet.rcode === 'NXDOMAIN' ||
+      packet.rcode === 'NOTZONE' ||
       !packet.answers ||
       packet.answers.length === 0
     ) {

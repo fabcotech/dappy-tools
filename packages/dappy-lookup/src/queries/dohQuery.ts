@@ -1,10 +1,13 @@
+import {
+  DappyNetworkMember,
+  isDappyNetworkMemberHTTPS,
+  NamePacket,
+  RecordType,
+} from '@fabcotech/dappy-model';
 import dnsPacket, { Packet } from 'dns-packet';
 
 import { JSONObject } from '../utils/json';
 import { nodeRequest } from '../utils/nodeRequest';
-import { RecordType } from '../model/ResourceRecords';
-import { DappyNetworkMember } from '../model/DappyNetwork';
-import { NamePacket } from '../types';
 
 const DNS_QUERY_PATH = '/dns-query';
 
@@ -22,7 +25,7 @@ export const createDohQuery =
     { name, recordType }: { name: string; recordType: RecordType },
     options: DappyNetworkMember,
   ) => {
-    const { hostname, port, scheme, ip, caCert } = options;
+    const { hostname, port, scheme, ip } = options;
     const dnsQuery = dnsPacket.encode({
       type: 'query',
       id: 0,
@@ -47,8 +50,8 @@ export const createDohQuery =
       },
       body: dnsQuery,
     };
-    if (caCert) {
-      reqOptions.ca = Buffer.from(caCert, 'base64').toString();
+    if (isDappyNetworkMemberHTTPS(options)) {
+      reqOptions.ca = Buffer.from(options.caCert, 'base64').toString();
     }
     const rawResponse = await request(reqOptions);
 

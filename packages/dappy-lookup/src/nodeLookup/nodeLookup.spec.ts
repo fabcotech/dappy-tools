@@ -1,13 +1,11 @@
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
-
-import { nodeLookup } from './nodeLookup';
 import {
   createNamePacketErrorResponse,
   createNamePacketSuccessResponse,
-} from '../model/fakeData';
-import { ReturnCode } from '../model/NamePacket';
-import { RecordType } from '../model/ResourceRecords';
+} from '@fabcotech/dappy-model';
+
+import { nodeLookup } from './nodeLookup';
 
 chai.use(spies);
 
@@ -32,8 +30,8 @@ describe('nodeLookup', () => {
   it('should returns first IPv6 address', (done) => {
     const namePacket = createNamePacketSuccessResponse({
       answers: [
-        { name: '@', class: 'IN', ttl: 60, type: RecordType.AAAA, data: '::1' },
-        { name: '@', class: 'IN', ttl: 60, type: RecordType.AAAA, data: '::2' },
+        { name: '@', class: 'IN', ttl: 60, type: 'AAAA', data: '::1' },
+        { name: '@', class: 'IN', ttl: 60, type: 'AAAA', data: '::2' },
       ],
     });
     const fakeDappyLookup = chai.spy(() => Promise.resolve(namePacket));
@@ -58,7 +56,7 @@ describe('nodeLookup', () => {
     const fakeDappyLookup = () =>
       Promise.resolve(
         createNamePacketErrorResponse({
-          rcode: ReturnCode.NXDOMAIN,
+          rcode: 'NXDOMAIN',
         }),
       );
     const lookup = nodeLookup(fakeDappyLookup);

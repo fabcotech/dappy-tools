@@ -10,6 +10,9 @@
   "references": [
     {
       "path": "../bees/tsconfig.build.json"
+    },
+    {
+      "path": "../model/tsconfig.build.json"
     }
   ],
 }

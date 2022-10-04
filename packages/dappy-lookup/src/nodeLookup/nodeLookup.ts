@@ -2,7 +2,6 @@ import dns from 'dns';
 // import { NamePacket } from '../model/NamePacket';
 
 import { lookup as dappyLookupRecord } from '../lookup';
-import { RecordType } from '../model/ResourceRecords';
 
 export const nodeLookup =
   (lookupFn: typeof dappyLookupRecord) =>
@@ -11,31 +10,27 @@ export const nodeLookup =
     options: dns.LookupOneOptions,
     callback: (...args: any[]) => void,
   ) => {
-    lookupFn(name, options.family === 6 ? RecordType.AAAA : RecordType.A).then(
-      (packet) => {
-        const family = options.family === 6 ? 6 : 4;
+    lookupFn(name, options.family === 6 ? 'AAAA' : 'A').then((packet) => {
+      const family = options.family === 6 ? 6 : 4;
 
-        if (!packet.answers || !packet.answers.length) {
-          callback(
-            new Error(
-              `No address found for name ${name} (format: IPv${family})`,
-            ),
-          );
-          return;
-        }
+      if (!packet.answers || !packet.answers.length) {
+        callback(
+          new Error(`No address found for name ${name} (format: IPv${family})`),
+        );
+        return;
+      }
 
-        const addresses = packet.answers.map(({ data }) => data);
+      const addresses = packet.answers.map(({ data }) => data);
 
-        if (!addresses || addresses.length === 0) {
-          callback(
-            new Error(
-              `No address found for name ${name} (format: IPv${options.family})`,
-            ),
-          );
-          return;
-        }
+      if (!addresses || addresses.length === 0) {
+        callback(
+          new Error(
+            `No address found for name ${name} (format: IPv${options.family})`,
+          ),
+        );
+        return;
+      }
 
-        callback(null, addresses[0], family);
-      },
-    );
+      callback(null, addresses[0], family);
+    });
   };

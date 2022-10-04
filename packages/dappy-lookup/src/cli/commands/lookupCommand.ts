@@ -1,11 +1,11 @@
-import { getNetwork, isDappyNetworkId } from './utils';
-import { DappyLookupOptions, DappyNetwork, ReturnCode } from '../../types';
+import { DappyNetwork, isDappyNetworkId } from '@fabcotech/dappy-model';
+import { getNetwork } from './utils';
+import { DappyLookupOptions } from '../../types';
 import { dedent } from '../utils/dedent';
 import { asciiTable } from '../utils/asciiTable';
 import { Command } from './command';
 
 const MAX_RECORD_DISPLAY_LENGTH = 80;
-
 const normalizeAnswerData = (data: string) => {
   const singleLineData = data.replace(/\n/, '');
 
@@ -26,7 +26,7 @@ export const formatNetwork = (network: DappyNetwork): string => {
 export const lookupCommand: Command = {
   description: dedent`
     Lookup name records in dappy network.
-    
+
     Positioned arguments:
       1. name: <name to lookup>
       2. record type: A, AAAA, CERT, CNAME, TXT, CSP
@@ -88,7 +88,7 @@ export const lookupCommand: Command = {
 
     const packet = await api.lookup(name, recordType, options);
 
-    if (packet.rcode !== ReturnCode.NOERROR) {
+    if (packet.rcode !== 'NOERROR') {
       api.print(`Error (${packet.rcode})`);
     }
 

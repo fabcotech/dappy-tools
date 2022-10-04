@@ -1,5 +1,8 @@
-import { DappyNetwork } from '../..';
-import { DappyNetworkId } from '../../types';
+import {
+  DappyNetwork,
+  DappyNetworkId,
+  isDappyNetwork,
+} from '@fabcotech/dappy-model';
 
 import {
   isObjectWith,
@@ -9,7 +12,6 @@ import {
   isOptional,
 } from '../../utils/validation';
 import { parseUrl, tryParseJSON } from '../../utils/parse';
-import { isDappyNetwork } from '../../model/DappyNetwork';
 
 export const getArg = (name: string, args: string[]): string | undefined => {
   return args.find((arg) => arg.startsWith(`--${name}=`))?.split('=')[1];
@@ -131,6 +133,7 @@ export const getNetwork = async (
     if (!isDappyNetwork(rawNetwork)) {
       throw new Error('Invalid network file');
     }
+
     return rawNetwork;
   }
 

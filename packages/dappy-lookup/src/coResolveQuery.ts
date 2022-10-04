@@ -1,13 +1,14 @@
 import { resolver, ResolverOutput } from '@fabcotech/bees';
-
-import { dappyNetworks } from './dappyNetworks';
-import { hashString } from './utils/hashString';
 import {
-  isDappyNetwork,
+  isDappyNetworkMembers,
   DappyNetwork,
   DappyNetworkId,
   DappyNetworkMember,
-} from './model/DappyNetwork';
+} from '@fabcotech/dappy-model';
+
+import { dappyNetworks } from './dappyNetworks';
+import { hashString } from './utils/hashString';
+
 import { DappyLookupOptions } from './types';
 import { JSONObject } from './utils/json';
 
@@ -37,7 +38,7 @@ export const createGetDappyNetworkMembers =
   async (dappyNetwork?: DappyNetwork) => {
     const network = dappyNetwork || DEFAULT_DAPPY_NETWORK;
 
-    if (isDappyNetwork(network)) {
+    if (isDappyNetworkMembers(network)) {
       return network;
     }
 

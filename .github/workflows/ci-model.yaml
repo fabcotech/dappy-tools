@@ -6,7 +6,7 @@ name: CI dappy model
 on:
   push:
     paths:
-      - 'packages/model/**'
+      - 'packages/dappy-model/**'
       - .github/workflows/ci-model.yaml
 
 jobs:

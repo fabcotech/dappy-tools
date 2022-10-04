@@ -1,12 +1,11 @@
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
-import { ReturnCode } from '../..';
 import {
   createNamePacketErrorResponse,
   createNamePacketQuery,
   createNamePacketSuccessResponse,
   getFakeDappyNetworkMember,
-} from '../../model/fakeData';
+} from '@fabcotech/dappy-model';
 import { isNetworkIdArgs, getArgsMap, getNetwork } from './utils';
 import { lookupCommand } from './lookupCommand';
 
@@ -45,7 +44,7 @@ describe('cli command lookup', () => {
     const lookup = () =>
       Promise.resolve(
         createNamePacketErrorResponse({
-          rcode: ReturnCode.NXDOMAIN,
+          rcode: 'NXDOMAIN',
         }),
       );
     const print = chai.spy();
@@ -129,7 +128,7 @@ describe('cli command lookup', () => {
     3jX6/QyTi8+7hoXmGbppHjJ56I2aJy8y3AqtzoHpvxRseFeO8eH1u57LiilIi3Rp
     VpScSx9ZMGEzGny+9ehbyRlf9dxpboLVUneTscmOjqqhaIWXSP9itO0cJWU3J/c5
     ArKazOtur0q566LkeIbiTqfub6V7mrhbwV34vL2OevACbuWd2fvjPzPBpSzCYlBO
-    -----END CERTIFICATE-----    
+    -----END CERTIFICATE-----
     `;
     const readFile = () => Promise.resolve(caCertContent);
 

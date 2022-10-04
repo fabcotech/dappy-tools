@@ -3,8 +3,7 @@ import spies from 'chai-spies';
 import {
   createCertNamePacketSuccessResponse,
   fakeCertificate,
-} from '../../model/fakeData';
-import { RecordType } from '../../model/ResourceRecords';
+} from '@fabcotech/dappy-model';
 import { saveCertificateCommand } from './saveCertificateCommand';
 
 chai.use(spies);
@@ -35,14 +34,14 @@ describe('cli command: savecertificate', () => {
             answers: [
               {
                 name: 'example',
-                type: RecordType.CERT,
+                type: 'CERT',
                 class: 'IN',
                 ttl: 60,
                 data: fakeCertificate,
               },
               {
                 name: 'example',
-                type: RecordType.CERT,
+                type: 'CERT',
                 class: 'IN',
                 ttl: 60,
                 data: fakeCertificate,
@@ -90,14 +89,14 @@ describe('cli command: savecertificate', () => {
             answers: [
               {
                 name: 'example',
-                type: RecordType.CERT,
+                type: 'CERT',
                 class: 'IN',
                 ttl: 60,
                 data: fakeCertificate,
               },
               {
                 name: 'example',
-                type: RecordType.CERT,
+                type: 'CERT',
                 class: 'IN',
                 ttl: 60,
                 data: fakeCertificate,
@@ -138,13 +137,11 @@ describe('cli command: savecertificate', () => {
     const fakeWriteFile = chai.spy(() => Promise.resolve());
     const print = chai.spy();
     const r = await saveCertificateCommand.action(['example'], {
-      lookup: chai.spy(() =>
-        Promise.resolve(
-          createCertNamePacketSuccessResponse({
-            answers: [],
-          }),
-        ),
-      ),
+      lookup: chai.spy(() => {
+        const res = createCertNamePacketSuccessResponse();
+        res.answers = [];
+        return Promise.resolve(res);
+      }),
       print,
       readFile: chai.spy(() => Promise.resolve('')),
       writeFile: fakeWriteFile,

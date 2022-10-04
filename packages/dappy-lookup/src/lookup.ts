@@ -1,7 +1,7 @@
+import { NamePacket } from '@fabcotech/dappy-model';
 import { nodeRequest } from './utils/nodeRequest';
 
-import { DappyLookupOptions, NamePacket } from './types';
-import { RecordType } from './model/ResourceRecords';
+import { DappyLookupOptions } from './types';
 import { createCoResolveQuery } from './coResolveQuery';
 import { createDohQuery } from './queries/dohQuery';
 import { getCertificates } from './getCertificates';
@@ -20,7 +20,7 @@ export const lookup = (
       return createCoResolveQuery(createDohQuery(nodeRequest))(
         {
           name,
-          recordType: RecordType[recordType as keyof typeof RecordType],
+          recordType,
         },
         options,
       ) as Promise<NamePacket>;

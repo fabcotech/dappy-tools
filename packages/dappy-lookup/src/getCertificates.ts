@@ -1,11 +1,7 @@
+import { NamePacket } from '@fabcotech/dappy-model';
 import { createCoResolveQuery } from './coResolveQuery';
 import { createPostJSONQuery } from './queries/postJSONQuery';
-import {
-  DappyLookupOptions,
-  NamePacket,
-  PacketType,
-  RecordType,
-} from './types';
+import { DappyLookupOptions } from './types';
 import { nodeRequest } from './utils/nodeRequest';
 
 export const CERT_QUERY_PATH = '/dns-query-extended';
@@ -32,12 +28,12 @@ export const getCertificates = async (
     createPostJSONQuery(nodeRequest, { path: CERT_QUERY_PATH }),
   )(
     {
-      type: PacketType.QUERY,
+      type: 'query',
       id: 0,
       questions: [
         {
           name,
-          type: RecordType.CERT,
+          type: 'CERT',
           class: 'IN',
         },
       ],

@@ -65,6 +65,7 @@
   },
   "dependencies": {
     "@fabcotech/bees": "*",
+    "@fabcotech/dappy-model": "*",
     "dns-packet": "^5.3.1"
   },
   "bugs": {

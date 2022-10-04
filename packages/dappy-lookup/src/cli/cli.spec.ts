@@ -1,6 +1,6 @@
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
-import { createNamePacketQuery } from '../model/fakeData';
+import { createNamePacketQuery } from '@fabcotech/dappy-model';
 import { runCli, processCli } from './cli';
 
 chai.use(spies);

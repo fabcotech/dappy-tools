@@ -1,4 +1,4 @@
-import { DappyNetworkId, DappyNetworkMember } from './types';
+import { DappyNetworkId, DappyNetworkMember } from '@fabcotech/dappy-model';
 
 export const dappyNetworks: Record<DappyNetworkId, DappyNetworkMember[]> = {
   d: [

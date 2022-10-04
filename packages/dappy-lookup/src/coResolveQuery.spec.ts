@@ -1,17 +1,17 @@
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
+import {
+  createNamePacketSuccessResponse,
+  DappyNetworkId,
+  getFakeDappyNetworkMember,
+} from '@fabcotech/dappy-model';
 
-import { DappyNetworkId } from '.';
 import {
   createCoResolveQuery,
   getDappyNetworkMembers,
   createGetDappyNetworkMembers,
 } from './coResolveQuery';
 import { spyFns } from './testUtils/spyFns';
-import {
-  createNamePacketSuccessResponse,
-  getFakeDappyNetworkMember,
-} from './model/fakeData';
 
 chai.use(spies);
 

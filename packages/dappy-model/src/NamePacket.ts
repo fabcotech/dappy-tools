@@ -1,10 +1,10 @@
 import { z } from 'zod';
 import { JSONObject } from './json';
 import { hostname } from './regexp';
-import { RecordType, RRDataSchema } from './ResourceRecords';
+import {  RecordTypeSchema, RRDataSchema } from './ResourceRecords';
 
 const NameQuestionSchema = z.object({
-  type: z.enum(RecordType),
+  type: RecordTypeSchema,
   class: z.literal('IN'),
   name: z.string().regex(hostname),
 });
@@ -12,7 +12,7 @@ const NameQuestionSchema = z.object({
 export type NameQuestion = z.infer<typeof NameQuestionSchema>;
 
 const NameAnswerSchema = z.object({
-  type: z.enum(RecordType),
+  type: RecordTypeSchema,
   class: z.literal('IN'),
   name: z.string().regex(hostname),
   ttl: z.number(),
