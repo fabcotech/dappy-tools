@@ -1,4 +1,4 @@
-name: publish node
+name: publish gossip
 
 on: [workflow_dispatch]
 
