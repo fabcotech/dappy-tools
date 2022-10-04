@@ -4,8 +4,8 @@ import {
   createRRCERT,
   createRRCSP,
   createRRTXT,
-} from '../../model/fakeData';
-import { NameZone } from '../../model/NameZone';
+  NameZone,
+} from '@fabcotech/dappy-model';
 
 export const zones: Record<string, NameZone> = {
   example: createNameZone({

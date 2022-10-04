@@ -1,3 +1,4 @@
+import { NamePacket } from '@fabcotech/dappy-model';
 import { SecureVersion } from 'tls';
 import http from 'http';
 import https from 'https';
@@ -18,7 +19,6 @@ import { log } from '../log';
 import { getConfig } from '../config';
 import { initMetrics } from './metrics';
 import { createFetchNameAnswers } from './routes/dns-query';
-import { NamePacket, PacketType, ReturnCode } from '../model/NamePacket';
 
 const SELF_SIGNED_CERTIFICATE_DURATION = 365 * 20; // 20 years
 
@@ -121,8 +121,8 @@ export const startDnsServer = async () => {
     if (!isDappyTLD(queryPacket)) {
       server.send(
         dnsPacket.encode({
-          flags: ReturnCode.NXDOMAIN,
-          type: PacketType.RESPONSE,
+          flags: 3,
+          type: 'response',
           id: queryPacket.id || 0,
           questions: queryPacket.questions as any,
           answers: [],

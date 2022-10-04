@@ -1,6 +1,6 @@
+import { createNameZone } from '@fabcotech/dappy-model';
 import chai from 'chai';
 import spies from 'chai-spies';
-import { createNameZone } from '../../model/fakeData';
 
 import { getTLDs, normalizeRecords } from './utils';
 
@@ -9,18 +9,18 @@ chai.use(spies);
 
 describe('dns-query', () => {
   it('normalizeRecords() returns records with zone data', () => {
-    const zone = createNameZone({
-      records: [
-        { name: '@', type: 'A', data: '127.0.0.1' },
-        { name: '', type: 'A', data: '127.0.0.1' },
-        {
-          name: 'foo',
-          type: 'A',
-          data: '127.0.0.1',
-          ttl: 300,
-        },
-      ],
-    });
+    const zone = createNameZone();
+    zone.records = [
+      { name: '@', type: 'A', data: '127.0.0.1' },
+      { name: '', type: 'A', data: '127.0.0.1' },
+      {
+        name: 'foo',
+        type: 'A',
+        data: '127.0.0.1',
+        ttl: 300,
+      },
+    ];
+
     expect(normalizeRecords(zone, zone.records, 'fakeNetwork')).to.eql([
       {
         name: zone.origin,

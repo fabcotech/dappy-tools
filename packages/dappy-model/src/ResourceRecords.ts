@@ -56,12 +56,21 @@ export type RRCNAME = z.infer<typeof RRCNAMESchema>;
 export const isRRCNAME = (data: JSONObject): data is RRCNAME =>
   RRCNAMESchema.safeParse(data).success;
 
+const RRCSPSchema = ResourceRecordSchema.extend({
+  data: z.string(),
+  type: z.literal('CSP'),
+});
+export type RRCSP = z.infer<typeof RRCSPSchema>;
+export const isRRCSP = (data: JSONObject): data is RRCSP =>
+  RRCSPSchema.safeParse(data).success;
+
 export const RRSchema = z.discriminatedUnion('type', [
   RRASchema,
   RRAAAASchema,
   RRCERTSchema,
   RRTXTSchema,
   RRCNAMESchema,
+  RRCSPSchema,
 ]);
 export type RR = z.infer<typeof RRSchema>;
 
@@ -75,6 +84,8 @@ const RRTXTDataSchema = z.string();
 export type RRTXTData = z.infer<typeof RRTXTDataSchema>;
 const RRCNAMEDataSchema = z.string();
 export type RRCNAMEData = z.infer<typeof RRCNAMEDataSchema>;
+const RRCSPDataSchema = z.string();
+export type RRCSPata = z.infer<typeof RRCSPDataSchema>;
 
 export const RRDataSchema = z.union([
   RRADataSchema,
@@ -82,5 +93,6 @@ export const RRDataSchema = z.union([
   RRRCERTDataSchema,
   RRTXTDataSchema,
   RRCNAMEDataSchema,
+  RRCSPDataSchema,
 ]);
 export type RRData = z.infer<typeof RRDataSchema>;

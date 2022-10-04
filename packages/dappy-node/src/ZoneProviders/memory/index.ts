@@ -1,7 +1,7 @@
+import { NameZone } from '@fabcotech/dappy-model';
 import { Router } from 'express';
 
 import { log } from '../../log';
-import { NameZone } from '../../model/NameZone';
 
 import { zones } from './zones';
 

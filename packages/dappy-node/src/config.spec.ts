@@ -1,4 +1,5 @@
-import { DappyNetworkMember, dappyNetworks } from '@fabcotech/dappy-lookup';
+import { dappyNetworks } from '@fabcotech/dappy-lookup';
+import { DappyNetworkMemberHTTP } from '@fabcotech/dappy-model';
 import chai from 'chai';
 import spies from 'chai-spies';
 import { loadDappyNetwork } from './config';
@@ -16,12 +17,11 @@ describe('config', () => {
       const customNetwork = [
         {
           hostname: 'node1',
-          caCert: '',
           ip: '127.0.0.1',
           port: '3001',
           scheme: 'http',
         },
-      ] as DappyNetworkMember[];
+      ] as DappyNetworkMemberHTTP[];
 
       expect(
         loadDappyNetwork(undefined, customNetwork, dappyNetworks)
@@ -32,12 +32,11 @@ describe('config', () => {
         gamma: [
           {
             hostname: 'node1',
-            caCert: '',
             ip: '127.0.0.1',
             port: '3001',
             scheme: 'http',
           },
-        ] as DappyNetworkMember[],
+        ] as DappyNetworkMemberHTTP[],
       };
       expect(loadDappyNetwork('gamma', undefined, networks)).to.equal(
         networks.gamma

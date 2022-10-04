@@ -4,7 +4,7 @@ import { DappyNetworkMember } from './DappyNetwork';
 import { NameZone } from './NameZone';
 import { NamePacket } from './NamePacket';
 
-import { RRA, RRAAAA, RRCERT, RRCNAME, RRTXT } from './ResourceRecords';
+import { RRA, RRAAAA, RRCERT, RRCNAME, RRTXT, RRCSP } from './ResourceRecords';
 
 export const fakeCertificate = Buffer.from(
   `-----BEGIN CERTIFICATE-----
@@ -74,7 +74,7 @@ export const createRRCNAME = (rrcname: Partial<RRCNAME> = {}): RRCNAME => {
     {
       name: '@',
       type: 'CNAME',
-      data: 'label=value',
+      data: 'foo.bar',
     },
     rrcname
   );
@@ -91,6 +91,17 @@ export const createRRCERT = (rrcert: Partial<RRCERT> = {}): RRCERT => {
   );
 };
 
+export const createRRCSP = (rrcsp: Partial<RRCSP> = {}): RRCSP => {
+  return mergeDeep<RRCSP, Partial<RRCSP>>(
+    {
+      name: '@',
+      type: 'CSP',
+      data: "default-src 'self' *.source-sure.example.net",
+    },
+    rrcsp
+  );
+};
+
 export const createNameZone = (zone: Partial<NameZone> = {}): NameZone => {
   return mergeDeep(
     {
@@ -101,10 +112,12 @@ export const createNameZone = (zone: Partial<NameZone> = {}): NameZone => {
         createRRAAAA(),
         createRRCERT(),
         createRRTXT(),
+        createRRCNAME(),
         createRRA({ name: 'foo' }),
         createRRAAAA({ name: 'foo' }),
         createRRCERT({ name: 'foo' }),
         createRRTXT({ name: 'foo' }),
+        createRRCNAME({ name: 'foo' }),
       ],
     },
     zone

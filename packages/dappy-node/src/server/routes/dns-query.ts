@@ -1,14 +1,13 @@
 import dnsPacket, { Packet } from 'dns-packet';
 import { Request, Response } from 'express';
 
-import { isNameZone, NameZone } from '../../model/NameZone';
 import {
+  isNameZone,
+  NameZone,
   NameAnswer,
   NamePacket,
   NameQuestion,
-  PacketType,
-  ReturnCode,
-} from '../../model/NamePacket';
+} from '@fabcotech/dappy-model';
 import { getTLDs, normalizeRecords } from './utils';
 
 const compliantDNSRecordTypes = ['A', 'AAAA', 'TXT', 'CNAME'];
@@ -65,9 +64,9 @@ export const createFetchNameAnswers =
     if (!packet.questions || packet.questions.length === 0) {
       return {
         version: '1.0.0',
-        rcode: ReturnCode.NXDOMAIN,
-        flags: ReturnCode.NXDOMAIN,
-        type: PacketType.RESPONSE,
+        rcode: 'NXDOMAIN',
+        flags: 3,
+        type: 'response',
         id: packet.id || 0,
         questions: [],
         answers: [],
@@ -87,9 +86,9 @@ export const createFetchNameAnswers =
     } catch (e) {
       return {
         version: '1.0.0',
-        rcode: ReturnCode.SERVFAIL,
-        flags: ReturnCode.SERVFAIL,
-        type: PacketType.RESPONSE,
+        rcode: 'SERVFAIL',
+        flags: 2,
+        type: 'response',
         id: packet.id || 0,
         questions: packet.questions,
         answers: [],
@@ -101,9 +100,9 @@ export const createFetchNameAnswers =
     if (!isNameZones(tldZones)) {
       return {
         version: '1.0.0',
-        rcode: ReturnCode.NOTZONE,
-        flags: ReturnCode.NOTZONE,
-        type: PacketType.RESPONSE,
+        rcode: 'NOTZONE',
+        flags: 9,
+        type: 'response',
         id: packet.id || 0,
         questions: packet.questions,
         answers: [],
@@ -116,9 +115,9 @@ export const createFetchNameAnswers =
 
     return {
       version: '1.0.0',
-      type: PacketType.RESPONSE,
-      flags: answers.length === 0 ? ReturnCode.NXDOMAIN : ReturnCode.NOERROR,
-      rcode: answers.length === 0 ? ReturnCode.NXDOMAIN : ReturnCode.NOERROR,
+      type: 'response',
+      flags: answers.length === 0 ? 3 : 0,
+      rcode: answers.length === 0 ? 'NXDOMAIN' : 'NOERROR',
       id: packet.id || 0,
       questions: packet.questions,
       answers,

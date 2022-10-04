@@ -1,12 +1,12 @@
 import path from 'path';
 import { readFileSync } from 'node:fs';
-// import { ReadFile } from 'fs';
 
+import { dappyNetworks } from '@fabcotech/dappy-lookup';
 import {
-  dappyNetworks,
   DappyNetworkId,
   DappyNetworkMember,
-} from '@fabcotech/dappy-lookup';
+  isDappyNetworkMemberHTTPS,
+} from '@fabcotech/dappy-model';
 
 const DAPPY_CONFIG_FILE_NAME = 'dappyrc';
 const DAPPY_BROWSER_MIN_VERSION = '0.5.4';
@@ -54,9 +54,8 @@ export const loadDappyNetwork = (
 ) => {
   const network = customNetwork || knownNetworks[networkId] || [];
 
-  // .caCert are base64 in dappy-lookup
   (network || []).forEach((dnm) => {
-    if (dnm.caCert) {
+    if (isDappyNetworkMemberHTTPS(dnm)) {
       dnm.caCert = Buffer.from(dnm.caCert, 'base64').toString('utf8');
     }
   });

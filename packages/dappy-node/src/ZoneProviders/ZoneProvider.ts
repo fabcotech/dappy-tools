@@ -1,5 +1,5 @@
+import { NameZone } from '@fabcotech/dappy-model';
 import { Router } from 'express';
-import { NameZone } from '../model/NameZone';
 
 export interface ZoneProvider {
   getZonesPaginated: (a: { offset: number; limit: number }) => Promise<{

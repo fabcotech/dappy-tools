@@ -1,10 +1,9 @@
+import { DappyNetworkMember, NameZone } from '@fabcotech/dappy-model';
 import https from 'https';
 import { Request, Response } from 'express';
 import { checkZoneTransaction, gossip } from '@fabcotech/gossip';
 import isEqual from 'lodash.isequal';
 
-import { DappyNetworkMember } from '@fabcotech/dappy-lookup';
-import { NameZone } from '../../model/NameZone';
 import { log } from '../../log';
 
 const ROUNDS_OF_GOSSIP = 1;

@@ -1,5 +1,5 @@
+import { NameZone } from '@fabcotech/dappy-model';
 import { Request, Response } from 'express';
-import { NameZone } from '../../model/NameZone';
 
 export const createMintZone =
   (

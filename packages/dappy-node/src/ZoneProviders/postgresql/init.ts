@@ -1,6 +1,9 @@
+import {
+  DappyNetworkMember,
+  isDappyNetworkMemberHTTPS,
+} from '@fabcotech/dappy-model';
 import https from 'https';
 import type { Knex } from 'knex';
-import { DappyNetworkMember } from '@fabcotech/dappy-lookup';
 
 const getZonesPaginated = async (
   dnm: DappyNetworkMember,
@@ -10,16 +13,20 @@ const getZonesPaginated = async (
     const options = {
       minVersion: 'TLSv1.3',
       rejectUnauthorized: true,
-      ca: dnm.caCert,
       host: dnm.ip,
       method: 'POST',
       port: dnm.port,
+      ca: undefined,
       path: '/get-zones-paginated',
       headers: {
         'Content-Type': 'application/json',
         Host: dnm.hostname,
       },
     };
+    if (isDappyNetworkMemberHTTPS(dnm)) {
+      options.ca = dnm.caCert;
+    }
+
     const req = https.request(options as unknown, (res) => {
       if (res.statusCode !== 200) {
         reject(new Error(`Status code not 200 : ${res.statusCode}`));

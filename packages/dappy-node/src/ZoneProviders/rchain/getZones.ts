@@ -1,7 +1,7 @@
+import { NameZone } from '@fabcotech/dappy-model';
 import { getXRecordsWsHandler } from './get-x-records';
 import { pickRandomReadOnly } from './pickRandomReadOnly';
 import { log } from '../../log';
-import { NameZone } from '../../model/NameZone';
 import { getStore } from '../../store';
 import { getConfig } from '../../config';
 

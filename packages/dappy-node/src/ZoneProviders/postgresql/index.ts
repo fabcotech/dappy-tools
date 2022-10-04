@@ -1,9 +1,9 @@
+import { NameZone } from '@fabcotech/dappy-model';
 import { Router } from 'express';
 import knex from 'knex';
 import md5 from 'md5';
 import type { Knex } from 'knex';
 import { log } from '../../log';
-import { NameZone } from '../../model/NameZone';
 import { ZoneProvider } from '../ZoneProvider';
 import * as knexConfig from './knex';
 import { getConfig } from '../../config';

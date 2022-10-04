@@ -1,5 +1,4 @@
-import { NameZone } from '../../model/NameZone';
-import { RR } from '../../model/ResourceRecords';
+import { NameZone, RR } from '@fabcotech/dappy-model';
 
 export const getTLDs = (names: string[], dappyNetworkId: string): string[] => {
   // hello.d -> hello
@@ -32,11 +31,12 @@ export const normalizeRecords = (
   zone: NameZone,
   records: RR[],
   suffix: string,
-  appendSuffixDappy = false,
+  appendSuffixDappy = false
 ): RR[] =>
   records.map((record) => ({
     ...record,
     name:
-      getRecordName(record.name, zone.origin) + (appendSuffixDappy ? `.${suffix}` : ''),
+      getRecordName(record.name, zone.origin) +
+      (appendSuffixDappy ? `.${suffix}` : ''),
     ttl: record.ttl || zone.ttl,
   }));

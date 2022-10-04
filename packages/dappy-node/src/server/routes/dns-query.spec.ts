@@ -1,8 +1,6 @@
 import chai from 'chai';
 import spies from 'chai-spies';
-import { createNamePacketQuery, createNameZone } from '../../model/fakeData';
-import { ReturnCode } from '../../model/NamePacket';
-import { RecordType } from '../../model/ResourceRecords';
+import { createNamePacketQuery, createNameZone } from '@fabcotech/dappy-model';
 
 import { getZoneRecords, createFetchNameAnswers } from './dns-query';
 
@@ -15,7 +13,7 @@ describe('dns-query', () => {
       questions: [
         {
           name: 'example.fakeNetwork',
-          type: RecordType.CNAME,
+          type: 'CNAME',
           class: 'IN',
         },
       ],
@@ -40,7 +38,7 @@ describe('dns-query', () => {
       questions: [
         {
           name: 'example.fakeNetwork',
-          type: RecordType.A,
+          type: 'A',
           class: 'IN',
         },
       ],
@@ -68,7 +66,7 @@ describe('dns-query', () => {
       questions: [
         {
           name: 'example',
-          type: RecordType.A,
+          type: 'A',
           class: 'IN',
         },
       ],
@@ -96,12 +94,12 @@ describe('dns-query', () => {
       questions: [
         {
           name: 'example',
-          type: RecordType.A,
+          type: 'A',
           class: 'IN',
         },
         {
           name: 'bar.foo.fakeNetwork',
-          type: RecordType.A,
+          type: 'A',
           class: 'IN',
         },
       ],
@@ -166,7 +164,7 @@ describe('dns-query', () => {
       'fakeNetwork'
     )(nsQuery);
 
-    expect(nsAnwser.rcode).to.eql(ReturnCode.NXDOMAIN);
+    expect(nsAnwser.rcode).to.eql('NXDOMAIN');
     expect(nsAnwser.answers).to.eql([]);
   });
   it('fetchNameAnswers() return SERVFAIL when unable to fetch zones', async () => {
@@ -176,7 +174,7 @@ describe('dns-query', () => {
       'fakeNetwork'
     )(nsQuery);
 
-    expect(nsAnwser.rcode).to.eql(ReturnCode.SERVFAIL);
+    expect(nsAnwser.rcode).to.eql('SERVFAIL');
     expect(nsAnwser.answers).to.eql([]);
   });
 
@@ -190,7 +188,7 @@ describe('dns-query', () => {
       'fakeNetwork'
     )(nsQuery);
 
-    expect(nsAnwser.rcode).to.eql(ReturnCode.NOTZONE);
+    expect(nsAnwser.rcode).to.eql('NOTZONE');
     expect(nsAnwser.answers).to.eql([]);
   });
 });
