@@ -1,10 +1,10 @@
 import { DappyNetworkMember } from "@fabcotech/dappy-model";
 
 const formatDappyNetworkMember = (dnm: DappyNetworkMember) => {
-  return `${dnm.ip}:${dnm.port}@${dnm.hostname}`
-}
+  return `${dnm.ip}:${dnm.port}@${dnm.hostname}`;
+};
 
-const gossipToOne = (
+export const gossipToOne = (
   dnm: DappyNetworkMember,
   func: (dnm: DappyNetworkMember) => Promise<true>,
   timeout: number
@@ -17,26 +17,28 @@ const gossipToOne = (
         if (over) return;
         over = true;
         if (i === 2) {
-          reject(formatDappyNetworkMember(dnm) + ' timeout')
+          reject(new Error(`${formatDappyNetworkMember(dnm)} timeout`));
         } else {
           i += 1;
-          go()
+          go();
         }
       }, timeout);
       func(dnm)
         .then((a) => {
           if (over) return;
           over = true;
-          resolve(a)
+          resolve(a);
         })
-        .catch(err => {
+        .catch((err) => {
           if (over) return;
           over = true;
           if (i === 2) {
-            if (typeof err === 'string') {
-              reject(formatDappyNetworkMember(dnm) + ' ' + err)
-            } else {
-              reject(formatDappyNetworkMember(dnm) + ' tls/comm' + '\n' + JSON.stringify(err, Object.getOwnPropertyNames(err)))
+            if (typeof err === "string") {
+              reject(new Error(`${formatDappyNetworkMember(dnm)} ${err}`));
+            } else if (err instanceof Error) {
+              reject(
+                new Error(`${formatDappyNetworkMember(dnm)} ${err.message}`)
+              );
             }
           } else {
             setTimeout(() => {
@@ -44,8 +46,8 @@ const gossipToOne = (
               go();
             }, timeout);
           }
-        })
-    }
+        });
+    };
     go();
   });
 };
@@ -60,25 +62,22 @@ export const gossip = (
   func: (dnm: DappyNetworkMember) => Promise<true>,
   timeout = 8000
 ): Promise<(true | string | Error)[]> => {
-  const results: (true | string | Error)[] = dappyNetwork.map(() => 'notover');
+  const results: (true | string | Error)[] = dappyNetwork.map(() => "notover");
   return new Promise((resolve) => {
     dappyNetwork.forEach((dnm, index) => {
-      gossipToOne(
-        dnm,
-        func,
-        timeout
-      ).then((a) => {
-        results[index] = a;
-        if (!results.find(r => r === 'notover')) {
-          resolve(results)
-        }
-      })
-      .catch(err => {
-        results[index] = err;
-        if (!results.find(r => r === 'notover')) {
-          resolve(results)
-        }
-      })
-    })
+      gossipToOne(dnm, func, timeout)
+        .then((a) => {
+          results[index] = a;
+          if (!results.find((r) => r === "notover")) {
+            resolve(results);
+          }
+        })
+        .catch((err: Error) => {
+          results[index] = err;
+          if (!results.find((r) => r === "notover")) {
+            resolve(results);
+          }
+        });
+    });
   });
 };

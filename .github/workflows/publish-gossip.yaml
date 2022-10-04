@@ -1,0 +1,23 @@
+name: publish node
+
+on: [workflow_dispatch]
+
+jobs:
+  npm:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.release.target_commitish }}
+      - name: Install Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm ci && npx lerna bootstrap
+      - run: npx lerna run --scope=@fabcotech/gossip build
+      - run: npm publish
+        working-directory: packages/gossip
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
