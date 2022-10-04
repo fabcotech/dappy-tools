@@ -1,4 +1,4 @@
-import { NameZone } from '@fabcotech/dappy-model';
+import { NameZone } from '@fabcotech/dappy-lookup';
 import { Router } from 'express';
 import knex from 'knex';
 import md5 from 'md5';

@@ -5,7 +5,7 @@ import {
   createNamePacketQuery,
   createNamePacketSuccessResponse,
   getFakeDappyNetworkMember,
-} from '@fabcotech/dappy-model';
+} from '../../model';
 import { isNetworkIdArgs, getArgsMap, getNetwork } from './utils';
 import { lookupCommand } from './lookupCommand';
 

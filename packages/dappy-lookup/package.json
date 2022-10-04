@@ -1,6 +1,6 @@
 {
   "name": "@fabcotech/dappy-lookup",
-  "version": "2.3.9",
+  "version": "2.3.10",
   "description": "library that resolves names from dappy name system",
   "author": "FABCO <contact@fabco.tech>",
   "license": "MIT",
@@ -65,8 +65,9 @@
   },
   "dependencies": {
     "@fabcotech/bees": "*",
-    "@fabcotech/dappy-model": "*",
-    "dns-packet": "^5.3.1"
+    "dns-packet": "^5.3.1",
+    "lodash.merge": "^4.6.2",
+    "zod": "^3.19.1"
   },
   "bugs": {
     "url": "https://github.com/fabcotech/dappy-lookup/issues"

@@ -15,7 +15,7 @@ export type DappyNetworkMemberHTTP = z.infer<
   typeof DappyNetworkMemberHTTPschema
 >;
 export const isDappyNetworkMemberHTTP = (
-  v: JSONValue
+  v: JSONValue,
 ): v is DappyNetworkMemberHTTP =>
   DappyNetworkMemberHTTPschema.safeParse(v).success;
 
@@ -33,7 +33,7 @@ export type DappyNetworkMemberHTTPS = z.infer<
   typeof DappyNetworkMemberHTTPSschema
 >;
 export const isDappyNetworkMemberHTTPS = (
-  v: JSONValue
+  v: JSONValue,
 ): v is DappyNetworkMemberHTTPS =>
   DappyNetworkMemberHTTPSschema.safeParse(v).success;
 
@@ -46,7 +46,7 @@ export type DappyNetworkMember = z.infer<typeof DappyNetworkMemberSchema>;
 const DappyNetworkMembersSchema = z.array(DappyNetworkMemberSchema);
 
 export const isDappyNetworkMembers = (
-  members: JSONValue
+  members: JSONValue,
 ): members is z.infer<typeof DappyNetworkMembersSchema> =>
   DappyNetworkMembersSchema.safeParse(members).success;
 

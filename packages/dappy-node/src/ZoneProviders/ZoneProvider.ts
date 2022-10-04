@@ -1,4 +1,4 @@
-import { NameZone } from '@fabcotech/dappy-model';
+import { NameZone } from '@fabcotech/dappy-lookup';
 import { Router } from 'express';
 
 export interface ZoneProvider {

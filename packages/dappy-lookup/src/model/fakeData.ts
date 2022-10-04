@@ -33,7 +33,7 @@ fDQl9eM6cTrZentozYhB+UkyuNeZJLAm7MhiCEx3f7FVYXBZEg8SVGVDZ2tibzSk
 G72GCuXuXPANhMpPHbn3ht3p8yt9kB5WEOHuM4B189iExrzugmNDp2yXisrlrKxf
 FdKAoYx5XTW11Yd8GoEhlWNAAf0YhZCAi5WU
 -----END CERTIFICATE-----`,
-  'ascii'
+  'ascii',
 ).toString('base64');
 
 export const createRRA = (rra: Partial<RRA> = {}): RRA => {
@@ -43,7 +43,7 @@ export const createRRA = (rra: Partial<RRA> = {}): RRA => {
       type: 'A',
       data: '127.0.0.1',
     },
-    rra
+    rra,
   );
 };
 
@@ -54,7 +54,7 @@ export const createRRAAAA = (rraaaa: Partial<RRAAAA> = {}): RRAAAA => {
       type: 'AAAA',
       data: '::1',
     },
-    rraaaa
+    rraaaa,
   );
 };
 
@@ -65,7 +65,7 @@ export const createRRTXT = (rrtxt: Partial<RRTXT> = {}): RRTXT => {
       type: 'TXT',
       data: 'label=value',
     },
-    rrtxt
+    rrtxt,
   );
 };
 
@@ -76,7 +76,7 @@ export const createRRCNAME = (rrcname: Partial<RRCNAME> = {}): RRCNAME => {
       type: 'CNAME',
       data: 'foo.bar',
     },
-    rrcname
+    rrcname,
   );
 };
 
@@ -87,7 +87,7 @@ export const createRRCERT = (rrcert: Partial<RRCERT> = {}): RRCERT => {
       type: 'CERT',
       data: fakeCertificate,
     },
-    rrcert
+    rrcert,
   );
 };
 
@@ -98,7 +98,7 @@ export const createRRCSP = (rrcsp: Partial<RRCSP> = {}): RRCSP => {
       type: 'CSP',
       data: "default-src 'self' *.source-sure.example.net",
     },
-    rrcsp
+    rrcsp,
   );
 };
 
@@ -120,12 +120,12 @@ export const createNameZone = (zone: Partial<NameZone> = {}): NameZone => {
         createRRCNAME({ name: 'foo' }),
       ],
     },
-    zone
+    zone,
   );
 };
 
 export const getFakeDappyNetworkMember = (
-  networkInfo: Partial<DappyNetworkMember> = {}
+  networkInfo: Partial<DappyNetworkMember> = {},
 ): DappyNetworkMember =>
   mergeDeep(
     {
@@ -135,11 +135,11 @@ export const getFakeDappyNetworkMember = (
       port: '443',
       caCert: fakeCertificate,
     },
-    networkInfo
+    networkInfo,
   );
 
 export const createNamePacketQuery = (
-  packet: Partial<NamePacket> = {}
+  packet: Partial<NamePacket> = {},
 ): NamePacket => {
   return mergeDeep<NamePacket, Partial<NamePacket>>(
     {
@@ -158,12 +158,12 @@ export const createNamePacketQuery = (
       additionals: [],
       authorities: [],
     },
-    packet
+    packet,
   );
 };
 
 export const createNamePacketSuccessResponse = (
-  packet: Partial<NamePacket> = {}
+  packet: Partial<NamePacket> = {},
 ): NamePacket => {
   return mergeDeep<NamePacket, Partial<NamePacket>>(
     {
@@ -190,12 +190,12 @@ export const createNamePacketSuccessResponse = (
       additionals: [],
       authorities: [],
     },
-    packet
+    packet,
   );
 };
 
 export const createCertNamePacketSuccessResponse = (
-  response: Partial<NamePacket> = {}
+  response: Partial<NamePacket> = {},
 ): NamePacket => {
   return mergeDeep<NamePacket, Partial<NamePacket>>(
     {
@@ -222,12 +222,12 @@ export const createCertNamePacketSuccessResponse = (
       additionals: [],
       authorities: [],
     },
-    response
+    response,
   );
 };
 
 export const createNamePacketErrorResponse = (
-  packet: Partial<NamePacket> = {}
+  packet: Partial<NamePacket> = {},
 ): NamePacket => {
   return mergeDeep<NamePacket, Partial<NamePacket>>(
     {
@@ -246,6 +246,6 @@ export const createNamePacketErrorResponse = (
       additionals: [],
       authorities: [],
     },
-    packet
+    packet,
   );
 };

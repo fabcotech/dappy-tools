@@ -1,4 +1,4 @@
-import { NameZone } from '@fabcotech/dappy-model';
+import { NameZone } from '@fabcotech/dappy-lookup';
 import { getXRecordsWsHandler } from './get-x-records';
 import { pickRandomReadOnly } from './pickRandomReadOnly';
 import { log } from '../../log';

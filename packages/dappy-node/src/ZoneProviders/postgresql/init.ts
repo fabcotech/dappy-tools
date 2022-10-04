@@ -1,7 +1,7 @@
 import {
   DappyNetworkMember,
   isDappyNetworkMemberHTTPS,
-} from '@fabcotech/dappy-model';
+} from '@fabcotech/dappy-lookup';
 import https from 'https';
 import type { Knex } from 'knex';
 

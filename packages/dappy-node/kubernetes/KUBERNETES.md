@@ -72,7 +72,7 @@ openssl req \
     echo '[req]'; \
     echo 'distinguished_name=req'; \
     echo '[san]'; \
-    echo 'subjectAltName=DNS.1:localhost,DNS.2:node1.d.fabco.dappy')
+    echo 'subjectAltName=DNS.1:node1.d.fabco.dappy')
 
 # save as a secret
 kubectl create secret tls dappy-node-tls --key="dappy-node.key" --cert="dappy-node.crt" -n=<NAMESPACE>

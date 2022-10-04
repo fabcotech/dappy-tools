@@ -13,7 +13,7 @@ describe('DappyNetwork', () => {
           scheme: 'https',
           caCert: Buffer.from('fake_ca_cert', 'utf8').toString('base64'),
         },
-      ])
+      ]),
     ).to.eql(true);
     expect(
       isDappyNetwork([
@@ -23,7 +23,7 @@ describe('DappyNetwork', () => {
           port: '123',
           scheme: 'https',
         },
-      ])
+      ]),
     ).to.eql(false);
   });
   it('should parse http member', async () => {
@@ -36,7 +36,7 @@ describe('DappyNetwork', () => {
           port: '123',
           scheme: 'http',
         },
-      ])
+      ]),
     ).to.eql(true);
   });
   it('should validate port between 0 and 65535', () => {
@@ -48,7 +48,7 @@ describe('DappyNetwork', () => {
           port: '65536',
           scheme: 'http',
         },
-      ])
+      ]),
     ).to.eql(false);
     expect(
       isDappyNetwork([
@@ -58,7 +58,7 @@ describe('DappyNetwork', () => {
           port: '80',
           scheme: 'http',
         },
-      ])
+      ]),
     ).to.eql(true);
   });
   it('should validate hostname', () => {
@@ -70,7 +70,7 @@ describe('DappyNetwork', () => {
           port: '80',
           scheme: 'http',
         },
-      ])
+      ]),
     ).to.eql(true);
     expect(
       isDappyNetwork([
@@ -80,7 +80,7 @@ describe('DappyNetwork', () => {
           port: '80',
           scheme: 'http',
         },
-      ])
+      ]),
     ).to.eql(false);
   });
   it('should validate base64', () => {
@@ -93,7 +93,7 @@ describe('DappyNetwork', () => {
           scheme: 'https',
           caCert: '34567*%£*',
         },
-      ])
+      ]),
     ).to.eql(false);
     expect(
       isDappyNetwork([
@@ -104,7 +104,7 @@ describe('DappyNetwork', () => {
           scheme: 'https',
           caCert: Buffer.from('34567*%£*').toString('base64'),
         },
-      ])
+      ]),
     ).to.eql(true);
   });
 });

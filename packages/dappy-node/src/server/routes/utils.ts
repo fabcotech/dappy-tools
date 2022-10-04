@@ -1,4 +1,4 @@
-import { NameZone, RR } from '@fabcotech/dappy-model';
+import { NameZone, RR } from '@fabcotech/dappy-lookup';
 
 export const getTLDs = (names: string[], dappyNetworkId: string): string[] => {
   // hello.d -> hello

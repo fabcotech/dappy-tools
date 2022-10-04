@@ -1,6 +1,6 @@
 import chai from 'chai';
 import spies from 'chai-spies';
-import { createNamePacketQuery, createNameZone } from '@fabcotech/dappy-model';
+import { createNamePacketQuery, createNameZone } from '@fabcotech/dappy-lookup';
 
 import { getZoneRecords, createFetchNameAnswers } from './dns-query';
 

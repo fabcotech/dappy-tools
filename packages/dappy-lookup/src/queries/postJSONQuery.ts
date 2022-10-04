@@ -1,7 +1,4 @@
-import {
-  DappyNetworkMember,
-  isDappyNetworkMemberHTTPS,
-} from '@fabcotech/dappy-model';
+import { DappyNetworkMember, isDappyNetworkMemberHTTPS } from '../model';
 
 import { tryParseJSON } from '../utils/parse';
 import { nodeRequest } from '../utils/nodeRequest';

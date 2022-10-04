@@ -1,11 +1,11 @@
+import dnsPacket, { Packet } from 'dns-packet';
+
 import {
   DappyNetworkMember,
   isDappyNetworkMemberHTTPS,
   NamePacket,
   RecordType,
-} from '@fabcotech/dappy-model';
-import dnsPacket, { Packet } from 'dns-packet';
-
+} from '../model';
 import { JSONObject } from '../utils/json';
 import { nodeRequest } from '../utils/nodeRequest';
 

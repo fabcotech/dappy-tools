@@ -1,4 +1,4 @@
-import { createNameZone } from '@fabcotech/dappy-model';
+import { createNameZone } from '@fabcotech/dappy-lookup';
 import chai from 'chai';
 import spies from 'chai-spies';
 

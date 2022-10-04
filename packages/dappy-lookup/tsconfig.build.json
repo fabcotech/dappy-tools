@@ -10,9 +10,6 @@
   "references": [
     {
       "path": "../bees/tsconfig.build.json"
-    },
-    {
-      "path": "../dappy-model/tsconfig.build.json"
     }
   ],
 }

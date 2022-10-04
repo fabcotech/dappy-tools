@@ -5,7 +5,7 @@ import {
   createRRCSP,
   createRRTXT,
   NameZone,
-} from '@fabcotech/dappy-model';
+} from '@fabcotech/dappy-lookup';
 
 export const zones: Record<string, NameZone> = {
   example: createNameZone({

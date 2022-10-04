@@ -1,6 +1,6 @@
-import { createNamePacketQuery } from '@fabcotech/dappy-model';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
+import { createNamePacketQuery } from '../../model';
 import { createHelpCommand } from './helpCommand';
 import { dedent } from '../utils/dedent';
 

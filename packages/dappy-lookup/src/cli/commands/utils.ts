@@ -1,8 +1,4 @@
-import {
-  DappyNetwork,
-  DappyNetworkId,
-  isDappyNetwork,
-} from '@fabcotech/dappy-model';
+import { DappyNetwork, DappyNetworkId, isDappyNetwork } from '../../model';
 
 import {
   isObjectWith,

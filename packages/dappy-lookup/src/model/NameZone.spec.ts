@@ -22,7 +22,7 @@ describe('NameZone', () => {
           ...zoneWithUnknowRR.records,
           { name: 'foo', type: 'unknown', data: 'unknown' },
         ],
-      })
+      }),
     ).to.eql(false);
   });
 });

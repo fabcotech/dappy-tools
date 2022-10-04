@@ -1,4 +1,4 @@
-import { NamePacket } from '@fabcotech/dappy-model';
+import { NamePacket } from '@fabcotech/dappy-lookup';
 import { SecureVersion } from 'tls';
 import http from 'http';
 import https from 'https';

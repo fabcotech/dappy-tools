@@ -1,5 +1,4 @@
-import { dappyNetworks } from '@fabcotech/dappy-lookup';
-import { DappyNetworkMemberHTTP } from '@fabcotech/dappy-model';
+import { dappyNetworks, DappyNetworkMemberHTTP } from '@fabcotech/dappy-lookup';
 import chai from 'chai';
 import spies from 'chai-spies';
 import { loadDappyNetwork } from './config';

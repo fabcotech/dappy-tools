@@ -4,7 +4,7 @@ import {
   DappyNetwork,
   DappyNetworkId,
   DappyNetworkMember,
-} from '@fabcotech/dappy-model';
+} from './model';
 
 import { dappyNetworks } from './dappyNetworks';
 import { hashString } from './utils/hashString';

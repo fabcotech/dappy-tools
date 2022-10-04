@@ -1,12 +1,12 @@
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
+import dnsPacket, { Packet } from 'dns-packet';
+
 import {
   createNamePacketSuccessResponse,
   DappyNetworkMember,
   getFakeDappyNetworkMember,
-} from '@fabcotech/dappy-model';
-
-import dnsPacket, { Packet } from 'dns-packet';
+} from '../model';
 
 import { createDohQuery } from './dohQuery';
 

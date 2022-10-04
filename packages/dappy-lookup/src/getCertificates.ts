@@ -1,4 +1,4 @@
-import { NamePacket } from '@fabcotech/dappy-model';
+import { NamePacket } from './model';
 import { createCoResolveQuery } from './coResolveQuery';
 import { createPostJSONQuery } from './queries/postJSONQuery';
 import { DappyLookupOptions } from './types';

@@ -1,4 +1,4 @@
-import { DappyNetworkMember } from "@fabcotech/dappy-model";
+import { DappyNetworkMember } from "@fabcotech/dappy-lookup";
 
 const formatDappyNetworkMember = (dnm: DappyNetworkMember) => {
   return `${dnm.ip}:${dnm.port}@${dnm.hostname}`;

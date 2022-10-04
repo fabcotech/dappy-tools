@@ -12,9 +12,6 @@
 		{
 			"path": "packages/dappy-lookup"
 		},
-    {
-      "path": "packages/dappy-model"
-    },
 		{
 			"path": "."
 		},

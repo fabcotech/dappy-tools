@@ -1,12 +1,12 @@
 import path from 'path';
 import { readFileSync } from 'node:fs';
 
-import { dappyNetworks } from '@fabcotech/dappy-lookup';
 import {
+  dappyNetworks,
   DappyNetworkId,
   DappyNetworkMember,
   isDappyNetworkMemberHTTPS,
-} from '@fabcotech/dappy-model';
+} from '@fabcotech/dappy-lookup';
 
 const DAPPY_CONFIG_FILE_NAME = 'dappyrc';
 const DAPPY_BROWSER_MIN_VERSION = '0.5.4';

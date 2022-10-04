@@ -3,7 +3,7 @@ import spies from 'chai-spies';
 import {
   createCertNamePacketSuccessResponse,
   fakeCertificate,
-} from '@fabcotech/dappy-model';
+} from '../../model';
 import { saveCertificateCommand } from './saveCertificateCommand';
 
 chai.use(spies);

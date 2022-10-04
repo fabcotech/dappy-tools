@@ -1,4 +1,4 @@
-import { NamePacket } from '@fabcotech/dappy-model';
+import { NamePacket } from './model';
 import { nodeRequest } from './utils/nodeRequest';
 
 import { DappyLookupOptions } from './types';

@@ -1,4 +1,4 @@
-import { DappyNetworkMember, NameZone } from '@fabcotech/dappy-model';
+import { DappyNetworkMember, NameZone } from '@fabcotech/dappy-lookup';
 import https from 'https';
 import { Request, Response } from 'express';
 import { checkZoneTransaction, gossip } from '@fabcotech/gossip';

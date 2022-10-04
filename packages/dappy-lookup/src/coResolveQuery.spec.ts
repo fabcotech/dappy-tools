@@ -4,7 +4,7 @@ import {
   createNamePacketSuccessResponse,
   DappyNetworkId,
   getFakeDappyNetworkMember,
-} from '@fabcotech/dappy-model';
+} from './model';
 
 import {
   createCoResolveQuery,

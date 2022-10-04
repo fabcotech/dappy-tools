@@ -1,4 +1,4 @@
-import { DappyNetwork, isDappyNetworkId } from '@fabcotech/dappy-model';
+import { DappyNetwork, isDappyNetworkId } from '../../model';
 import { getNetwork } from './utils';
 import { DappyLookupOptions } from '../../types';
 import { dedent } from '../utils/dedent';

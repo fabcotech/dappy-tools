@@ -1,4 +1,4 @@
-import { DappyNetworkMember } from "@fabcotech/dappy-model";
+import { DappyNetworkMember } from "@fabcotech/dappy-lookup";
 import { expect } from "chai";
 
 import { gossip } from "./index";

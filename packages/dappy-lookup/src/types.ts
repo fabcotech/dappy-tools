@@ -1,4 +1,6 @@
-import { DappyNetwork } from '@fabcotech/dappy-model';
+import { DappyNetwork } from './model';
+
+export * from './model';
 
 export * from './utils/json';
 

@@ -3,7 +3,7 @@ import spies from 'chai-spies';
 import {
   createNamePacketErrorResponse,
   createNamePacketSuccessResponse,
-} from '@fabcotech/dappy-model';
+} from '../model';
 
 import { nodeLookup } from './nodeLookup';
 

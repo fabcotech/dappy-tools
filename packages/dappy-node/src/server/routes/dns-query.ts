@@ -7,7 +7,7 @@ import {
   NameAnswer,
   NamePacket,
   NameQuestion,
-} from '@fabcotech/dappy-model';
+} from '@fabcotech/dappy-lookup';
 import { getTLDs, normalizeRecords } from './utils';
 
 const compliantDNSRecordTypes = ['A', 'AAAA', 'TXT', 'CNAME'];
