@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 18
           cache: npm
-      - run: npm ci && npx lerna bootstrap
+      - run: npm i && npx lerna bootstrap
       - run: npx lerna run --scope=@fabcotech/gossip build
 
   test:
@@ -38,6 +38,6 @@ jobs:
         with:
           node-version: 18
           cache:  npm
-      - run: npm ci && npx lerna bootstrap
+      - run: npm i && npx lerna bootstrap
       - run: npx lerna run --scope=@fabcotech/gossip lint
       - run: npx lerna run --scope=@fabcotech/gossip test
