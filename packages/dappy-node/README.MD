@@ -131,7 +131,7 @@ When deploying using docker, we assume you have setup a secure postgreSQL databa
 `.pgdata` folder is shared with container, it will be useful only if you're running a pg instance locally.
 
 ```
-docker-compose up
+docker compose up
 ```
 
 Want to start a local postgreSQL (`localhost:5432`) + adminer (`localhost:8082`) ? (we do not recommend for production)
