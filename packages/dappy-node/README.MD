@@ -134,6 +134,12 @@ When deploying using docker, we assume you have setup a secure postgreSQL databa
 docker compose up
 ```
 
+dappy-nod should be exposed on port `3001`, you can run `curl localhost:3001/hashes` to make sure it's up, and responds with hashes of the zones.
+
+Now you must to link your local port `3001` to the public port `443` or else of your public IP address. (nginx or Apache). You'll need to generate a certificate (see [Kubernetes guide](./kubernetes/KUBERNETES.MD)) and configure your nginx to use this self signed certificate.
+
+**Local postgreSQL and adminer**
+
 Want to start a local postgreSQL (`localhost:5432`) + adminer (`localhost:8082`) ? (we do not recommend for production)
 
 ```
