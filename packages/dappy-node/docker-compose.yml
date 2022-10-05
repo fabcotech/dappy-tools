@@ -1,19 +1,31 @@
 services:
-  pg:
-    image: postgres:14-alpine
-    restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=dappy
-    ports:
-      - '5432:5432'
-    volumes:
-      - $PWD/.pgdata:/var/lib/postgresql/data
-  adminer:
-    image: amd64/adminer:4.8.1
-    restart: always
+  dappy-node-migrations:
     depends_on:
       - pg    
+    image: dappynodelocal:latest
+    environment:
+      - DAPPY_PG_CONNECTION_STRING=postgresql://postgres:postgres@172.17.0.1:5432/dappy
+      - DAPPY_NODE_ZONE_PROVIDER=postgresql
+    volumes:
+      - $PWD/.pgdata:/var/lib/postgresql/data
+    working_dir: "/app/packages/dappy-node/"
+    command: ["npm", "run", "pg:migrate"]
+  dappy-node:
+    depends_on:
+      dappy-node-migrations:
+        condition: service_completed_successfully  
+    image: dappynodelocal:latest
+    environment:
+      - DAPPY_PG_CONNECTION_STRING=postgresql://postgres:postgres@172.17.0.1:5432/dappy
+      - DAPPY_NODE_ZONE_PROVIDER=postgresql
+      - DOWNLOAD_ZONES_IF_EMPTY=true
+      - DAPPY_NETWORK_ID=gamma
+      - DAPPY_NETWORK_MEMBER_TO_DOWNLOAD_ZONES_FROM=node1.gamma.fabco.dappy
+      - DAPPY_NODE_ENABLE_REQUEST_METRICS=true
+      - DAPPY_NODE_CACHING=0
     ports:
-      - 8082:8080      
+      - '3001:3001'
+    volumes:
+      - $PWD/.pgdata:/var/lib/postgresql/data
+    #command: ["node", "--version"]
+    command: ["node", "--max-old-space-size=8192", "/app/packages/dappy-node/dist/src/index.js"]

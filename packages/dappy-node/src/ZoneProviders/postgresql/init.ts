@@ -1,7 +1,5 @@
-import {
-  DappyNetworkMember,
-  isDappyNetworkMemberHTTPS,
-} from '@fabcotech/dappy-lookup';
+import { DappyNetworkMember } from '@fabcotech/dappy-lookup';
+
 import https from 'https';
 import type { Knex } from 'knex';
 
@@ -10,22 +8,19 @@ const getZonesPaginated = async (
   a: { limit: number; offset: number }
 ): Promise<any> => {
   const results = await new Promise((resolve, reject) => {
-    const options = {
+    const options: https.RequestOptions = {
       minVersion: 'TLSv1.3',
       rejectUnauthorized: true,
       host: dnm.ip,
       method: 'POST',
+      ca: (dnm as any).caCert,
       port: dnm.port,
-      ca: undefined,
       path: '/get-zones-paginated',
       headers: {
         'Content-Type': 'application/json',
         Host: dnm.hostname,
       },
     };
-    if (isDappyNetworkMemberHTTPS(dnm)) {
-      options.ca = dnm.caCert;
-    }
 
     const req = https.request(options as unknown, (res) => {
       if (res.statusCode !== 200) {

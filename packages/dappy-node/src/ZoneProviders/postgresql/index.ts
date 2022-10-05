@@ -54,7 +54,7 @@ async function start() {
     limit: 3,
   });
   if (
-    firstZone.count > 0 &&
+    firstZone.count === 0 &&
     config.downloadZonesIfEmpty &&
     config.dappyNetworkMemberToDownloadNodesFrom
   ) {

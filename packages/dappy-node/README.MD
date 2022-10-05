@@ -28,9 +28,12 @@ dappy-lookup example.d A --endpoint=http://127.0.0.1:3001
 # In dappy-tools root
 npm i & npx lerna bootstrap
 
-# In dappy-tools/packages/dappy-node
+# Build the npm lib from dappy-tools/packages/dappy-node
 npm i
 npm run build
+
+# Build the docker image from dappy-tools/
+docker build . -f ./packages/dappy-node/Dockerfile -t dappynodelocal
 
 # test
 npm run test
@@ -73,21 +76,6 @@ We use the issue tracker to keep track of bugs and improvements to dappy-node it
 
 ## Reference
 
-### Command line tools
-
-dappy-node repository contains several command lines tools.
-
-- **easyrnode**: It helps to work with a local rchain node using the following commands/arguments:
-  - **init**: create files `.rnode/genesis/bonds.txt` and `rnode/genesis/wallets.txt` needed to bootstrap rchain
-  - **run**: run docker compose [file](src/bin/easyrnode/commands/assets/docker-compose.yml), which starts the latest images of [rnode](https://hub.docker.com/r/rchain/rnode) and [redis](https://hub.docker.com/_/redis)
-  - **deploy**: deploys a rholang file, --phlo-limit, --phlo-price, --private-key and --host have default values that can be overwritten. Example: `easyrnode deploy ./example.rho --wait`
-  - **help**: display help for each command. Example: `easyrnode help deploy`
-- **dappy-deploy-name-system**: deploy dappy name system master on rchain. Arguments:
-   - --validator: url to rchain node validator
-   - --privatekey: private key used to deploy dappy name system master
-   - --boxid: boxId used to deploy domain tokens
-   - --contractid: contract token created
-- **dappy-node**: DoH server. Configuration is described below
 ### dappy-node configuration
 
 dappy-node is configurable through environments variables.
@@ -132,3 +120,22 @@ Please read [API Reference](API.md) for more details.
 ### Kubernetes
 
 [Kubernetes guide](./kubernetes/KUBERNETES.MD)
+
+### Docker
+
+When deploying using docker, we assume you have setup a secure postgreSQL database already (on your server or a cloud provider). And know the `DAPPY_PG_CONNECTION_STRING` (in the format `postgresql://postgres:postgres@db1234.cloudprovider.com:5432/dappy`) for allowing dappy-node to write/ready in the database.
+
+**Note :** the host address from within the container may vary depending on your OS, on linux it's probably `172.17.0.1`, on macOS 
+`host.docker.internal`.
+
+`.pgdata` folder is shared with container, it will be useful only if you're running a pg instance locally.
+
+```
+docker-compose up
+```
+
+Want to start a local postgreSQL (`localhost:5432`) + adminer (`localhost:8082`) ? (we do not recommend for production)
+
+```
+docker compose --file docker-compose-pg-adminer.yml  up
+```

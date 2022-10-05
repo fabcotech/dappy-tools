@@ -1,6 +1,6 @@
 # Kubernetes
 
-When deploying using kubernetes, we assume you have setup a secure postgreSQL database already. And know the `DAPPY_PG_CONNECTION_STRING` for allowing dappy-node to write/ready in the database.
+When deploying using kubernetes, we assume you have setup a secure postgreSQL database already (on your server or a cloud provider). And know the `DAPPY_PG_CONNECTION_STRING` (in the format `postgresql://postgres:postgres@db1234.cloudprovider.com:5432/dappy`) for allowing dappy-node to write/ready in the database.
 
 ## General architecture
 
