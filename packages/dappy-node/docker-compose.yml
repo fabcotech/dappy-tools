@@ -1,13 +1,9 @@
 services:
   dappy-node-migrations:
-    depends_on:
-      - pg    
     image: fabcotech/dappy-node:3.33.4
     environment:
       - DAPPY_PG_CONNECTION_STRING=postgresql://postgres:postgres@172.17.0.1:5432/dappy
       - DAPPY_NODE_ZONE_PROVIDER=postgresql
-    volumes:
-      - $PWD/.pgdata:/var/lib/postgresql/data
     working_dir: "/app/packages/dappy-node/"
     command: ["npm", "run", "pg:migrate"]
   dappy-node:
@@ -25,7 +21,4 @@ services:
       - DAPPY_NODE_CACHING=0
     ports:
       - '3001:3001'
-    volumes:
-      - $PWD/.pgdata:/var/lib/postgresql/data
-    #command: ["node", "--version"]
     command: ["node", "--max-old-space-size=8192", "/app/packages/dappy-node/dist/src/index.js"]
