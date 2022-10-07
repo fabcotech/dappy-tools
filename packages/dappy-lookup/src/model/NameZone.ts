@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import z from 'zod';
 
 import { RRSchema } from './ResourceRecords';
 import { JSONObject } from './json';

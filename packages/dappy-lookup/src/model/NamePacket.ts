@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import z from 'zod';
 import { JSONObject } from './json';
 import { hostname } from './regexp';
 import { RecordTypeSchema, RRDataSchema } from './ResourceRecords';

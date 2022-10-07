@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import z from 'zod';
 import { JSONValue } from './json';
 import { base64, hostname, port } from './regexp';
 
