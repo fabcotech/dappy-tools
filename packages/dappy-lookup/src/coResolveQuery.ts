@@ -14,6 +14,18 @@ import { JSONObject } from './utils/json';
 
 const DEFAULT_DAPPY_NETWORK = 'd';
 
+const shuffleArray = (dn: DappyNetworkMember[]): DappyNetworkMember[] => {
+  const newArray = dn.concat([]);
+  for (let i = newArray.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = newArray[i];
+    newArray[i] = newArray[j];
+    newArray[j] = temp;
+  }
+
+  return newArray;
+};
+
 const CO_RESOLUTION_SETTINGS: {
   [key: number]: { absolute: number; accuracy: number };
 } = {
@@ -70,7 +82,8 @@ type QueryType<TQuery> = (
 export const createCoResolveQuery =
   <TQuery, TResult extends object>(query: QueryType<TQuery>) =>
   async (queryArgs: TQuery, options?: DappyLookupOptions): Promise<TResult> => {
-    const members = await getDappyNetworkMembers(options?.dappyNetwork);
+    let members = await getDappyNetworkMembers(options?.dappyNetwork);
+    members = shuffleArray(members);
 
     const results: Record<string, TResult> = {};
     const resolved = await resolver(
