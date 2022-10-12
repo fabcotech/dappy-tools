@@ -1,6 +1,6 @@
 services:
   dappy-node-migrations:
-    image: fabcotech/dappy-node:3.33.4
+    image: fabcotech/dappy-node:3.33.5
     environment:
       - DAPPY_PG_CONNECTION_STRING=postgresql://postgres:postgres@172.17.0.1:5432/dappy
       - DAPPY_NODE_ZONE_PROVIDER=postgresql
@@ -10,7 +10,7 @@ services:
     depends_on:
       dappy-node-migrations:
         condition: service_completed_successfully  
-    image: fabcotech/dappy-node:3.33.4
+    image: fabcotech/dappy-node:3.33.5
     environment:
       - DAPPY_PG_CONNECTION_STRING=postgresql://postgres:postgres@172.17.0.1:5432/dappy
       - DAPPY_NODE_ZONE_PROVIDER=postgresql
