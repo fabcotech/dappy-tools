@@ -141,11 +141,14 @@ export const createHandleGossip =
         }
       )
         .then((results: (string | true | Error)[]) => {
+          console.log(results);
           const errors = results.filter((a) => a !== true);
           if (errors.length) {
             log(`${results.length - errors.length} gossips successful`);
             log(`${errors.length} gossip errors :`, 'error');
-            log(JSON.stringify(errors), 'error');
+            errors.forEach((e) => {
+              log(e, 'error');
+            });
           } else {
             log('all gossips successful');
           }
