@@ -141,7 +141,6 @@ export const createHandleGossip =
         }
       )
         .then((results: (string | true | Error)[]) => {
-          console.log(results);
           const errors = results.filter((a) => a !== true);
           if (errors.length) {
             log(`${results.length - errors.length} gossips successful`);
