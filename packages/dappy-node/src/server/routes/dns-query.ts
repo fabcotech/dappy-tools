@@ -28,7 +28,7 @@ export const getZoneRecords = (
             zone,
             zone.records,
             dappyNetworkId,
-            new RegExp(`.${dappyNetworkId}`).test(name)
+            name.endsWith(`.${dappyNetworkId}`)
           )
         )
         .flat();
