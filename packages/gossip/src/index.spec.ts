@@ -48,7 +48,7 @@ describe("index.ts", () => {
   it("should fail check signature (invalid signature) (checkZoneTransaction)", () => {
     const zoneTransactionWithSignature = {
       data: {
-        zone: undefined as JSON,
+        zone: undefined,
         date: 1661785885595 + 1,
       },
       signature,
