@@ -53,16 +53,13 @@ export const loadDappyNetwork = (
   knownNetworks: Record<string, DappyNetworkMember[]>
 ) => {
   let network: DappyNetworkMember[];
-  if (customNetwork.length) {
+  if (customNetwork.length) {
     network = customNetwork;
-  }
-  else if (networkId && knownNetworks[networkId]) {
+  } else if (networkId && knownNetworks[networkId]) {
     network = knownNetworks[networkId];
   } else {
     return [];
   }
-
- // const network = customNetwork || knownNetworks[networkId] || [];
 
   (network || []).forEach((dnm) => {
     if (isDappyNetworkMemberHTTPS(dnm)) {
