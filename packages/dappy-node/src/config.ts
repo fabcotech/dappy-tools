@@ -52,7 +52,17 @@ export const loadDappyNetwork = (
   customNetwork: DappyNetworkMember[],
   knownNetworks: Record<string, DappyNetworkMember[]>
 ) => {
-  const network = customNetwork || knownNetworks[networkId] || [];
+  let network: DappyNetworkMember[];
+  if (customNetwork.length) {
+    network = customNetwork;
+  }
+  else if (networkId && knownNetworks[networkId]) {
+    network = knownNetworks[networkId];
+  } else {
+    return [];
+  }
+
+ // const network = customNetwork || knownNetworks[networkId] || [];
 
   (network || []).forEach((dnm) => {
     if (isDappyNetworkMemberHTTPS(dnm)) {
@@ -124,14 +134,14 @@ export function initConfig() {
       '04ea33c48dff95cdff4f4211780a5b151570a9a2fac5e62e5fa545c1aa5be3539c34d426b046f985204815964e10fcd1d87ef88d9bcf43816ad1fa00934cfe4652',
     dappyNetworkId: process.env.DAPPY_NETWORK_ID || 'local',
     dappyNetwork: loadDappyNetwork(
-      parseDappyNetworkId(process.env.DAPPY_NETWORK_ID),
+      parseDappyNetworkId(process.env.DAPPY_NETWORK_ID || ''),
       tryReadJSONFile(process.env.DAPPY_NETWORK_FILE || './dappynetwork.json'),
       dappyNetworks
     ),
     dappyLogPath: process.env.DAPPY_LOG_PATH || './logs',
 
     downloadZonesIfEmpty: [true, 'true'].includes(
-      process.env.DOWNLOAD_ZONES_IF_EMPTY
+      process.env.DOWNLOAD_ZONES_IF_EMPTY || ''
     ),
     dappyNetworkMemberToDownloadNodesFrom:
       process.env.DAPPY_NETWORK_MEMBER_TO_DOWNLOAD_ZONES_FROM,

@@ -9,7 +9,7 @@ chai.use(spies);
 describe('config', () => {
   describe('loadDappyNetwork', () => {
     it('should return [] if no network is defined', () => {
-      const network = loadDappyNetwork(undefined, undefined, dappyNetworks);
+      const network = loadDappyNetwork(undefined, [], dappyNetworks);
       expect(network).to.eql([]);
     });
     it('should return custom network', () => {
@@ -37,7 +37,7 @@ describe('config', () => {
           },
         ] as DappyNetworkMemberHTTP[],
       };
-      expect(loadDappyNetwork('gamma', undefined, networks)).to.equal(
+      expect(loadDappyNetwork('gamma', [], networks)).to.equal(
         networks.gamma
       );
     });
