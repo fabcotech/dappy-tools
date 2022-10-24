@@ -46,8 +46,8 @@ const NamePacketSchema = z.object({
   flags: z.number(),
   questions: z.array(NameQuestionSchema),
   answers: z.array(NameAnswerSchema),
-  additionals: z.array(undefined),
-  authorities: z.array(undefined),
+  additionals: z.array(z.any()).default([]),
+  authorities: z.array(z.any()).default([]),
 });
 
 export type NamePacket = z.infer<typeof NamePacketSchema>;
