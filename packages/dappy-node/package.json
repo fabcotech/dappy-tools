@@ -39,7 +39,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@fabcotech/dappy-lookup": "2.3.13",
+    "@fabcotech/dappy-lookup": "*",
     "@fabcotech/gossip": "*",
     "@fabcotech/rchain-token": "18.0.1",
     "@fabcotech/rchain-toolkit": "3.0.1",
