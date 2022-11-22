@@ -43,7 +43,7 @@ npm i -S @fabcotech/dappy-lookup
 Here is an example to get you started:
 
 ```typescript
-import { lookup } from 'dappy-lookup';
+import { lookup } from '@fabcotech/dappy-lookup';
 
 async function run() {
     // lookup the A records for example.dappy on d network
@@ -67,7 +67,7 @@ This example above will resolve a name on default dappy network which is the `d`
 Next example do the same but on `gamma` network (used for testing purposes)
 
 ```typescript
-import { lookup } from 'dappy-lookup';
+import { lookup } from '@fabcotech/dappy-lookup;
 
 async function run() {
     // lookup the A records for example.dappy on gamma network
@@ -87,7 +87,7 @@ On DappyNS, name servers not only distribute IPv4 (**A** records) and IPv6 addre
 The example below demonstrates how to do this:
 
 ```typescript
-import { lookup, nodeLookup } from 'dappy-lookup';
+import { lookup, nodeLookup } from '@fabcotech/dappy-lookup;
 
 const { answers: [{ data: ca }]} = await lookup('example.dappy', 'CERT')
 
@@ -108,7 +108,7 @@ So dappy-lookup provide a lookup function (created with `nodeLookup`) with the s
 The example below shows how to replace native NodeJS lookup function with the dappy-lookup equivalent function. In this example the certificate is not recovered dynamically, it is installed previously on the operating system.
 
 ```typescript
-import { nodeLookup } from 'dappy-lookup';
+import { nodeLookup } from '@fabcotech/dappy-lookup;
 
 https.get('https://example.dappy/', {
     lookup: nodeLookup,
