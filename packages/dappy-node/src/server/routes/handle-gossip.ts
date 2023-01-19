@@ -69,7 +69,7 @@ export const createHandleGossip =
         gossipToDappyNetwork = true;
       } catch (err) {
         log(err);
-        resSend(res, err, 403);
+        resSend(res, err as string, 403);
         return;
       }
     } else {

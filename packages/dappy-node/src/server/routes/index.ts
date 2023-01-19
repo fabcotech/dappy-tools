@@ -10,6 +10,7 @@ import { createGetHash } from './get-hash';
 import { getCurrentZoneProvider } from '../../ZoneProviders';
 import { getStore } from '../../store';
 import { createGetZones } from './get-zones';
+import { createGetRecords } from './get-records';
 import { createGetZonesPaginated } from './get-zones-paginated';
 import { createHandleGossip } from './handle-gossip';
 import { getConfig } from '../../config';
@@ -93,6 +94,68 @@ export function getRouter() {
       }
     )
   );
+
+  router.post(
+    '/:name',
+    bodyParser.json(),
+    createGetRecords(getZones, config.dappyNetworkId, undefined)
+  );
+  router.get(
+    '/:name',
+    bodyParser.json(),
+    createGetRecords(getZones, config.dappyNetworkId, undefined)
+  );
+  router.post(
+    '/:name/A',
+    bodyParser.json(),
+    createGetRecords(getZones, config.dappyNetworkId, 'A')
+  );
+  router.get(
+    '/:name/A',
+    bodyParser.json(),
+    createGetRecords(getZones, config.dappyNetworkId, 'A')
+  );
+  router.post(
+    '/:name/AAAA',
+    bodyParser.json(),
+    createGetRecords(getZones, config.dappyNetworkId, 'AAAA')
+  );
+  router.get(
+    '/:name/AAAA',
+    bodyParser.json(),
+    createGetRecords(getZones, config.dappyNetworkId, 'AAAA')
+  );
+  router.post(
+    '/:name/TXT',
+    bodyParser.json(),
+    createGetRecords(getZones, config.dappyNetworkId, 'TXT')
+  );
+  router.get(
+    '/:name/TXT',
+    bodyParser.json(),
+    createGetRecords(getZones, config.dappyNetworkId, 'TXT')
+  );
+  router.post(
+    '/:name/CERT',
+    bodyParser.json(),
+    createGetRecords(getZones, config.dappyNetworkId, 'CERT')
+  );
+  router.get(
+    '/:name/CERT',
+    bodyParser.json(),
+    createGetRecords(getZones, config.dappyNetworkId, 'CERT')
+  );
+  router.post(
+    '/:name/CNAME',
+    bodyParser.json(),
+    createGetRecords(getZones, config.dappyNetworkId, 'CNAME')
+  );
+  router.get(
+    '/:name/CNAME',
+    bodyParser.json(),
+    createGetRecords(getZones, config.dappyNetworkId, 'CNAME')
+  );
+
 
   return router;
 }

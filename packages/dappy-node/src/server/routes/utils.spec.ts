@@ -2,7 +2,7 @@ import { createNameZone } from '@fabcotech/dappy-lookup';
 import chai from 'chai';
 import spies from 'chai-spies';
 
-import { getTLDs, normalizeRecords } from './utils';
+import { getTLDs, normalizeRecords, recordHostsToMatchWith } from './utils';
 
 const { expect } = chai;
 chai.use(spies);
@@ -56,4 +56,10 @@ describe('dns-query', () => {
     expect(getTLDs(['default.dappy.d'], 'gamma')).to.eql(['d']);
     expect(getTLDs(['default.dappy.d'], 'd')).to.eql(['dappy']);
   });
+});
+
+describe.only('recordHostsToMatchWith', () => {
+  expect(recordHostsToMatchWith('example')).to.eql(['@', '*']);
+  expect(recordHostsToMatchWith('foo.example')).to.eql(['foo', '*']);
+  expect(recordHostsToMatchWith('foo.bar.example')).to.eql(['*.bar', '*']);
 });

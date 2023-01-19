@@ -22,7 +22,7 @@ const getZonesPaginated = async (
       },
     };
 
-    const req = https.request(options as unknown, (res) => {
+    const req = https.request(options, (res) => {
       if (res.statusCode !== 200) {
         reject(new Error(`Status code not 200 : ${res.statusCode}`));
         return;
@@ -45,7 +45,7 @@ const getZonesPaginated = async (
 };
 
 const getAllZones = (dnm: DappyNetworkMember): Promise<any> => {
-  let tables = [];
+  let tables: any = [];
   let i = 0;
   const perPage = 500;
   return new Promise((resolve, reject) => {
@@ -74,17 +74,17 @@ export const init = async (
   dnm: DappyNetworkMember,
   connection: Knex<any, unknown>,
   log: (a: any, level?: string) => void
-) => {
+): Promise<number[]> => {
   let t2 = new Date().getTime();
   const allTables = await getAllZones(dnm);
   t2 = Math.round((new Date().getTime() - t2) / 10) / 100;
   log(`retrieved ${allTables.length} tables from dappy network member`);
 
   const size = 200;
-  const batches = [];
+  const batches: number[] = [];
   for (let i = 0; i < allTables.length; i += size) {
     batches.push(
-      allTables.slice(i, i + size).map((a) => {
+      allTables.slice(i, i + size).map((a: any) => {
         delete a.id;
         return a;
       })

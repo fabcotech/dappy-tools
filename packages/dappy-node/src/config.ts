@@ -53,7 +53,7 @@ export const loadDappyNetwork = (
   knownNetworks: Record<string, DappyNetworkMember[]>
 ) => {
   let network: DappyNetworkMember[];
-  if (customNetwork.length) {
+  if (customNetwork && customNetwork.length) {
     network = customNetwork;
   } else if (networkId && knownNetworks[networkId]) {
     network = knownNetworks[networkId];

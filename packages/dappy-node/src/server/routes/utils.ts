@@ -40,3 +40,29 @@ export const normalizeRecords = (
       (appendSuffixDappy ? `.${suffix}` : ''),
     ttl: record.ttl || zone.ttl,
   }));
+
+/*
+  Based on a name that is looked up, with what
+  host should we match it ?
+*/
+export const recordHostsToMatchWith = (name: string): string[] => {
+  const levels = (name.match(/\./g) || []).length;
+  // example
+  if (levels === 0) {
+    return ['@', '*'];
+  }
+
+  const matchLvl1 = name.split('.').slice(0, 1).join('.');
+  // japan.example
+  if (levels === 1) {
+    return [matchLvl1, '*'];
+  }
+
+  const matchLvl2 = `*.${name.split('.').slice(1, 2).join('.')}`;
+  // north.japan.example
+  if (levels === 2) {
+    return [matchLvl2, '*'];
+  }
+
+  return [matchLvl2, '*'];
+};
