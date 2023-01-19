@@ -58,7 +58,7 @@ describe('dns-query', () => {
   });
 });
 
-describe.only('recordHostsToMatchWith', () => {
+describe('recordHostsToMatchWith()', () => {
   expect(recordHostsToMatchWith('example')).to.eql(['@', '*']);
   expect(recordHostsToMatchWith('foo.example')).to.eql(['foo', '*']);
   expect(recordHostsToMatchWith('foo.bar.example')).to.eql(['*.bar', '*']);
