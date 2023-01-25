@@ -37,9 +37,7 @@ describe('config', () => {
           },
         ] as DappyNetworkMemberHTTP[],
       };
-      expect(loadDappyNetwork('gamma', [], networks)).to.equal(
-        networks.gamma
-      );
+      expect(loadDappyNetwork('gamma', [], networks)).to.equal(networks.gamma);
     });
   });
 });

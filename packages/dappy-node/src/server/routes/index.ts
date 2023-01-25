@@ -156,6 +156,5 @@ export function getRouter() {
     createGetRecords(getZones, config.dappyNetworkId, 'CNAME')
   );
 
-
   return router;
 }
