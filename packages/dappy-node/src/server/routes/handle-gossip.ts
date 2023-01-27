@@ -49,11 +49,6 @@ export const createHandleGossip =
 
     const zones = await getZones([req.body.data.zone.origin]);
 
-    // todo
-    /*
-      Does dappyNetwork[0].publicKey has the right to create+update ?
-    */
-
     if (zones[0]) {
       if (isEqual(zones[0], req.body.data.zone)) {
         resSend(res, 'Zone already exists and unchanged', 200);
