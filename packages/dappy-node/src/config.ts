@@ -11,22 +11,6 @@ import {
 const DAPPY_CONFIG_FILE_NAME = 'dappyrc';
 const DAPPY_BROWSER_MIN_VERSION = '0.5.4';
 
-const numberOr = (defaultValue: any, value: any) => {
-  if (typeof value === 'number' && !Number.isNaN(value)) {
-    return value;
-  }
-  return defaultValue;
-};
-
-const createMustBeDefined =
-  (predicat: () => boolean) => (envVarName: string) => {
-    const envValue = process.env[envVarName];
-    if (predicat() && (!envValue || envValue.length === 0)) {
-      throw new Error(`${envVarName} can't be empty`);
-    }
-    return envValue;
-  };
-
 function isDappyNetwork(value: string): value is DappyNetworkId {
   return ['gamma', 'd'].includes(value);
 }
@@ -79,10 +63,6 @@ export function initConfig() {
   require('dotenv').config({
     path: path.resolve(process.cwd(), DAPPY_CONFIG_FILE_NAME),
   });
-
-  const mustBeDefinedWhenRchain = createMustBeDefined(
-    () => process.env.DAPPY_NODE_ZONE_PROVIDER === 'rchain'
-  );
 
   const cfg = {
     dappyBrowserMinVersion: DAPPY_BROWSER_MIN_VERSION,
