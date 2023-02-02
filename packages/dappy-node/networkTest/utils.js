@@ -155,3 +155,39 @@ module.exports.purchaseZone = async (dappyNetwork, zone, privateKey, neww = fals
     });
     return result;
   }
+
+module.exports.getHash = async (dnm) => {
+  return new Promise((resolve, reject) => {
+    const options = {
+      minVersion: 'TLSv1.3',
+      rejectUnauthorized: true,
+      host: dnm.ip,
+      method: 'GET',
+      ca: Buffer.from(dnm.caCert, 'base64').toString('utf8'),
+      port: dnm.port,
+      path: '/hash',
+      headers: {
+        'Content-Type': 'application/json',
+        Host: dnm.hostname,
+      },
+    };
+
+    const req = https.request(options, (res) => {
+      if (res.statusCode !== 200) {
+        reject(new Error(`Status code not 200 : ${res.statusCode}`));
+        return;
+      }
+      let data = '';
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+      res.on('end', () => {
+        resolve(data);
+      });
+    });
+    req.on('error', (err) => {
+      reject(err);
+    });
+    req.end();
+  });
+};
