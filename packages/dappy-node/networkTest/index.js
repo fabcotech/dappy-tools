@@ -4,10 +4,12 @@ const https = require('https');
 
 const { publicKeyFromPrivateKey } = require('@fabcotech/gossip');
 
-const { getRandomName, purchaseZone, getZonesPaginated, getHash } = require('./utils.js');
+const { getRandomName, purchaseZone, writeCerts, getHash } = require('./utils.js');
 
 const NUMBER_OF_ZONES_TO_CREATE = 100;
 const processes = [];
+
+writeCerts();
 
 const argsProcess1 =
   'DAPPY_PG_CONNECTION_STRING=postgresql://postgres:postgres@localhost:5432/dappy1 DAPPY_NODE_HTTP_PORT=3001 DAPPY_NODE_HTTPS_PORT=3002 DAPPY_NODE_CERTIFICATE_FILENAME=./networkTest/dappynodetest1.crt DAPPY_NODE_PRIVATE_KEY_FILENAME=./networkTest/dappynodetest1.key DOWNLOAD_ZONES_IF_EMPTY=false DAPPY_NETWORK_FILE=networkTest/dappyNetwork.json';
