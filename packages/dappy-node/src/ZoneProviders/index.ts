@@ -2,7 +2,6 @@ import { Router } from 'express';
 
 import { log } from '../log';
 
-import { zoneProvider as rchain } from './rchain';
 import { zoneProvider as memory } from './memory';
 import { zoneProvider as postgresql } from './postgresql';
 
@@ -10,7 +9,6 @@ import { getConfig } from '../config';
 import { ZoneProvider } from './ZoneProvider';
 
 const providers: Record<string, ZoneProvider> = {
-  rchain,
   memory,
   postgresql,
 };

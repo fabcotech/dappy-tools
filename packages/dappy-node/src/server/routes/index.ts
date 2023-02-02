@@ -1,14 +1,12 @@
 import { Response, Router } from 'express';
 import bodyParser from 'body-parser';
 
-import { getNodes } from './get-nodes';
 import { ping } from './ping';
 import { createDnsQuery, createExtendedDnsQuery } from './dns-query';
 import { createMintZone } from './mint-zone';
 import { createUpdateZone } from './update-zone';
 import { createGetHash } from './get-hash';
 import { getCurrentZoneProvider } from '../../ZoneProviders';
-import { getStore } from '../../store';
 import { createGetZones } from './get-zones';
 import { createGetRecords } from './get-records';
 import { createGetZonesPaginated } from './get-zones-paginated';
@@ -17,14 +15,13 @@ import { getConfig } from '../../config';
 
 export function getRouter() {
   const router = Router();
-  const store = getStore();
   const config = getConfig();
 
   const { getZones, saveZone, getHash, getZonesPaginated } =
     getCurrentZoneProvider();
 
   router.post('/ping', ping);
-  router.post('/get-nodes', getNodes(store));
+  router.get('/ping', ping);
   router.post(
     '/dns-query',
     bodyParser.raw({

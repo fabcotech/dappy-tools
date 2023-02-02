@@ -115,18 +115,6 @@ curl https://rnode.dev/status
 
 ### Deploy dappy-node
 
-Prerequisites to run dappy-node:
-- Dappy name system master uri is needed and set to `DAPPY_NAMES_MASTER_REGISTRY_URI` env variable.
-
-To create master and deploy dappy name system contract on local rnode network, follow instructions below.
-
-```sh
-npm i -g @fabcotech/dappy-node
-dappy-deploy-name-system --validator=http://rnode.dev
-```
-
-Contract is now deployed on your local rnode network, you can get `DAPPY_NAMES_MASTER_REGISTRY_URI` and `DAPPY_NAMES_CONTRACT_ID` values from `dappyrc` file.
-
 Inside folder `<DAPPY_NODE_GIT_ROOT_FOLDER>/packages/dappy-node/kubernetes/envs/minikube`
 
 ```sh
@@ -165,14 +153,6 @@ exit
 ### Redeploy Dappy name system
 
 ```sh
-
-# Create deploy_name_contract
-npm i -g @fabcotech/dappy-node
-dappy-deploy-name-system --validator=http://rnode.dev
-
-# Delete old configmap rnode-config
-kubectl delete cm dappy-config
-
 # Create configmap that contains master uri
 kubectl create configmap dappy-config --from-env-file dappyrc
 

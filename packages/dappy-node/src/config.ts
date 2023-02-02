@@ -88,15 +88,6 @@ export function initConfig() {
     dappyBrowserMinVersion: DAPPY_BROWSER_MIN_VERSION,
     dappyBrowserDownloadLink: `https://github.com/fabcotech/dappy/releases/tag/${DAPPY_BROWSER_MIN_VERSION}?warning`,
 
-    dappyNamesMasterRegistryUri: mustBeDefinedWhenRchain(
-      'DAPPY_NAMES_MASTER_REGISTRY_URI'
-    ),
-    dappyNamesContractId: mustBeDefinedWhenRchain('DAPPY_NAMES_CONTRACT_ID'),
-
-    rchainValidator:
-      process.env.DAPPY_RCHAIN_VALIDATOR || 'http://localhost:40403',
-    rchainReadOnly:
-      process.env.DAPPY_RCHAIN_READ_ONLY || 'http://localhost:40403',
     rchainReadOnlyCertificateFilename:
       process.env.DAPPY_RCHAIN_READ_ONLY_CERTIFICATE_FILENAME,
     rchainNetwork: process.env.DAPPY_RCHAIN_NETWORK || 'unknown',
@@ -110,14 +101,8 @@ export function initConfig() {
       process.env.DAPPY_NODE_PRIVATE_KEY_FILENAME || './dappynode.key',
     dappyNodeCertificateFilename:
       process.env.DAPPY_NODE_CERTIFICATE_FILENAME || './dappynode.crt',
-    dappyNodeVersion: '0.2.8',
-    dappyNodeZoneProvider: process.env.DAPPY_NODE_ZONE_PROVIDER || 'rchain',
-    dappyNodeCaching: numberOr(
-      60,
-      parseInt(process.env.DAPPY_NODE_CACHING || '', 10)
-    ),
+    dappyNodeZoneProvider: process.env.DAPPY_NODE_ZONE_PROVIDER || 'postgresql',
     dappyNodeCachingZone: process.env.DAPPY_NODE_CACHING_ZONE === 'true',
-    dappyNodeFiles: process.env.NODES_FILE,
     dappyNodeEnableRequestMetrics:
       process.env.DAPPY_NODE_ENABLE_REQUEST_METRICS === 'true',
     dappyNodeSentryUrl: process.env.DAPPY_NODE_SENTRY_URL,

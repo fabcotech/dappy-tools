@@ -16,12 +16,6 @@ spec:
           name: dappy-node
           imagePullPolicy: Always
           env:
-            - name: DAPPY_RCHAIN_READ_ONLY
-              value: http://rnode:40403
-            - name: DAPPY_RCHAIN_VALIDATOR
-              value: http://rnode:40403
-            - name: DAPPY_RCHAIN_NETWORK
-              value: local
             - name: DAPPY_NETWORK
               value: local       
             - name: DAPPY_NODE_CACHING

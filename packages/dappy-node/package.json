@@ -1,12 +1,13 @@
 {
   "name": "@fabcotech/dappy-node",
-  "version": "3.34.0",
+  "version": "3.35.0",
   "description": "Dappy main nodeJS program, stores the name records and provides a HTTP+TLS interface to interact with rnode",
   "author": "FABCO",
   "repository": "https://github.com/fabcotech/dappy-node.git",
   "main": "./dist/src/index.js",
   "scripts": {
     "test": "mocha -r ts-node/register 'src/**/*.spec.ts' 'src/**/*.spec.js'",
+    "test:network": "node networkTest.js",
     "test:watch": "mocha -r ts-node/register -watch 'src/**/*.spec.ts' 'src/**/*.spec.js' -watch-files 'src/**/*.ts' 'src/**/*.js'",
     "test:types": "npx tsc --project ./tsconfig.build.json --noEmit",
     "lint": "eslint src --ext .ts",
@@ -15,7 +16,6 @@
     "copy-files": "copyfiles -u 1 src/bin/easyrnode/**/*.yml src/bin/easyrnode/**/*.sh dist/",
     "build": "npm run clean:dist && tsc -b ./tsconfig.build.json",
     "start": "node dist/src/index.js",
-    "start:dev:rchain": "NODE_ENV=development DAPPY_NODE_ZONE_PROVIDER=rchain ts-node src/index.ts",
     "start:dev:memory": "NODE_ENV=development DAPPY_NODE_CACHING=0 DAPPY_NODE_ZONE_PROVIDER=memory ts-node src/index.ts",
     "start:dev:postgresql": "NODE_ENV=development DAPPY_NODE_CACHING=0 DAPPY_NODE_ZONE_PROVIDER=postgresql ts-node src/index.ts",
     "pg:start": "docker compose up -d pg adminer",
@@ -42,7 +42,6 @@
   "dependencies": {
     "@fabcotech/dappy-lookup": "*",
     "@fabcotech/gossip": "*",
-    "@fabcotech/rchain-token": "18.0.1",
     "@fabcotech/rchain-toolkit": "3.0.1",
     "@sentry/node": "^6.2.3",
     "@sentry/tracing": "^6.2.3",
