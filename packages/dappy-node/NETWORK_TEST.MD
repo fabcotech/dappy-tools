@@ -1,4 +1,9 @@
-Three processes will be spawned:
+
+### Network tests
+
+In addition to the regular tests `npm run test` there is a network test that will simulate a 2-nodes dappy network exposed on localhost, through HTTP+TLS with a self-signed certificate+key pais for each (production setup). 1000 fake zones are created in the name system during the test.
+
+A third node is later spawned, in order to test the fetching capabilities.
 
 ```
 (1) master node
@@ -16,12 +21,12 @@ postgresql://postgres:postgres@localhost:5432/dappy3
 db: dappy3
 On port 3005 and 3006
 
-dappyNetworkTest.json will be used as a reference of dappyNetwork
+networktest/dappyNetwork.json will be used as a reference of dappy network
 ```
 
-#### init
+#### Prerequisites
 
-Create or empty databases dappy1 and dappy2, easy with adminer `npm run pg:open-adminer`
+Create or empty postgreSQL databases dappy1, dappy2 and dappy3, easy with adminer `npm run pg:open-adminer`
 
 #### Run
 

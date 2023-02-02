@@ -1,12 +1,11 @@
 const { exec } = require("child_process");
 const fs = require('fs');
-const https = require('https');
 
 const { publicKeyFromPrivateKey } = require('@fabcotech/gossip');
 
 const { getRandomName, purchaseZone, writeCerts, getHash } = require('./utils.js');
 
-const NUMBER_OF_ZONES_TO_CREATE = 100;
+const NUMBER_OF_ZONES_TO_CREATE = 1000;
 const processes = [];
 
 writeCerts();
