@@ -1,11 +1,36 @@
-import { NamePacket } from './model';
+import { NamePacket, RR } from './model';
 import { nodeRequest } from './utils/nodeRequest';
 
 import { DappyLookupOptions } from './types';
 import { createCoResolveQuery } from './coResolveQuery';
+import { createCoResolveQuerySimple } from './coResolveQuerySimple';
 import { createDohQuery } from './queries/dohQuery';
+import { createSimpleQuery } from './queries/simpleQuery';
 import { getCertificates } from './getCertificates';
 import { createPostJSONQuery } from './queries/postJSONQuery';
+
+export const lookupSimple = (
+  name: string,
+  recordType: string,
+  options?: DappyLookupOptions,
+) => {
+  switch (recordType) {
+    case 'A':
+    case 'AAAA':
+    case 'CNAME':
+    case 'CERT':
+    case 'TXT':
+      return createCoResolveQuerySimple(createSimpleQuery(nodeRequest))(
+        {
+          name,
+          recordType,
+        },
+        options,
+      ) as Promise<{ records: RR[] }>;
+    default:
+      throw new Error(`Unsupported record type: ${recordType}`);
+  }
+};
 
 export const lookup = (
   name: string,

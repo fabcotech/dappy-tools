@@ -16,6 +16,10 @@ export const decodeCertificates = (packet: NamePacket): NamePacket => {
   };
 };
 
+type GetCertificatesArgs2 = {
+  options?: DappyLookupOptions;
+} & Partial<NamePacket>;
+
 type GetCertificatesArgs = {
   options?: DappyLookupOptions;
 } & Partial<NamePacket>;
@@ -24,6 +28,10 @@ export const getCertificates = async (
   name: string,
   options?: DappyLookupOptions,
 ) => {
+  const p = await createCoResolveQuery<GetCertificatesArgs2, any>(
+    createPostJSONQuery(nodeRequest, { path: `/${name}/CERT` }),
+  )({});
+
   const packet = await createCoResolveQuery<GetCertificatesArgs, NamePacket>(
     createPostJSONQuery(nodeRequest, { path: CERT_QUERY_PATH }),
   )(

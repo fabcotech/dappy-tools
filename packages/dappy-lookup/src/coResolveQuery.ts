@@ -14,7 +14,9 @@ import { JSONObject } from './utils/json';
 
 const DEFAULT_DAPPY_NETWORK = 'd';
 
-const shuffleArray = (dn: DappyNetworkMember[]): DappyNetworkMember[] => {
+export const shuffleArray = (
+  dn: DappyNetworkMember[],
+): DappyNetworkMember[] => {
   const newArray = dn.concat([]);
   for (let i = newArray.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -26,7 +28,7 @@ const shuffleArray = (dn: DappyNetworkMember[]): DappyNetworkMember[] => {
   return newArray;
 };
 
-const CO_RESOLUTION_SETTINGS: {
+export const CO_RESOLUTION_SETTINGS: {
   [key: number]: { absolute: number; accuracy: number };
 } = {
   1: { absolute: 1, accuracy: 100 },
@@ -69,12 +71,12 @@ export const getDappyNetworkMembers = createGetDappyNetworkMembers(
   getDappyNetworkStaticList,
 );
 
-const getHashOfMajorityResult = (resolved: ResolverOutput) =>
+export const getHashOfMajorityResult = (resolved: ResolverOutput) =>
   Object.values(resolved.loadState)
     .map(({ ids, data }) => ({ count: ids.length, hash: data }))
     .sort((a, b) => b.count - a.count)[0].hash;
 
-type QueryType<TQuery> = (
+export type QueryType<TQuery> = (
   query: TQuery,
   options: DappyNetworkMember,
 ) => Promise<JSONObject>;
