@@ -5,3 +5,5 @@ build
 build/*
 *.crt
 *.key
+*.base64
+test*.js
