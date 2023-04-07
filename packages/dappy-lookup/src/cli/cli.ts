@@ -1,6 +1,7 @@
 import { Command, getCommands } from './commands';
 import { Api, print, readFile, writeFile } from './api';
 import { lookup } from '..';
+import { dohServer } from '../dohServer';
 
 function processShutdown(code: number) {
   process.exit(code);
@@ -47,6 +48,7 @@ export async function runCli(
   const api = parameters.api || {
     print,
     lookup,
+    dohServer,
     readFile,
     writeFile,
   };

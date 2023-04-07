@@ -1,6 +1,7 @@
 import { readFile as nodeReadFile, writeFile as nodeWriteFile } from 'fs';
 
 import { lookup } from '..';
+import { dohServer } from '../dohServer';
 
 export function print(str: string) {
   // eslint-disable-next-line no-console
@@ -34,6 +35,7 @@ export const writeFile = (path: string, data: string): Promise<void> => {
 export interface Api {
   print: typeof print;
   lookup: typeof lookup;
+  dohServer: typeof dohServer;
   readFile: (path: string) => Promise<string>;
   writeFile: (path: string, data: string) => Promise<void>;
 }

@@ -1,21 +1,13 @@
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
-import { createNamePacketQuery } from '../model';
 import { runCli, processCli } from './cli';
+import { fakeApi } from './utils/test.spec';
 
 chai.use(spies);
-
-const writeFile = chai.spy(() => Promise.resolve());
 
 describe('cli (core)', () => {
   it('must shutdown with command return code', async () => {
     const shutdown = chai.spy();
-    const api = {
-      print: () => {},
-      lookup: () => Promise.resolve(createNamePacketQuery()),
-      readFile: () => Promise.resolve(''),
-      writeFile: () => Promise.resolve(),
-    };
     const commands = {
       foo: {
         action: () => Promise.resolve(1),
@@ -30,25 +22,19 @@ describe('cli (core)', () => {
       args: ['foo'],
       shutdown,
       commands,
-      api,
+      api: fakeApi(),
     });
     await runCli({
       args: ['bar'],
       shutdown,
       commands,
-      api,
+      api: fakeApi(),
     });
     expect(shutdown).to.have.been.first.called.with(1);
     expect(shutdown).to.have.been.second.called.with(0);
   });
   it('must shutdown with code 1 on unexpected command error', async () => {
     const shutdown = chai.spy();
-    const api = {
-      print: chai.spy(),
-      lookup: () => Promise.resolve(createNamePacketQuery()),
-      readFile: () => Promise.resolve(''),
-      writeFile,
-    };
     const commands = {
       foo: {
         action: () => {
@@ -57,6 +43,7 @@ describe('cli (core)', () => {
         description: 'foo command description.',
       },
     };
+    const api = fakeApi();
     await runCli({
       args: ['foo'],
       shutdown,
@@ -76,30 +63,20 @@ describe('cli (core)', () => {
           action: fooAction,
         },
       },
-      api: {
-        print: () => {},
-        lookup: () => Promise.resolve(createNamePacketQuery()),
-        readFile: () => Promise.resolve(''),
-        writeFile,
-      },
+      api: fakeApi(),
     });
     expect(fooAction).to.have.been.called.with(['param1', 'param2']);
     expect(code).to.equal(0);
   });
 
   it('missing command', async () => {
-    const print = chai.spy(() => {});
+    const api = fakeApi();
     const code = await processCli({
       parameters: [],
       commands: {},
-      api: {
-        print,
-        lookup: () => Promise.resolve(createNamePacketQuery()),
-        readFile: () => Promise.resolve(''),
-        writeFile,
-      },
+      api,
     });
-    expect(print).to.have.been.called.with('missing command');
+    expect(api.print).to.have.been.called.with('missing command');
     expect(code).to.equal(1);
   });
 
@@ -113,12 +90,7 @@ describe('cli (core)', () => {
           action: fooAction,
         },
       },
-      api: {
-        print: () => {},
-        lookup: () => Promise.resolve(createNamePacketQuery()),
-        readFile: () => Promise.resolve(''),
-        writeFile,
-      },
+      api: fakeApi(),
     });
     expect(fooAction).to.have.been.called.with(['param1', 'param2']);
     expect(code).to.equal(0);

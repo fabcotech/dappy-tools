@@ -5,29 +5,26 @@ import {
   fakeCertificate,
 } from '../../model';
 import { saveCertificateCommand } from './saveCertificateCommand';
+import { fakeApi, fakeDoHServer } from '../utils/test.spec';
 
 chai.use(spies);
 
 describe('cli command: savecertificate', () => {
   it('save 1 certificate as file', async () => {
-    const fakeWriteFile = chai.spy(() => Promise.resolve());
-    const r = await saveCertificateCommand.action(['example'], {
+    const api = fakeApi({
       lookup: chai.spy(() =>
         Promise.resolve(createCertNamePacketSuccessResponse()),
       ),
-      print: chai.spy(),
-      readFile: chai.spy(() => Promise.resolve('')),
-      writeFile: fakeWriteFile,
     });
-    expect(fakeWriteFile).to.have.been.called.with(
+    const r = await saveCertificateCommand.action(['example'], api);
+    expect(api.writeFile).to.have.been.called.with(
       'example.pem',
       fakeCertificate,
     );
     expect(r).to.eql(0);
   });
   it('save 2 certificates as files', async () => {
-    const fakeWriteFile = chai.spy(() => Promise.resolve());
-    const r = await saveCertificateCommand.action(['example'], {
+    const api = fakeApi({
       lookup: chai.spy(() =>
         Promise.resolve(
           createCertNamePacketSuccessResponse({
@@ -50,39 +47,33 @@ describe('cli command: savecertificate', () => {
           }),
         ),
       ),
-      print: chai.spy(),
-      readFile: chai.spy(() => Promise.resolve('')),
-      writeFile: fakeWriteFile,
     });
-    expect(fakeWriteFile).to.have.been.first.called.with(
+    const r = await saveCertificateCommand.action(['example'], api);
+    expect(api.writeFile).to.have.been.first.called.with(
       'example-1.pem',
       fakeCertificate,
     );
-    expect(fakeWriteFile).to.have.been.second.called.with(
+    expect(api.writeFile).to.have.been.second.called.with(
       'example-2.pem',
       fakeCertificate,
     );
     expect(r).to.eql(0);
   });
   it('save 1 certificate as file with --out', async () => {
-    const fakeWriteFile = chai.spy(() => Promise.resolve());
+    const api = fakeApi({
+      lookup: chai.spy(() =>
+        Promise.resolve(createCertNamePacketSuccessResponse()),
+      ),
+    });
     const r = await saveCertificateCommand.action(
       ['example', '--out=toto.pem'],
-      {
-        lookup: chai.spy(() =>
-          Promise.resolve(createCertNamePacketSuccessResponse()),
-        ),
-        print: chai.spy(),
-        readFile: chai.spy(() => Promise.resolve('')),
-        writeFile: fakeWriteFile,
-      },
+      api,
     );
-    expect(fakeWriteFile).to.have.been.called.with('toto.pem', fakeCertificate);
+    expect(api.writeFile).to.have.been.called.with('toto.pem', fakeCertificate);
     expect(r).to.eql(0);
   });
   it('save 2 certificates as files with --out', async () => {
-    const fakeWriteFile = chai.spy(() => Promise.resolve());
-    const r = await saveCertificateCommand.action(['example', '--out=foo'], {
+    const api = fakeApi({
       lookup: chai.spy(() =>
         Promise.resolve(
           createCertNamePacketSuccessResponse({
@@ -105,33 +96,32 @@ describe('cli command: savecertificate', () => {
           }),
         ),
       ),
-      print: chai.spy(),
-      readFile: chai.spy(() => Promise.resolve('')),
-      writeFile: fakeWriteFile,
     });
-    expect(fakeWriteFile).to.have.been.first.called.with(
+    const r = await saveCertificateCommand.action(
+      ['example', '--out=foo'],
+      api,
+    );
+    expect(api.writeFile).to.have.been.first.called.with(
       'foo-1.pem',
       fakeCertificate,
     );
-    expect(fakeWriteFile).to.have.been.second.called.with(
+    expect(api.writeFile).to.have.been.second.called.with(
       'foo-2.pem',
       fakeCertificate,
     );
     expect(r).to.eql(0);
   });
   it('missing name', async () => {
-    const fakePrint = chai.spy();
-    const r = await saveCertificateCommand.action([], {
+    const api = fakeApi({
       lookup: chai.spy(() =>
         Promise.resolve(createCertNamePacketSuccessResponse()),
       ),
-      readFile: chai.spy(() => Promise.resolve('')),
-      writeFile: chai.spy(() => Promise.resolve()),
-      print: fakePrint,
     });
 
+    const r = await saveCertificateCommand.action([], api);
+
     expect(r).to.eql(1);
-    expect(fakePrint).to.have.been.called.with('missing name');
+    expect(api.print).to.have.been.called.with('missing name');
   });
   it('no answer', async () => {
     const fakeWriteFile = chai.spy(() => Promise.resolve());
@@ -142,6 +132,7 @@ describe('cli command: savecertificate', () => {
         res.answers = [];
         return Promise.resolve(res);
       }),
+      dohServer: fakeDoHServer(),
       print,
       readFile: chai.spy(() => Promise.resolve('')),
       writeFile: fakeWriteFile,

@@ -10,67 +10,48 @@ import { isNetworkIdArgs, getArgsMap, getNetwork } from './utils';
 import { lookupCommand } from './lookupCommand';
 
 import { dedent } from '../utils/dedent';
+import { fakeApi, fakeDoHServer } from '../utils/test.spec';
 
 chai.use(spies);
 
-const writeFile = chai.spy(() => Promise.resolve());
-
 describe('cli command lookup', () => {
   it('missing name', async () => {
-    const lookup = () => Promise.resolve(createNamePacketQuery());
-    const print = chai.spy();
-    const code = await lookupCommand.action([], {
-      lookup,
-      print,
-      readFile: () => Promise.resolve(''),
-      writeFile,
-    });
-    expect(print).to.have.been.called.with('missing name');
+    const api = fakeApi();
+    const code = await lookupCommand.action([], api);
+    expect(api.print).to.have.been.called.with('missing name');
     expect(code).to.eql(1);
   });
   it('missing record type', async () => {
-    const lookup = () => Promise.resolve(createNamePacketQuery());
-    const print = chai.spy();
-    const code = await lookupCommand.action(['example.dappy'], {
-      lookup,
-      print,
-      readFile: () => Promise.resolve(''),
-      writeFile,
-    });
-    expect(print).to.have.been.called.with('missing record type');
+    const api = fakeApi();
+    const code = await lookupCommand.action(['example.dappy'], api);
+    expect(api.print).to.have.been.called.with('missing record type');
     expect(code).to.eql(1);
   });
   it('record not found', async () => {
-    const lookup = () =>
-      Promise.resolve(
-        createNamePacketErrorResponse({
-          rcode: 'NXDOMAIN',
-        }),
-      );
-    const print = chai.spy();
-    const code = await lookupCommand.action(['example.dappy', 'A'], {
-      lookup,
-      print,
-      readFile: () => Promise.resolve(''),
-      writeFile,
+    const api = fakeApi({
+      lookup: () =>
+        Promise.resolve(
+          createNamePacketErrorResponse({
+            rcode: 'NXDOMAIN',
+          }),
+        ),
     });
-    expect(print).to.have.been.called.with('Record(s) example.dappy not found');
+    const code = await lookupCommand.action(['example.dappy', 'A'], api);
+    expect(api.print).to.have.been.called.with(
+      'Record(s) example.dappy not found',
+    );
     expect(code).to.eql(1);
   });
   it('specify existing network', async () => {
-    const lookup = chai.spy(() =>
-      Promise.resolve(createNamePacketSuccessResponse()),
-    );
-    const print = chai.spy();
-
-    await lookupCommand.action(['example.dappy', 'A', '--network=gamma'], {
-      lookup,
-      print,
-      readFile: () => Promise.resolve(''),
-      writeFile,
+    const api = fakeApi({
+      lookup: chai.spy(() =>
+        Promise.resolve(createNamePacketSuccessResponse()),
+      ),
     });
 
-    expect(lookup).to.have.been.called.with('example.dappy', {
+    await lookupCommand.action(['example.dappy', 'A', '--network=gamma'], api);
+
+    expect(api.lookup).to.have.been.called.with('example.dappy', {
       dappyNetwork: 'gamma',
     });
   });

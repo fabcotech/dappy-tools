@@ -3,10 +3,9 @@ import spies from 'chai-spies';
 import { createNamePacketQuery } from '../../model';
 import { createHelpCommand } from './helpCommand';
 import { dedent } from '../utils/dedent';
+import { fakeApi, fakeDoHServer } from '../utils/test.spec';
 
 chai.use(spies);
-
-const writeFile = chai.spy(() => Promise.resolve());
 
 describe('cli command: help', () => {
   it('no arguments, list all commands', async () => {
@@ -24,12 +23,12 @@ describe('cli command: help', () => {
         action: () => Promise.resolve(0),
       },
     };
-    await createHelpCommand(commands).action([], {
-      print,
-      lookup: () => Promise.resolve(createNamePacketQuery()),
-      readFile: () => Promise.resolve(''),
-      writeFile,
-    });
+    await createHelpCommand(commands).action(
+      [],
+      fakeApi({
+        print,
+      }),
+    );
     expect(stdout).to.contains(dedent`
     Available commands:
       * foo
@@ -55,12 +54,12 @@ describe('cli command: help', () => {
         action: () => Promise.resolve(0),
       },
     };
-    await createHelpCommand(commands).action(['foo'], {
-      print,
-      lookup: () => Promise.resolve(createNamePacketQuery()),
-      readFile: () => Promise.resolve(''),
-      writeFile,
-    });
+    await createHelpCommand(commands).action(
+      ['foo'],
+      fakeApi({
+        print,
+      }),
+    );
     expect(stdout).to.contains(commands.foo.description);
   });
   it('command not found', async () => {
@@ -69,12 +68,12 @@ describe('cli command: help', () => {
       stdout += `${str}\n`;
     };
     const commands = {};
-    const code = await createHelpCommand(commands).action(['foo'], {
-      print,
-      lookup: () => Promise.resolve(createNamePacketQuery()),
-      readFile: () => Promise.resolve(''),
-      writeFile,
-    });
+    const code = await createHelpCommand(commands).action(
+      ['foo'],
+      fakeApi({
+        print,
+      }),
+    );
     expect(stdout).to.contains('command not found');
     expect(code).to.eql(1);
   });
