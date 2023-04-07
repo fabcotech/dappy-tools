@@ -28,7 +28,7 @@ export const getCertificates = async (
   name: string,
   options?: DappyLookupOptions,
 ) => {
-  const p = await createCoResolveQuery<GetCertificatesArgs2, any>(
+  await createCoResolveQuery<GetCertificatesArgs2, any>(
     createPostJSONQuery(nodeRequest, { path: `/${name}/CERT` }),
   )({});
 

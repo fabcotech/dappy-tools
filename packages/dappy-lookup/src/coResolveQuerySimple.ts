@@ -1,5 +1,4 @@
-import { resolver, ResolverOutput } from '@fabcotech/bees';
-import { DappyNetworkMember } from './model';
+import { resolver } from '@fabcotech/bees';
 
 import {
   getDappyNetworkMembers,

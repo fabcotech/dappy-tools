@@ -2,7 +2,6 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 import {
   createNamePacketErrorResponse,
-  createNamePacketQuery,
   createNamePacketSuccessResponse,
   getFakeDappyNetworkMember,
 } from '../../model';
@@ -10,7 +9,7 @@ import { isNetworkIdArgs, getArgsMap, getNetwork } from './utils';
 import { lookupCommand } from './lookupCommand';
 
 import { dedent } from '../utils/dedent';
-import { fakeApi, fakeDoHServer } from '../utils/test.spec';
+import { fakeApi } from '../utils/test.spec';
 
 chai.use(spies);
 

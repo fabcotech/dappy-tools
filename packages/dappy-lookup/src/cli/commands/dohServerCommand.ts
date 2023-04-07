@@ -41,7 +41,7 @@ export const dohServerCommand: Command = {
     api.print(`Network used: ${formatNetwork(options.dappyNetwork)}`);
     api.print('');
 
-    const server = api.dohServer(options);
+    const server = api.dohServer(options, api.print);
     server.start();
 
     return 0;

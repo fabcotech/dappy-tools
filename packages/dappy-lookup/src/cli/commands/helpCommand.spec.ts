@@ -1,9 +1,8 @@
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
-import { createNamePacketQuery } from '../../model';
 import { createHelpCommand } from './helpCommand';
 import { dedent } from '../utils/dedent';
-import { fakeApi, fakeDoHServer } from '../utils/test.spec';
+import { fakeApi } from '../utils/test.spec';
 
 chai.use(spies);
 
