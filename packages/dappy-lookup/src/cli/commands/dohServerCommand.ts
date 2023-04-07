@@ -42,8 +42,7 @@ export const dohServerCommand: Command = {
     api.print('');
 
     const server = api.dohServer(options, api.print);
-    server.start();
-
+    await server.start();
     return 0;
   },
 };

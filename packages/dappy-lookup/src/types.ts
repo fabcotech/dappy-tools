@@ -11,4 +11,6 @@ export type DappyLookupOptions = {
 export type DappyDohServerOptions = {
   dappyNetwork: DappyNetwork;
   port: number;
+  key?: string;
+  cert?: string;
 };

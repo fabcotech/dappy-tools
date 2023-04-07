@@ -7,7 +7,7 @@ chai.use(spies);
 
 describe('cli command: dohServer', () => {
   it('should works', async () => {
-    const start = chai.spy();
+    const start = chai.spy(() => Promise.resolve());
     const api = fakeApi({
       dohServer: () => ({ start }),
     });
