@@ -108,7 +108,7 @@ export const createCoResolveQuery =
           };
         }
       },
-      members.map((_, i) => i.toString()),
+      members.map((_: DappyNetworkMember, i: number) => i.toString()),
       CO_RESOLUTION_SETTINGS[Math.min(members.length, 7)].accuracy,
       CO_RESOLUTION_SETTINGS[Math.min(members.length, 7)].absolute,
       (a) => a,
