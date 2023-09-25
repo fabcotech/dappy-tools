@@ -1,6 +1,11 @@
 {
   "extends": "./tsconfig.build.json",
   "compilerOptions": {
+    "lib": [
+      // other libs...
+      "dom",
+      "es2017"
+    ],
     "baseUrl": "./packages",
     "paths": {
       "@fabcotech/*": ["*/src"]

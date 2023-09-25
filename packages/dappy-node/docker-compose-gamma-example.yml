@@ -1,0 +1,37 @@
+services:
+  dappy-node-migrations-gamma:
+    image: fabcotech/dappy-node:3.34.0
+    environment:
+      - DAPPY_PG_CONNECTION_STRING=postgresql://postgresql://user:password@host:port/dappygamma
+      - DAPPY_PG_CA_PATH=/app/packages/dappy-node/certs/postgresql-gamma.crt
+      - DAPPY_NODE_ZONE_PROVIDER=postgresql
+    working_dir: '/app/packages/dappy-node/'
+    volumes:
+      - ${PWD}/certs:/app/packages/dappy-node/certs/
+    command: ['npm', 'run', 'pg:migrate']
+  dappy-node-gamma:
+    depends_on:
+      dappy-node-migrations-gamma:
+        condition: service_completed_successfully
+    image: fabcotech/dappy-node:3.34.0
+    restart: always
+    environment:
+      - DAPPY_PG_CONNECTION_STRING=postgresql://postgresql://user:password@host:port/dappygamma
+      - DAPPY_PG_CA_PATH=/app/packages/dappy-node/certs/postgresql-gamma.crt
+      - DAPPY_NODE_ZONE_PROVIDER=postgresql
+      - DOWNLOAD_ZONES_IF_EMPTY=true
+      - DAPPY_NETWORK_ID=gamma
+      - DAPPY_NETWORK_MEMBER_TO_DOWNLOAD_ZONES_FROM=node3.gamma.fabco.dappy
+      - DAPPY_NODE_ENABLE_REQUEST_METRICS=true
+      - DAPPY_NODE_CACHING=0
+      - DAPPY_NETWORK_MASTER_PUBLIC_KEY=abcd
+    volumes:
+      - ${PWD}/certs:/app/packages/dappy-node/certs/
+    ports:
+      - '3001:3001'
+    command:
+      [
+        'node',
+        '--max-old-space-size=8192',
+        '/app/packages/dappy-node/dist/src/index.js',
+      ]

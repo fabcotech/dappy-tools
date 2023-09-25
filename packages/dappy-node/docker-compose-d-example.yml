@@ -1,0 +1,31 @@
+services:
+  dappy-node-migrations-d:
+    image: fabcotech/dappy-node:3.34.0
+    environment:
+      - DAPPY_PG_CONNECTION_STRING=postgresql://user:password@host:port/dappyd
+      - DAPPY_NODE_ZONE_PROVIDER=postgresql
+    working_dir: '/app/packages/dappy-node/'
+    command: ['npm', 'run', 'pg:migrate']
+  dappy-node-d:
+    depends_on:
+      dappy-node-migrations-d:
+        condition: service_completed_successfully
+    image: fabcotech/dappy-node:3.34.0
+    restart: always
+    environment:
+      - DAPPY_PG_CONNECTION_STRING=postgresql://user:password@host:port/dappyd
+      - DAPPY_NODE_ZONE_PROVIDER=postgresql
+      - DOWNLOAD_ZONES_IF_EMPTY=true
+      - DAPPY_NETWORK_ID=d
+      - DAPPY_NETWORK_MEMBER_TO_DOWNLOAD_ZONES_FROM=node1.d.fabco.dappy
+      - DAPPY_NODE_ENABLE_REQUEST_METRICS=true
+      - DAPPY_NODE_CACHING=0
+      - DAPPY_NETWORK_MASTER_PUBLIC_KEY=abcd
+    ports:
+      - '3002:3001'
+    command:
+      [
+        'node',
+        '--max-old-space-size=8192',
+        '/app/packages/dappy-node/dist/src/index.js',
+      ]

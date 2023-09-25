@@ -7,6 +7,10 @@
     "cm": "cz"
   },
   "devDependencies": {
+    "@types/chai": "^4.3.6",
+    "@types/chai-spies": "^1.0.4",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.6.2",
     "cz-conventional-changelog": "^3.3.0",
     "cz-customizable": "^7.0.0",
     "lerna": "^5.5.0",
