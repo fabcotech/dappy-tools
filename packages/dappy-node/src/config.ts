@@ -65,14 +65,6 @@ export function initConfig() {
   });
 
   const cfg = {
-    dappyBrowserMinVersion: DAPPY_BROWSER_MIN_VERSION,
-    dappyBrowserDownloadLink: `https://github.com/fabcotech/dappy/releases/tag/${DAPPY_BROWSER_MIN_VERSION}?warning`,
-
-    rchainReadOnlyCertificateFilename:
-      process.env.DAPPY_RCHAIN_READ_ONLY_CERTIFICATE_FILENAME,
-    rchainNetwork: process.env.DAPPY_RCHAIN_NETWORK || 'unknown',
-    rchainShardId: process.env.DAPPY_RCHAIN_SHARD_NAME || '',
-
     dappyNodeHttpPort:
       parseInt(process.env.DAPPY_NODE_HTTP_PORT || '', 10) || 3001,
     dappyNodeHttpsPort: parseInt(process.env.DAPPY_NODE_HTTPS_PORT || '', 10),
@@ -114,6 +106,5 @@ export function initConfig() {
   };
 
   config = cfg;
-
   return cfg;
 }

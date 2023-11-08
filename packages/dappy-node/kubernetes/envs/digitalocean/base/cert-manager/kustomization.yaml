@@ -1,3 +1,0 @@
-resources:
-- letsencrypt-staging-issuer.yaml
-- letsencrypt-prod-issuer.yaml

@@ -6,7 +6,7 @@ It just take a dozen of minutes to join a dappy network.
 
 Let's generate a certificate+key pair first. You can choose any domain you want as it is just an identifier in the dappy network, and indicative. The identifier is not a domain name in the DNS or dappy name system. If you run multiple node, it is probably better to name the certificate and keys `dappynodegamma3`.
 
-For the `gamma` network use the `noden.gamma.company.dappy` schema, for the `d` network use the `noden.d.company.dappy` schema. Of course you need one key pair per node.
+For the `gamma` network use the `noden.gamma.[company].dappy` schema, for the `d` network use the `noden.d.[company].dappy` schema. Of course you need one key pair per node.
 
 ```sh
 openssl req -x509 -newkey rsa:2048 -sha256 -days 30000 -nodes -outform PEM \
@@ -41,7 +41,7 @@ Accepting HTTP requests on `127.0.0.1:3001`.
 
 #### Run with docker compose (d network)
 
-rename `docker-compose-d-example.yml` to `docker-compose-d.yml`.
+Rename `docker-compose-d-example.yml` to `docker-compose-d.yml`.
 
 Simply copy the instructions from previous paragraphs, but use `docker-compose-d.yml` instead. Make sure you have a distinct `DAPPY_PG_CONNECTION_STRING`, there should be one database per node, if not the zones will be mixed. However having the same IP address poses no problem.
 

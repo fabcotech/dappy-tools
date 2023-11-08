@@ -1,8 +1,0 @@
-bases:
-- ../../../../base/pg
-
-resources:
-- pg-deployment.yaml
-- pg-pv.yaml
-- pg-service.yaml
-- adminer-ingress.yaml

@@ -88,3 +88,7 @@ dappyrc
 .pgdata
 
 .network.json
+
+certs/*
+docker-compose-d.yml
+docker-compose-gamma.yml
